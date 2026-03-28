@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/* ── Thmanyah Serif Display ── */
+@font-face {
+  font-family: 'Thmanyah Serif Display';
+  src: url('/fonts/Thmanyahserifdisplay12-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Display';
+  src: url('/fonts/Thmanyahserifdisplay12-Reg.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Display';
+  src: url('/fonts/Thmanyahserifdisplay12-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Display';
+  src: url('/fonts/Thmanyahserifdisplay12-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Display';
+  src: url('/fonts/Thmanyahserifdisplay12-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Thmanyah Serif Text ── */
+@font-face {
+  font-family: 'Thmanyah Serif Text';
+  src: url('/fonts/Thmanyahseriftext12-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Text';
+  src: url('/fonts/Thmanyahseriftext12-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Text';
+  src: url('/fonts/Thmanyahseriftext12-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Text';
+  src: url('/fonts/Thmanyahseriftext12-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Serif Text';
+  src: url('/fonts/Thmanyahseriftext12-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Thmanyah Sans ── */
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/Thmanyahsans12-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/Thmanyahsans12-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/Thmanyahsans12-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/Thmanyahsans12-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('/fonts/Thmanyahsans12-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Theme ── */
+@theme {
+  --font-display: 'Thmanyah Serif Display', 'Georgia', serif;
+  --font-body: 'Thmanyah Serif Text', 'Georgia', serif;
+  --font-ui: 'Thmanyah Sans', 'Segoe UI', 'Helvetica Neue', sans-serif;
+
+  --color-thmanyah-black: #000000;
+  --color-thmanyah-green: #00C17A;
+  --color-thmanyah-green-light: #B5E8BE;
+  --color-thmanyah-blue: #0072F9;
+  --color-thmanyah-red: #F24935;
+  --color-thmanyah-amber: #FFBC0A;
+  --color-thmanyah-off-white: #F7F4EE;
+  --color-thmanyah-warm-gray: #F2EDEA;
+  --color-thmanyah-cream: #F4F2ED;
+  --color-thmanyah-charcoal: #2B2D3F;
+  --color-thmanyah-dark-slate: #111421;
+  --color-thmanyah-muted: #494C6B;
+  --color-thmanyah-warm-border: #EFEDE2;
+  --color-thmanyah-mint: #B2E2BA;
+  --color-thmanyah-peach: #FF9172;
+  --color-thmanyah-sky: #84DBE5;
+  --color-thmanyah-pale-yellow: #F9E59E;
+  --color-thmanyah-blush: #FFD1C4;
+  --color-thmanyah-pink-light: #FFA5C6;
+}
+
+/* ── Base ── */
+html {
+  direction: rtl;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--color-thmanyah-off-white);
+  color: var(--color-thmanyah-black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-thmanyah-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: #c4c0b8;
+  border-radius: 9999px;
+}
+
+/* ── Selection ── */
+::selection {
+  background-color: var(--color-thmanyah-green-light);
+  color: var(--color-thmanyah-black);
+}
+
+/* ── Focus ── */
+*:focus-visible {
+  outline: 2px solid var(--color-thmanyah-green);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out forwards;
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Stagger children */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger-children > *:nth-child(10) { animation-delay: 0.5s; }
