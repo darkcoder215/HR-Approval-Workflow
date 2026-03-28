@@ -20,21 +20,43 @@ import {
   Mail,
   ChevronDown,
   LogOut,
+  FlaskConical,
+  Trash2,
+  Database,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { APPROVAL_CHAIN_TEMPLATE, SLA_TOTAL } from "@/lib/constants";
 import { getAllRequests, getDashboardStats } from "@/lib/store";
+import { seedDemoData, hasDemoData, clearAllData } from "@/lib/seedData";
 
 function HomeContent() {
   const { isAuthenticated, user, logout } = useAuth();
   const [hasRequests, setHasRequests] = useState(false);
+  const [seeded, setSeeded] = useState(false);
+  const [seedCount, setSeedCount] = useState(0);
 
   useEffect(() => {
     const all = getAllRequests();
     setHasRequests(all.length > 0);
+    setSeedCount(all.length);
+    setSeeded(hasDemoData());
   }, []);
+
+  const handleSeed = () => {
+    const data = seedDemoData();
+    setSeeded(true);
+    setHasRequests(true);
+    setSeedCount(data.length);
+  };
+
+  const handleClear = () => {
+    clearAllData();
+    setSeeded(false);
+    setHasRequests(false);
+    setSeedCount(0);
+  };
 
   if (!isAuthenticated) return <LoginScreen />;
 
@@ -165,7 +187,44 @@ function HomeContent() {
             )}
           </div>
 
-          <div className="mt-12 md:mt-16 animate-bounce">
+          {/* Demo Data Panel */}
+          <div className="mt-10 md:mt-14 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
+            <div className="inline-block bg-white/[0.06] border border-white/10 rounded-2xl p-5 md:p-6 backdrop-blur-sm max-w-md mx-auto">
+              <div className="flex items-center gap-2 mb-3">
+                <FlaskConical className="w-4 h-4 text-thmanyah-amber" />
+                <span className="font-ui font-black text-[13px] text-white/80">بيانات تجريبية</span>
+              </div>
+              <p className="font-ui text-[12px] text-white/40 mb-4 leading-relaxed">
+                أنشئ طلبات تجريبية بمراحل مختلفة (معتمدة، مرفوضة، قيد المعالجة) لاستعراض جميع واجهات المنصة.
+              </p>
+              {seedCount > 0 && (
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-thmanyah-green/10 rounded-xl">
+                  <Database className="w-3.5 h-3.5 text-thmanyah-green" />
+                  <span className="font-ui font-bold text-[12px] text-thmanyah-green">{seedCount} طلب في النظام</span>
+                </div>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSeed}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber/90 hover:bg-thmanyah-amber text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
+                >
+                  <FlaskConical className="w-3.5 h-3.5" />
+                  {seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
+                </button>
+                {seedCount > 0 && (
+                  <button
+                    onClick={handleClear}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-thmanyah-red/20 text-white/60 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    مسح
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 md:mt-8 animate-bounce">
             <ChevronDown className="w-5 h-5 text-white/20 mx-auto" />
           </div>
         </div>
