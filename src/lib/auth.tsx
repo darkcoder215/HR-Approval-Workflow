@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-thmanyah-black flex items-center justify-center">
         <div className="animate-pulse-soft">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/thamanyah.png" alt="ثمانية" className="w-12 h-12 brightness-0 invert mx-auto" />
+          <img src="/thamanyah.png" alt="ثمانية" className="w-12 h-12 rounded-xl mx-auto" />
         </div>
       </div>
     );

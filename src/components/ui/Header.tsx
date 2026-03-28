@@ -19,7 +19,7 @@ export default function Header() {
             alt="ثمانية"
             width={28}
             height={28}
-            className="brightness-0 invert"
+            className="rounded-lg"
           />
           <span className="font-display font-black text-white text-[13px] md:text-[15px] tracking-tight hidden sm:block">
             نموذج طلب فتح شاغر وظيفي

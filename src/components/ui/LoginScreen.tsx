@@ -43,7 +43,7 @@ export default function LoginScreen() {
         {/* Logo + Branding */}
         <div className="text-center mb-10 animate-fade-in-up">
           <div className="w-16 h-16 mx-auto mb-6 animate-float-slow">
-            <Image src="/thamanyah.png" alt="ثمانية" width={64} height={64} className="brightness-0 invert" />
+            <Image src="/thamanyah.png" alt="ثمانية" width={64} height={64} className="rounded-2xl" />
           </div>
           <h1 className="font-display font-black text-white text-[32px] md:text-[40px] leading-tight mb-3">
             منظومة الشواغر الوظيفية

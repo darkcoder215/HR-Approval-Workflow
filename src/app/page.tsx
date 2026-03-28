@@ -66,7 +66,7 @@ function HomeContent() {
       <header className="sticky top-0 z-40 bg-thmanyah-black/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 md:gap-3">
-            <Image src="/thamanyah.png" alt="ثمانية" width={28} height={28} className="brightness-0 invert" />
+            <Image src="/thamanyah.png" alt="ثمانية" width={28} height={28} className="rounded-lg" />
             <span className="font-display font-black text-white text-[14px] md:text-[15px] hidden sm:block">ثمانية</span>
           </Link>
           <nav className="flex items-center gap-1 md:gap-2">
@@ -324,7 +324,7 @@ function HomeContent() {
       <footer className="bg-thmanyah-dark-slate text-white/40 py-6 md:py-8">
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="/thamanyah.png" alt="ثمانية" width={20} height={20} className="brightness-0 invert opacity-40" />
+            <Image src="/thamanyah.png" alt="ثمانية" width={20} height={20} className="rounded opacity-60" />
             <span className="font-ui font-bold text-[11px] md:text-[12px]">ثمانية — إدارة الثقافة</span>
           </div>
           <span className="font-ui font-bold text-[11px] md:text-[12px]">{new Date().getFullYear()}</span>
