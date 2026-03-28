@@ -16,6 +16,8 @@ import {
   Send,
   ChevronDown,
   ChevronUp,
+  FlaskConical,
+  Wand2,
 } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Card from "@/components/ui/Card";
@@ -25,7 +27,10 @@ import Textarea from "@/components/ui/Textarea";
 import RadioGroup from "@/components/ui/RadioGroup";
 import Button from "@/components/ui/Button";
 import FormSection from "@/components/form/FormSection";
+import LoginScreen from "@/components/ui/LoginScreen";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import { createRequest } from "@/lib/store";
+import { DUMMY_PROFILES, DummyProfile } from "@/lib/dummyProfiles";
 import {
   DEPARTMENTS,
   JOB_LEVELS,
@@ -108,12 +113,43 @@ const initial: FormData = {
   deptCeoEmail: "",
 };
 
+function SubmitContent() {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <LoginScreen />;
+  return <SubmitForm />;
+}
+
 export default function SubmitPage() {
+  return (
+    <AuthProvider>
+      <SubmitContent />
+    </AuthProvider>
+  );
+}
+
+function SubmitForm() {
   const router = useRouter();
   const [form, setForm] = useState<FormData>(initial);
   const [submitting, setSubmitting] = useState(false);
   const [showApprovals, setShowApprovals] = useState(false);
+  const [showPrefill, setShowPrefill] = useState(false);
+  const [prefillFlash, setPrefillFlash] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+
+  const prefill = (profile: DummyProfile) => {
+    const newForm = { ...initial };
+    for (const [key, value] of Object.entries(profile.data)) {
+      if (key in newForm) {
+        (newForm as Record<string, string>)[key] = value;
+      }
+    }
+    setForm(newForm);
+    setErrors({});
+    setShowPrefill(false);
+    setPrefillFlash(true);
+    setTimeout(() => setPrefillFlash(false), 1500);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const set = (field: keyof FormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -223,19 +259,52 @@ export default function SubmitPage() {
   };
 
   return (
-    <div className="min-h-screen bg-thmanyah-off-white">
+    <div className={`min-h-screen bg-thmanyah-off-white ${prefillFlash ? "animate-glow-pulse" : ""}`}>
       <Header />
+
+      {/* Test Prefill FAB */}
+      <div className="fixed bottom-6 left-6 z-50">
+        <div className="relative">
+          {showPrefill && (
+            <div className="absolute bottom-14 left-0 bg-white rounded-2xl shadow-lg border border-thmanyah-warm-border p-4 w-[280px] md:w-[320px] animate-scale-in">
+              <p className="font-ui font-black text-[13px] mb-3 flex items-center gap-2">
+                <FlaskConical className="w-4 h-4 text-thmanyah-green" />
+                تعبئة تجريبية
+              </p>
+              <div className="space-y-2">
+                {DUMMY_PROFILES.map((profile) => (
+                  <button
+                    key={profile.id}
+                    onClick={() => prefill(profile)}
+                    className={`w-full text-right px-4 py-3 rounded-xl border transition-all hover-lift cursor-pointer ${profile.color}`}
+                  >
+                    <p className="font-ui font-black text-[13px]">{profile.label}</p>
+                    <p className="font-ui font-bold text-[11px] opacity-70 mt-0.5">{profile.description}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          <button
+            onClick={() => setShowPrefill(!showPrefill)}
+            className="w-12 h-12 md:w-14 md:h-14 bg-thmanyah-charcoal hover:bg-thmanyah-black text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105 cursor-pointer"
+            title="تعبئة تجريبية"
+          >
+            <Wand2 className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+        </div>
+      </div>
 
       {/* Hero intro */}
       <div className="bg-thmanyah-black text-white">
-        <div className="max-w-3xl mx-auto px-6 py-12 text-center">
+        <div className="max-w-3xl mx-auto px-4 md:px-6 py-8 md:py-12 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-thmanyah-green/10 border border-thmanyah-green/30 rounded-full mb-6">
             <Briefcase className="w-4 h-4 text-thmanyah-green" />
             <span className="font-ui text-[13px] text-thmanyah-green font-medium">
               نموذج طلب فتح شاغر وظيفي
             </span>
           </div>
-          <h1 className="font-display font-black text-[32px] md:text-[40px] leading-tight mb-4">
+          <h1 className="font-display font-black text-[26px] md:text-[40px] leading-tight mb-4">
             كل شاغر هو قرار استثماري
           </h1>
           <p className="font-body text-[16px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-6">
@@ -270,7 +339,7 @@ export default function SubmitPage() {
       </div>
 
       {/* Approval flow overview */}
-      <div className="max-w-3xl mx-auto px-6 -mt-4 mb-8 relative z-10">
+      <div className="max-w-3xl mx-auto px-4 md:px-6 -mt-4 mb-8 relative z-10">
         <Card className="border border-thmanyah-warm-border">
           <button
             onClick={() => setShowApprovals(!showApprovals)}
@@ -335,7 +404,7 @@ export default function SubmitPage() {
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="max-w-3xl mx-auto px-6 pb-24 space-y-6"
+        className="max-w-3xl mx-auto px-4 md:px-6 pb-24 space-y-6"
       >
         {/* Section 1: Requester Info */}
         <FormSection

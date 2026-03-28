@@ -22,10 +22,22 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Textarea from "@/components/ui/Textarea";
 import ApprovalStepper from "@/components/ui/ApprovalStepper";
+import LoginScreen from "@/components/ui/LoginScreen";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import { getRequestById, approveStep, rejectStep } from "@/lib/store";
 import { VacancyRequest } from "@/lib/types";
 
 export default function ApprovePage() {
+  return <AuthProvider><ApproveContent /></AuthProvider>;
+}
+
+function ApproveContent() {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <LoginScreen />;
+  return <ApproveView />;
+}
+
+function ApproveView() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -84,7 +96,7 @@ export default function ApprovePage() {
     return (
       <div className="min-h-screen bg-thmanyah-off-white">
         <Header />
-        <div className="max-w-lg mx-auto px-6 py-32 text-center">
+        <div className="max-w-lg mx-auto px-4 md:px-6 py-32 text-center">
           <h2 className="font-display font-bold text-[24px] mb-2">الطلب غير موجود</h2>
           <Link href="/dashboard"><Button>العودة للوحة المتابعة</Button></Link>
         </div>
@@ -99,7 +111,7 @@ export default function ApprovePage() {
     return (
       <div className="min-h-screen bg-thmanyah-off-white">
         <Header />
-        <div className="max-w-lg mx-auto px-6 py-24 text-center animate-fade-in-up">
+        <div className="max-w-lg mx-auto px-4 md:px-6 py-24 text-center animate-fade-in-up">
           <div
             className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-6 ${
               actionDone === "approved" ? "bg-thmanyah-green-light/30" : "bg-red-50"
@@ -141,7 +153,7 @@ export default function ApprovePage() {
 
       {/* Header */}
       <div className="bg-thmanyah-black text-white">
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
           <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="w-5 h-5 text-thmanyah-green" />
             <span className="font-ui font-medium text-[13px] text-thmanyah-green">
@@ -168,7 +180,7 @@ export default function ApprovePage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Request details */}
           <div className="lg:col-span-2 space-y-6">

@@ -24,6 +24,8 @@ import Card from "@/components/ui/Card";
 import StatCard from "@/components/ui/StatCard";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import LoginScreen from "@/components/ui/LoginScreen";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import {
   getAllRequests,
   getDashboardStats,
@@ -35,6 +37,16 @@ import { DEPARTMENTS, STATUS_LABELS } from "@/lib/constants";
 type FilterStatus = "all" | "received" | "pending_approval" | "approved" | "rejected";
 
 export default function DashboardPage() {
+  return <AuthProvider><DashboardContent /></AuthProvider>;
+}
+
+function DashboardContent() {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <LoginScreen />;
+  return <DashboardView />;
+}
+
+function DashboardView() {
   const [requests, setRequests] = useState<VacancyRequest[]>([]);
   const [stats, setStats] = useState({
     totalRequests: 0,
@@ -106,7 +118,7 @@ export default function DashboardPage() {
       <Header />
 
       <div className="bg-thmanyah-black text-white">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
           <div className="flex items-center gap-3 mb-1">
             <LayoutDashboard className="w-5 h-5 text-thmanyah-green" />
             <span className="font-ui text-[13px] text-thmanyah-green font-medium">لوحة المتابعة</span>
@@ -120,9 +132,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-6">
         {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
           <StatCard
             label="إجمالي الطلبات"
             value={stats.totalRequests}

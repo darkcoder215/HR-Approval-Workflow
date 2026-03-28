@@ -23,11 +23,23 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import ApprovalStepper from "@/components/ui/ApprovalStepper";
+import LoginScreen from "@/components/ui/LoginScreen";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import { getRequestById } from "@/lib/store";
 import { VacancyRequest } from "@/lib/types";
 import { STATUS_LABELS } from "@/lib/constants";
 
 export default function TrackPage() {
+  return <AuthProvider><TrackContent /></AuthProvider>;
+}
+
+function TrackContent() {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <LoginScreen />;
+  return <TrackView />;
+}
+
+function TrackView() {
   const params = useParams();
   const router = useRouter();
   const [request, setRequest] = useState<VacancyRequest | null>(null);
@@ -64,7 +76,7 @@ export default function TrackPage() {
     return (
       <div className="min-h-screen bg-thmanyah-off-white">
         <Header />
-        <div className="max-w-lg mx-auto px-6 py-32 text-center">
+        <div className="max-w-lg mx-auto px-4 md:px-6 py-32 text-center">
           <div className="w-16 h-16 rounded-full bg-thmanyah-cream mx-auto flex items-center justify-center mb-4">
             <FileText className="w-8 h-8 text-thmanyah-muted" />
           </div>
@@ -101,7 +113,7 @@ export default function TrackPage() {
           text-white
         `}
       >
-        <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 py-10">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <Badge
@@ -161,10 +173,10 @@ export default function TrackPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 md:space-y-6">
             {/* Request Summary */}
             <Card>
               <h3 className="font-display font-bold text-[18px] mb-5 flex items-center gap-2">
