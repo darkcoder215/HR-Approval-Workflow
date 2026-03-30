@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 export default function Header() {
@@ -49,6 +49,15 @@ export default function Header() {
           >
             لوحة المتابعة
           </Link>
+          {user?.username === "admin" && (
+            <Link
+              href="/settings"
+              className="px-3 py-2 text-[12px] font-ui font-bold text-white/40 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              الإعدادات
+            </Link>
+          )}
           {user && (
             <button
               onClick={logout}
@@ -76,6 +85,9 @@ export default function Header() {
             <MobileLink href="/" onClick={() => setMobileOpen(false)}>الرئيسية</MobileLink>
             <MobileLink href="/submit" onClick={() => setMobileOpen(false)}>تقديم طلب</MobileLink>
             <MobileLink href="/dashboard" onClick={() => setMobileOpen(false)}>لوحة المتابعة</MobileLink>
+            {user?.username === "admin" && (
+              <MobileLink href="/settings" onClick={() => setMobileOpen(false)}>الإعدادات</MobileLink>
+            )}
             {user && (
               <button
                 onClick={() => { logout(); setMobileOpen(false); }}

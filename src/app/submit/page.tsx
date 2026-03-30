@@ -42,6 +42,7 @@ import {
   APPROVAL_FLOW_NOTE,
   APPROVAL_CHAIN_TEMPLATE,
 } from "@/lib/constants";
+import { getSettings } from "@/lib/settings";
 
 type FormData = {
   requesterName: string;
@@ -135,6 +136,18 @@ function SubmitForm() {
   const [showPrefill, setShowPrefill] = useState(false);
   const [prefillFlash, setPrefillFlash] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+
+  // Load admin-customizable settings (falls back to constants.ts defaults)
+  const s = typeof window !== "undefined" ? getSettings() : null;
+  const departments = s?.departments ?? DEPARTMENTS;
+  const jobLevels = s?.jobLevels ?? JOB_LEVELS;
+  const roleNatures = s?.roleNatures ?? ROLE_NATURES;
+  const countries = s?.countries ?? COUNTRIES;
+  const introChallenge = s?.introChallenge ?? INTRO_CHALLENGE;
+  const introOpportunity = s?.introOpportunity ?? INTRO_OPPORTUNITY;
+  const hiringBarMessage = s?.hiringBarMessage ?? HIRING_BAR_MESSAGE;
+  const approvalFlowNote = s?.approvalFlowNote ?? APPROVAL_FLOW_NOTE;
+  const approvalChain = s?.approvalChain ?? APPROVAL_CHAIN_TEMPLATE;
 
   const prefill = (profile: DummyProfile) => {
     const newForm = { ...initial };
@@ -308,7 +321,7 @@ function SubmitForm() {
             كل شاغر هو قرار استثماري
           </h1>
           <p className="font-body text-[16px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-6">
-            {INTRO_OPPORTUNITY}
+            {introOpportunity}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mt-8">
@@ -320,7 +333,7 @@ function SubmitForm() {
                 </span>
               </div>
               <p className="font-ui text-[13px] text-white/60 leading-relaxed">
-                {INTRO_CHALLENGE}
+                {introChallenge}
               </p>
             </div>
             <div className="flex-1 bg-thmanyah-green/10 border border-thmanyah-green/20 rounded-2xl p-5 text-right">
@@ -368,11 +381,11 @@ function SubmitForm() {
               <div className="bg-thmanyah-pale-yellow/20 rounded-xl p-3 mb-4 flex items-start gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <p className="font-ui text-[12px] text-amber-800 leading-relaxed">
-                  {APPROVAL_FLOW_NOTE}
+                  {approvalFlowNote}
                 </p>
               </div>
               <div className="space-y-3">
-                {APPROVAL_CHAIN_TEMPLATE.map((step, i) => (
+                {approvalChain.map((step, i) => (
                   <div
                     key={i}
                     className="flex items-center gap-3 px-4 py-3 rounded-xl bg-thmanyah-cream/60"
@@ -436,7 +449,7 @@ function SubmitForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Select
               label="الإدارة"
-              options={DEPARTMENTS.map((d) => ({ value: d, label: d }))}
+              options={departments.map((d) => ({ value: d, label: d }))}
               value={form.department}
               onChange={set("department")}
               error={errors.department}
@@ -614,7 +627,7 @@ function SubmitForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Select
               label="المستوى الوظيفي"
-              options={JOB_LEVELS.map((l) => ({ value: l, label: l }))}
+              options={jobLevels.map((l) => ({ value: l, label: l }))}
               value={form.jobLevel}
               onChange={set("jobLevel")}
               error={errors.jobLevel}
@@ -622,7 +635,7 @@ function SubmitForm() {
             />
             <Select
               label="طبيعة الدور"
-              options={ROLE_NATURES}
+              options={roleNatures}
               value={form.roleNature}
               onChange={set("roleNature")}
               error={errors.roleNature}
@@ -641,7 +654,7 @@ function SubmitForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Select
               label="الدولة"
-              options={COUNTRIES.map((c) => ({ value: c, label: c }))}
+              options={countries.map((c) => ({ value: c, label: c }))}
               value={form.country}
               onChange={set("country")}
               error={errors.country}
@@ -751,7 +764,7 @@ function SubmitForm() {
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
-              {HIRING_BAR_MESSAGE}
+              {hiringBarMessage}
             </p>
           </div>
           <Textarea

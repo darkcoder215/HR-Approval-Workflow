@@ -6,6 +6,7 @@
 
 import { VacancyRequest, ApprovalStep, RequestStatus } from "./types";
 import { APPROVAL_CHAIN_TEMPLATE } from "./constants";
+import { getSettings } from "./settings";
 import { v4 as uuidv4 } from "uuid";
 
 const STORAGE_KEY = "thmanyah_vacancy_requests";
@@ -47,11 +48,12 @@ export function createRequest(
   data: Omit<VacancyRequest, "id" | "createdAt" | "updatedAt" | "status" | "currentApprovalStep" | "approvalChain">
 ): VacancyRequest {
   const now = new Date().toISOString();
-  const approvalChain: ApprovalStep[] = APPROVAL_CHAIN_TEMPLATE.map((step, index) => ({
+  const chainTemplate = typeof window !== "undefined" ? getSettings().approvalChain : APPROVAL_CHAIN_TEMPLATE;
+  const approvalChain: ApprovalStep[] = chainTemplate.map((step, index) => ({
     ...step,
     id: uuidv4(),
     approverName: index === 0 ? data.budgetOwner : step.approverName || "",
-    status: index === 0 ? "pending" : "pending",
+    status: "pending" as const,
   }));
 
   const request: VacancyRequest = {
