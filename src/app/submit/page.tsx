@@ -314,7 +314,8 @@ function SubmitForm() {
       await new Promise((r) => setTimeout(r, 400));
 
       if (!res.ok || data.error) {
-        setAnalysisError(data.error || "فشل التحليل");
+        const debugInfo = data.debug ? `\n\nOpenRouter response:\n${data.debug}` : "";
+        setAnalysisError((data.error || "فشل التحليل") + debugInfo);
         setShowAnalysis(true);
       } else {
         setAnalysis(data.analysis);
@@ -1135,7 +1136,7 @@ function SubmitForm() {
                   <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-ui font-black text-[14px] text-amber-800 mb-1">تعذر إجراء التحليل</p>
-                    <p className="font-ui font-bold text-[13px] text-amber-700">{analysisError}</p>
+                    <p className="font-ui font-bold text-[13px] text-amber-700 whitespace-pre-wrap break-all">{analysisError}</p>
                     <p className="font-ui text-[12px] text-amber-600 mt-2">يمكنك إعادة المحاولة أو المتابعة بإرسال الطلب بدون التحليل.</p>
                     <button
                       onClick={() => { setShowAnalysis(false); runAnalysis(); }}

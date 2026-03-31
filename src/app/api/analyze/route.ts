@@ -41,7 +41,6 @@ export async function POST(request: NextRequest) {
         ],
         temperature: 0.2,
         max_tokens: 4000,
-        response_format: { type: "json_object" },
       }),
     });
 
@@ -49,7 +48,7 @@ export async function POST(request: NextRequest) {
       const errorData = await response.text();
       console.error("AI API error:", response.status, errorData);
       return NextResponse.json(
-        { error: `فشل في الاتصال بخدمة التحليل (${response.status})` },
+        { error: `فشل في الاتصال بخدمة التحليل (${response.status})`, debug: errorData },
         { status: 502 }
       );
     }
