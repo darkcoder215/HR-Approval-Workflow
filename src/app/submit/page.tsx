@@ -995,7 +995,7 @@ function SubmitForm() {
           <div className="text-center space-y-4">
             <div className="bg-thmanyah-green/10 rounded-xl p-4 max-w-lg mx-auto">
               <p className="font-ui text-[13px] text-emerald-800 leading-relaxed">
-                سيتم تحليل طلبك بالذكاء الاصطناعي قبل الإرسال لتقييم الحاجة الفعلية للتوظيف.
+                سيتم تحليل طلبك آليًا قبل الإرسال لتقييم الحاجة الفعلية للتوظيف.
               </p>
             </div>
             <Button

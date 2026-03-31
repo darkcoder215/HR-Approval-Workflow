@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const AI_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     const prompt = buildAnalysisPrompt(formData);
 
-    const response = await fetch(OPENROUTER_API_URL, {
+    const response = await fetch(AI_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error("OpenRouter error:", errorData);
+      console.error("AI API error:", errorData);
       return NextResponse.json(
         { error: "فشل في الاتصال بخدمة التحليل" },
         { status: 502 }
