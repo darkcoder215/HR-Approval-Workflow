@@ -13,7 +13,8 @@ export async function POST(request: NextRequest) {
 
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: "مفتاح API غير مُعرّف" }, { status: 500 });
+      console.error("OPENROUTER_API_KEY is not set in environment variables");
+      return NextResponse.json({ error: "مفتاح API غير مُعرّف — يرجى التأكد من إعداد المتغير OPENROUTER_API_KEY في Vercel" }, { status: 500 });
     }
 
     const prompt = buildAnalysisPrompt(formData);
@@ -40,14 +41,15 @@ export async function POST(request: NextRequest) {
         ],
         temperature: 0.2,
         max_tokens: 4000,
+        response_format: { type: "json_object" },
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error("AI API error:", errorData);
+      console.error("AI API error:", response.status, errorData);
       return NextResponse.json(
-        { error: "فشل في الاتصال بخدمة التحليل" },
+        { error: `فشل في الاتصال بخدمة التحليل (${response.status})` },
         { status: 502 }
       );
     }
@@ -56,6 +58,7 @@ export async function POST(request: NextRequest) {
     const content = data.choices?.[0]?.message?.content;
 
     if (!content) {
+      console.error("Empty AI response. Full response:", JSON.stringify(data).slice(0, 500));
       return NextResponse.json(
         { error: "لم يتم استلام رد من خدمة التحليل" },
         { status: 502 }
@@ -63,16 +66,38 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        throw new Error("No JSON found in response");
+      // Try parsing the content directly first (structured output mode)
+      let analysis;
+      try {
+        analysis = JSON.parse(content);
+      } catch {
+        // Fallback: extract JSON from markdown code blocks or raw text
+        const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || content.match(/(\{[\s\S]*\})/);
+        if (!jsonMatch) {
+          throw new Error("No JSON found in response");
+        }
+        analysis = JSON.parse(jsonMatch[1] || jsonMatch[0]);
       }
-      const analysis = JSON.parse(jsonMatch[0]);
-      return NextResponse.json({ analysis });
-    } catch {
-      console.error("Failed to parse AI response:", content);
+
+      // Validate required fields and provide defaults
+      const validated = {
+        overallScore: analysis.overallScore ?? 50,
+        scoreLabel: analysis.scoreLabel ?? "حاجة متوسطة",
+        summary: analysis.summary ?? "لم يتم تقديم ملخص",
+        dimensions: Array.isArray(analysis.dimensions) ? analysis.dimensions : [],
+        strengths: Array.isArray(analysis.strengths) ? analysis.strengths : [],
+        concerns: Array.isArray(analysis.concerns) ? analysis.concerns : [],
+        aiRiskAssessment: analysis.aiRiskAssessment ?? "",
+        budgetConsideration: analysis.budgetConsideration ?? "",
+        recommendation: analysis.recommendation ?? "يرجى المتابعة مع إدارة المواهب",
+        suggestedQuestions: Array.isArray(analysis.suggestedQuestions) ? analysis.suggestedQuestions : [],
+      };
+
+      return NextResponse.json({ analysis: validated });
+    } catch (parseErr) {
+      console.error("Failed to parse AI response:", parseErr, "\nRaw content:", content.slice(0, 1000));
       return NextResponse.json(
-        { error: "فشل في تحليل الرد" },
+        { error: "فشل في تحليل الرد — يرجى المحاولة مرة أخرى" },
         { status: 500 }
       );
     }

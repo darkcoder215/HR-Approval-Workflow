@@ -1136,7 +1136,13 @@ function SubmitForm() {
                   <div>
                     <p className="font-ui font-black text-[14px] text-amber-800 mb-1">تعذر إجراء التحليل</p>
                     <p className="font-ui font-bold text-[13px] text-amber-700">{analysisError}</p>
-                    <p className="font-ui text-[12px] text-amber-600 mt-2">يمكنك المتابعة بإرسال الطلب بدون التحليل أو إلغاء الطلب ومناقشته مع إدارة المواهب.</p>
+                    <p className="font-ui text-[12px] text-amber-600 mt-2">يمكنك إعادة المحاولة أو المتابعة بإرسال الطلب بدون التحليل.</p>
+                    <button
+                      onClick={() => { setShowAnalysis(false); runAnalysis(); }}
+                      className="mt-3 px-4 py-2 bg-amber-600 text-white font-ui font-bold text-[12px] rounded-lg hover:bg-amber-700 transition-colors"
+                    >
+                      إعادة المحاولة
+                    </button>
                   </div>
                 </div>
               )}
