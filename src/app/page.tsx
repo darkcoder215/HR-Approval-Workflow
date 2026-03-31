@@ -244,9 +244,9 @@ function HomeContent() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 stagger-children">
-            <StepCard number="1" icon={<FileText className="w-6 h-6" />} title="تقديم الطلب" description="املأ النموذج بتفاصيل الشاغر، التبرير، وتقييم الحاجة. النموذج ذكي ويتكيّف مع إجاباتك." color="green" />
+            <StepCard number="1" icon={<FileText className="w-6 h-6" />} title="تقديم الطلب" description="املأ النموذج بتفاصيل الشاغر، التبرير، وتقييم الحاجة. النموذج يتكيّف مع إجاباتك تلقائيًا." color="green" />
             <StepCard number="2" icon={<ShieldCheck className="w-6 h-6" />} title="مسار الاعتماد" description="الطلب يمر بـ 6 مراحل اعتماد متسلسلة مع SLA محدد لكل مرحلة. تتبّع طلبك لحظة بلحظة." color="blue" />
-            <StepCard number="3" icon={<CheckCircle2 className="w-6 h-6" />} title="بدء التوظيف" description="بعد اعتماد جميع الأطراف، يتواصل معك فريق استقطاب المواهب خلال 24 ساعة عمل." color="amber" />
+            <StepCard number="3" icon={<CheckCircle2 className="w-6 h-6" />} title="بدء التوظيف" description="بعد اعتماد جميع الأطراف، يتواصل معك فريق المواهب خلال 24 ساعة عمل." color="amber" />
           </div>
         </div>
       </section>
@@ -298,9 +298,9 @@ function HomeContent() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 stagger-children">
             <FeatureCard icon={<Eye className="w-5 h-5" />} title="تتبع لحظي" description="اعرف وين وصل طلبك بالضبط مع شريط تقدم بصري واضح" />
-            <FeatureCard icon={<Mail className="w-5 h-5" />} title="إشعارات ذكية" description="إشعار عند كل انتقال حالة وتذكير تلقائي عند تجاوز SLA" />
+            <FeatureCard icon={<Mail className="w-5 h-5" />} title="إشعارات تلقائية" description="إشعار عند كل انتقال حالة وتذكير تلقائي عند تجاوز SLA" />
             <FeatureCard icon={<ShieldCheck className="w-5 h-5" />} title="صلاحيات محكمة" description="كل شخص يرى ما يخصه فقط مع فصل بين التعليقات العامة والداخلية" />
-            <FeatureCard icon={<Target className="w-5 h-5" />} title="أسئلة ذكية" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
+            <FeatureCard icon={<Target className="w-5 h-5" />} title="أسئلة متكيّفة" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
             <FeatureCard icon={<BarChart3 className="w-5 h-5" />} title="لوحة تحليلية" description="إحصائيات شاملة حسب الإدارة مع نسب القبول والرفض" />
             <FeatureCard icon={<Users className="w-5 h-5" />} title="تعليقات ثنائية" description="تعليقات عامة لمقدم الطلب وملاحظات داخلية للمعتمدين فقط" />
           </div>

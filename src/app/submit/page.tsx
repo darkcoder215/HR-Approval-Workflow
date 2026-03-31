@@ -18,6 +18,7 @@ import {
   ChevronUp,
   FlaskConical,
   Wand2,
+  CheckCircle2,
 } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Card from "@/components/ui/Card";
@@ -68,13 +69,20 @@ type FormData = {
   nationality: string;
   triedAlternatives: string;
   alternativesDescription: string;
+  whyNoAlternatives: string;
   risksIfNotHired: string;
   aiRoleIntegration: string;
   aiAutomationPotential: string;
   aiReplacementAssessment: string;
   hiringBarCommitment: string;
+  expectedOutputs3Months: string;
+  expectedOutputs6Months: string;
+  successMetrics: string;
+  managerConfirmation: string;
   directManagerName: string;
   directManagerEmail: string;
+  dottedLineManagerName: string;
+  dottedLineManagerEmail: string;
   deptCeoName: string;
   deptCeoEmail: string;
 };
@@ -103,13 +111,20 @@ const initial: FormData = {
   nationality: "",
   triedAlternatives: "",
   alternativesDescription: "",
+  whyNoAlternatives: "",
   risksIfNotHired: "",
   aiRoleIntegration: "",
   aiAutomationPotential: "",
   aiReplacementAssessment: "",
   hiringBarCommitment: "",
+  expectedOutputs3Months: "",
+  expectedOutputs6Months: "",
+  successMetrics: "",
+  managerConfirmation: "",
   directManagerName: "",
   directManagerEmail: "",
+  dottedLineManagerName: "",
+  dottedLineManagerEmail: "",
   deptCeoName: "",
   deptCeoEmail: "",
 };
@@ -128,10 +143,24 @@ export default function SubmitPage() {
   );
 }
 
+interface AnalysisResult {
+  overallScore: number;
+  scoreLabel: string;
+  summary: string;
+  strengths: string[];
+  concerns: string[];
+  aiImpact: string;
+  recommendation: string;
+}
+
 function SubmitForm() {
   const router = useRouter();
   const [form, setForm] = useState<FormData>(initial);
   const [submitting, setSubmitting] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [showApprovals, setShowApprovals] = useState(false);
   const [showPrefill, setShowPrefill] = useState(false);
   const [prefillFlash, setPrefillFlash] = useState(false);
@@ -211,11 +240,18 @@ function SubmitForm() {
     if (form.triedAlternatives === "yes" && !form.alternativesDescription.trim()) {
       newErrors.alternativesDescription = "مطلوب";
     }
+    if (form.triedAlternatives === "no" && !form.whyNoAlternatives.trim()) {
+      newErrors.whyNoAlternatives = "مطلوب";
+    }
     if (!form.risksIfNotHired.trim()) newErrors.risksIfNotHired = "مطلوب";
     if (!form.aiRoleIntegration.trim()) newErrors.aiRoleIntegration = "مطلوب";
     if (!form.aiAutomationPotential.trim()) newErrors.aiAutomationPotential = "مطلوب";
     if (!form.aiReplacementAssessment.trim()) newErrors.aiReplacementAssessment = "مطلوب";
     if (!form.hiringBarCommitment.trim()) newErrors.hiringBarCommitment = "مطلوب";
+    if (!form.expectedOutputs3Months.trim()) newErrors.expectedOutputs3Months = "مطلوب";
+    if (!form.expectedOutputs6Months.trim()) newErrors.expectedOutputs6Months = "مطلوب";
+    if (!form.successMetrics.trim()) newErrors.successMetrics = "مطلوب";
+    if (!form.managerConfirmation) newErrors.managerConfirmation = "مطلوب";
 
     if (!form.directManagerName.trim()) newErrors.directManagerName = "مطلوب";
     if (!form.directManagerEmail.trim()) newErrors.directManagerEmail = "مطلوب";
@@ -230,9 +266,40 @@ function SubmitForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const runAnalysis = async () => {
+    setAnalyzing(true);
+    setAnalysisError(null);
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formData: form }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setAnalysisError(data.error || "فشل التحليل");
+        // Still show modal so user can proceed without AI
+        setShowAnalysis(true);
+      } else {
+        setAnalysis(data.analysis);
+        setShowAnalysis(true);
+      }
+    } catch {
+      setAnalysisError("تعذر الاتصال بخدمة التحليل");
+      setShowAnalysis(true);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    runAnalysis();
+  };
+
+  const confirmSubmit = () => {
+    setShowAnalysis(false);
     setSubmitting(true);
 
     const request = createRequest({
@@ -269,6 +336,12 @@ function SubmitForm() {
     setTimeout(() => {
       router.push(`/track/${request.id}`);
     }, 800);
+  };
+
+  const cancelSubmit = () => {
+    setShowAnalysis(false);
+    setAnalysis(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -422,7 +495,6 @@ function SubmitForm() {
         {/* Section 1: Requester Info */}
         <FormSection
           title="بيانات مقدم الطلب"
-          subtitle="معلوماتك الأساسية وموقعك التنظيمي"
           icon={<User className="w-5 h-5" />}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -612,7 +684,6 @@ function SubmitForm() {
         {/* Section 3: Role Details */}
         <FormSection
           title="تفاصيل الدور الوظيفي"
-          subtitle="المسمى والمستوى والوصف"
           icon={<Briefcase className="w-5 h-5" />}
         >
           <Input
@@ -678,7 +749,7 @@ function SubmitForm() {
         {/* Section 4: AI Assessment */}
         <FormSection
           title="تقييم الذكاء الاصطناعي"
-          subtitle="ضمن تطوير قراراتنا، شاركنا رؤيتك للدور من منظور تقني"
+          subtitle="شاركنا رؤيتك للدور من منظور تقني"
           icon={<Brain className="w-5 h-5" />}
           highlight
         >
@@ -745,8 +816,21 @@ function SubmitForm() {
             </div>
           )}
 
+          {form.triedAlternatives === "no" && (
+            <div className="animate-fade-in-up">
+              <Textarea
+                label="لماذا لم تجرب حلول أخرى حتى الآن؟"
+                placeholder="اشرح لماذا لم يتم تجربة بدائل أخرى قبل طلب التوظيف..."
+                value={form.whyNoAlternatives}
+                onChange={set("whyNoAlternatives")}
+                error={errors.whyNoAlternatives}
+                required
+              />
+            </div>
+          )}
+
           <Textarea
-            label="ما المخاطر والآثار السلبية في حال ما وظفنا؟"
+            label="المخاطر والآثار السلبية في حال لم نوظف"
             hint="بالتفصيل، شاركنا الأثر على الفريق والمشاريع والأهداف"
             placeholder="اشرح بالتفصيل ماذا يحدث لو لم نوظف في هذا الشاغر..."
             value={form.risksIfNotHired}
@@ -758,7 +842,7 @@ function SubmitForm() {
 
         {/* Section 6: Hiring Bar */}
         <FormSection
-          title="رفع معيار التوظيف"
+          title="رفع معيار اختيار المواهب"
           icon={<Target className="w-5 h-5" />}
           highlight
         >
@@ -777,14 +861,69 @@ function SubmitForm() {
           />
         </FormSection>
 
+        {/* Section 6b: Success Definition */}
+        <FormSection
+          title="تعريف النجاح"
+          subtitle="خطة فترة التجربة الناجحة تُبنى بالتوازي مع تحليل الدور وقبل المقابلات وليس بعد مرحلة قبول العرض الوظيفي. هناك بعض المرونة في تعديلها بلا شك خلال مراحل التوظيف ولكن الأصل لا تُبنى من الأساس بعد المقابلات."
+          icon={<CheckCircle2 className="w-5 h-5" />}
+        >
+          <Textarea
+            label="المخرجات المتوقعة خلال أول 3 أشهر"
+            placeholder="ما الذي تتوقع أن يحققه الموظف الجديد خلال أول 90 يوم..."
+            value={form.expectedOutputs3Months}
+            onChange={set("expectedOutputs3Months")}
+            error={errors.expectedOutputs3Months}
+            required
+          />
+          <Textarea
+            label="المخرجات المتوقعة خلال أول 6 أشهر"
+            placeholder="ما الذي تتوقع أن يحققه الموظف الجديد خلال أول 6 أشهر..."
+            value={form.expectedOutputs6Months}
+            onChange={set("expectedOutputs6Months")}
+            error={errors.expectedOutputs6Months}
+            required
+          />
+          <Textarea
+            label="مؤشرات قياس النجاح والأثر"
+            placeholder="كيف ستقيس نجاح هذا التوظيف وأثره على الفريق والأهداف..."
+            value={form.successMetrics}
+            onChange={set("successMetrics")}
+            error={errors.successMetrics}
+            required
+          />
+        </FormSection>
+
+        {/* Section 6c: Manager Confirmation */}
+        <FormSection
+          title="تأكيد المدير"
+          icon={<ShieldCheck className="w-5 h-5" />}
+          highlight
+        >
+          <div className="bg-thmanyah-black rounded-xl p-5 text-white">
+            <p className="font-body text-[15px] leading-relaxed text-white/80">
+              أؤكد بأن هذا الطلب مبني على احتياج حقيقي والتوظيف يقع ضمن ميزانية إدارتي، كما تم تقييم البدائل قبل طلب التوظيف وأتحمل أثر هذا القرار في حال عدم تحقيق النتائج المتوقعة.
+            </p>
+          </div>
+          <RadioGroup
+            label="هل تؤكد ما ورد أعلاه؟"
+            name="managerConfirmation"
+            options={[
+              { value: "yes", label: "نعم، أؤكد" },
+            ]}
+            value={form.managerConfirmation}
+            onChange={setRadio("managerConfirmation")}
+            required
+            error={errors.managerConfirmation}
+          />
+        </FormSection>
+
         {/* Section 7: Approval Chain Contacts */}
         <FormSection
           title="بيانات المعتمدين"
-          subtitle="أدخل بيانات المدير المباشر والرئيس التنفيذي لإدارتك"
           icon={<ShieldCheck className="w-5 h-5" />}
         >
           <p className="font-ui text-[13px] text-thmanyah-muted leading-relaxed">
-            المعتمدون الآخرون (استقطاب المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام.
+            المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
@@ -805,6 +944,27 @@ function SubmitForm() {
               error={errors.directManagerEmail}
               required
               data-error={!!errors.directManagerEmail}
+            />
+          </div>
+          <div className="bg-thmanyah-cream/40 rounded-xl p-3 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <p className="font-ui text-[12px] text-amber-800 leading-relaxed">
+              بعض الأدوار تتطلب مدير مباشر ومدير غير مباشر (dotted line). إذا ينطبق ذلك، يرجى تعبئة الحقول التالية.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Input
+              label="اسم المدير غير المباشر (Dotted Line)"
+              placeholder="الاسم الكامل (اختياري)"
+              value={form.dottedLineManagerName}
+              onChange={set("dottedLineManagerName")}
+            />
+            <Input
+              label="البريد الإلكتروني للمدير غير المباشر"
+              type="email"
+              placeholder="dotted-manager@thmanyah.com"
+              value={form.dottedLineManagerEmail}
+              onChange={set("dottedLineManagerEmail")}
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -835,22 +995,162 @@ function SubmitForm() {
           <div className="text-center space-y-4">
             <div className="bg-thmanyah-green/10 rounded-xl p-4 max-w-lg mx-auto">
               <p className="font-ui text-[13px] text-emerald-800 leading-relaxed">
-                بعد الإرسال، لن يكون بالإمكان تعديل الطلب. تأكد من مراجعة جميع البيانات قبل الإرسال.
+                سيتم تحليل طلبك بالذكاء الاصطناعي قبل الإرسال لتقييم الحاجة الفعلية للتوظيف.
               </p>
             </div>
             <Button
               type="submit"
               variant="accent"
               size="lg"
-              loading={submitting}
-              icon={<Send className="w-4 h-4" />}
+              loading={submitting || analyzing}
+              icon={analyzing ? <Brain className="w-4 h-4 animate-pulse" /> : <Send className="w-4 h-4" />}
               className="min-w-[200px]"
             >
-              إرسال الطلب
+              {analyzing ? "جاري التحليل..." : submitting ? "جاري الإرسال..." : "تحليل وإرسال الطلب"}
             </Button>
           </div>
         </Card>
       </form>
+
+      {/* AI Analysis Modal */}
+      {showAnalysis && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+            {/* Header */}
+            <div className="sticky top-0 bg-thmanyah-black text-white rounded-t-3xl p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                  <Brain className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="font-display font-black text-[20px] md:text-[24px]">تقرير التحليل الذكي</h2>
+                  <p className="font-ui font-bold text-[12px] text-white/50">تحليل آلي لاحتمالية الحاجة الفعلية للتوظيف</p>
+                </div>
+              </div>
+
+              {analysis && (
+                <div className="mt-4 flex items-center gap-4">
+                  {/* Score circle */}
+                  <div className={`w-20 h-20 rounded-full flex flex-col items-center justify-center shrink-0 ${
+                    analysis.overallScore >= 75 ? "bg-thmanyah-green/20" :
+                    analysis.overallScore >= 50 ? "bg-thmanyah-amber/20" :
+                    "bg-thmanyah-red/20"
+                  }`}>
+                    <span className={`font-display font-black text-[28px] leading-none ${
+                      analysis.overallScore >= 75 ? "text-thmanyah-green" :
+                      analysis.overallScore >= 50 ? "text-thmanyah-amber" :
+                      "text-thmanyah-red"
+                    }`}>
+                      {analysis.overallScore}
+                    </span>
+                    <span className="font-ui font-bold text-[10px] text-white/50">من ١٠٠</span>
+                  </div>
+                  <div className="flex-1">
+                    <span className={`inline-block px-3 py-1 rounded-full font-ui font-black text-[12px] mb-2 ${
+                      analysis.overallScore >= 75 ? "bg-thmanyah-green/20 text-thmanyah-green" :
+                      analysis.overallScore >= 50 ? "bg-thmanyah-amber/20 text-thmanyah-amber" :
+                      "bg-thmanyah-red/20 text-thmanyah-red"
+                    }`}>
+                      {analysis.scoreLabel}
+                    </span>
+                    <p className="font-ui font-bold text-[14px] text-white/80 leading-relaxed">
+                      {analysis.summary}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Body */}
+            <div className="p-6 md:p-8 space-y-6">
+              {analysisError && !analysis && (
+                <div className="bg-thmanyah-pale-yellow/20 rounded-xl p-4 flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-ui font-black text-[14px] text-amber-800 mb-1">تعذر إجراء التحليل</p>
+                    <p className="font-ui font-bold text-[13px] text-amber-700">{analysisError}</p>
+                    <p className="font-ui text-[12px] text-amber-600 mt-2">يمكنك المتابعة بإرسال الطلب بدون التحليل أو إلغاء الطلب ومناقشته مع إدارة المواهب.</p>
+                  </div>
+                </div>
+              )}
+
+              {analysis && (
+                <>
+                  {/* Strengths */}
+                  {analysis.strengths.length > 0 && (
+                    <div>
+                      <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-thmanyah-green" />
+                        نقاط القوة
+                      </h3>
+                      <div className="space-y-2">
+                        {analysis.strengths.map((s, i) => (
+                          <div key={i} className="flex items-start gap-2 bg-thmanyah-green-light/10 rounded-xl px-4 py-3">
+                            <CheckCircle2 className="w-4 h-4 text-thmanyah-green shrink-0 mt-0.5" />
+                            <p className="font-ui font-bold text-[13px] text-emerald-800">{s}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Concerns */}
+                  {analysis.concerns.length > 0 && (
+                    <div>
+                      <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-thmanyah-amber" />
+                        ملاحظات وتحفظات
+                      </h3>
+                      <div className="space-y-2">
+                        {analysis.concerns.map((c, i) => (
+                          <div key={i} className="flex items-start gap-2 bg-thmanyah-pale-yellow/20 rounded-xl px-4 py-3">
+                            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                            <p className="font-ui font-bold text-[13px] text-amber-800">{c}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* AI Impact */}
+                  <div>
+                    <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-3 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-thmanyah-blue" />
+                      أثر الذكاء الاصطناعي
+                    </h3>
+                    <div className="bg-thmanyah-sky/10 rounded-xl px-4 py-3">
+                      <p className="font-ui font-bold text-[13px] text-thmanyah-charcoal leading-relaxed">{analysis.aiImpact}</p>
+                    </div>
+                  </div>
+
+                  {/* Recommendation */}
+                  <div className="bg-thmanyah-black rounded-xl p-5">
+                    <h3 className="font-ui font-black text-[13px] text-white/60 mb-2">التوصية</h3>
+                    <p className="font-body font-bold text-[16px] text-white leading-relaxed">{analysis.recommendation}</p>
+                  </div>
+                </>
+              )}
+
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  onClick={confirmSubmit}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-thmanyah-green hover:bg-emerald-600 text-white rounded-full font-ui font-black text-[14px] transition-all cursor-pointer hover:scale-[1.01]"
+                >
+                  <Send className="w-4 h-4" />
+                  متابعة الإرسال
+                </button>
+                <button
+                  onClick={cancelSubmit}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-thmanyah-cream hover:bg-thmanyah-warm-gray text-thmanyah-charcoal rounded-full font-ui font-black text-[14px] transition-all cursor-pointer"
+                >
+                  إلغاء ومناقشة مع إدارة المواهب
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
