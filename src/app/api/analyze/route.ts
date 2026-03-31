@@ -27,36 +27,19 @@ export async function POST(request: NextRequest) {
         "X-Title": "Thmanyah HR Vacancy Approval",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.0-flash-001",
+        model: "google/gemini-2.5-flash-preview",
         messages: [
           {
             role: "system",
-            content: `أنت محلل موارد بشرية خبير في شركة ثمانية الإعلامية السعودية. مهمتك تحليل طلبات فتح الشواغر الوظيفية وتقديم تقييم شامل ومختصر لاحتمالية الحاجة الفعلية للتوظيف.
-
-يجب أن يكون تحليلك:
-- باللغة العربية الفصحى
-- مباشر وعملي بدون حشو
-- مبني على البيانات المقدمة في النموذج
-- يتضمن نسبة مئوية لاحتمالية الحاجة الفعلية
-
-أجب بتنسيق JSON فقط بالهيكلة التالية:
-{
-  "overallScore": <رقم من 0 إلى 100>,
-  "scoreLabel": "<تسمية: حاجة ملحة / حاجة مبررة / حاجة متوسطة / حاجة ضعيفة / غير مبرر>",
-  "summary": "<ملخص تنفيذي من 2-3 جمل>",
-  "strengths": ["<نقطة قوة 1>", "<نقطة قوة 2>", ...],
-  "concerns": ["<ملاحظة أو تحفظ 1>", "<ملاحظة أو تحفظ 2>", ...],
-  "aiImpact": "<تقييم مختصر لأثر الذكاء الاصطناعي على الحاجة لهذا الدور>",
-  "recommendation": "<توصية نهائية من جملة واحدة>"
-}`,
+            content: SYSTEM_PROMPT,
           },
           {
             role: "user",
             content: prompt,
           },
         ],
-        temperature: 0.3,
-        max_tokens: 1500,
+        temperature: 0.2,
+        max_tokens: 4000,
       }),
     });
 
@@ -79,9 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse the JSON from the AI response
     try {
-      // Extract JSON from potential markdown code blocks
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error("No JSON found in response");
@@ -104,64 +85,187 @@ export async function POST(request: NextRequest) {
   }
 }
 
+const SYSTEM_PROMPT = `أنت محلل موارد بشرية استراتيجي خبير تعمل في شركة ثمانية الإعلامية السعودية — واحدة من أبرز شركات الإعلام والمحتوى في المنطقة. مهمتك إجراء تحليل عميق وشامل لطلبات فتح الشواغر الوظيفية.
+
+## معايير التقييم (وزّع النقاط على أساس 100):
+
+### 1. وضوح الحاجة والتبرير (25 نقطة)
+- هل المبرر واضح ومحدد أم عام وغامض؟
+- هل المخاطر المذكورة حقيقية وقابلة للقياس أم مبالغ فيها؟
+- هل العدد المطلوب متناسب مع الحاجة المذكورة؟
+- هل هناك ارتباط واضح بمشروع أو هدف استراتيجي؟
+
+### 2. استنفاد البدائل (20 نقطة)
+- هل تم تجربة حلول بديلة فعلاً (إعادة توزيع، أتمتة، تعاقد خارجي)؟
+- إذا لم يتم، هل السبب مقنع؟
+- هل يمكن تحقيق المطلوب بأقل من العدد المطلوب؟
+
+### 3. تقييم أثر الذكاء الاصطناعي (20 نقطة)
+- هل مقدم الطلب واعٍ لأثر AI على هذا الدور؟
+- هل تم تقدير نسبة الأتمتة بشكل واقعي؟
+- هل الدور معرض للاستبدال بالذكاء الاصطناعي خلال 2-3 سنوات؟
+- هل يمكن دمج أدوات AI لتقليل العدد المطلوب؟
+
+### 4. تعريف النجاح والمخرجات (20 نقطة)
+- هل المخرجات المتوقعة واضحة وقابلة للقياس؟
+- هل مؤشرات النجاح محددة أم عامة؟
+- هل هناك فرق واضح بين مخرجات 3 أشهر و6 أشهر (تدرج منطقي)؟
+
+### 5. جودة الطلب والاتساق (15 نقطة)
+- هل الوصف الوظيفي مفصل وعملي؟
+- هل معيار التوظيف المرفوع واقعي وطموح؟
+- هل هناك تناقضات بين أجزاء الطلب؟
+- هل الطلب يعكس تفكيراً عميقاً أم سريعاً وسطحياً؟
+
+## تعليمات الإخراج:
+
+أجب بتنسيق JSON فقط بالهيكلة التالية (بدون أي نص خارج JSON):
+{
+  "overallScore": <رقم من 0 إلى 100>,
+  "scoreLabel": "<حاجة ملحة (85-100) / حاجة مبررة (70-84) / حاجة متوسطة (50-69) / حاجة ضعيفة (30-49) / غير مبرر (0-29)>",
+  "summary": "<ملخص تنفيذي من 3-4 جمل يلخص الموقف والتوصية>",
+  "dimensions": [
+    {
+      "name": "وضوح الحاجة والتبرير",
+      "score": <0-25>,
+      "maxScore": 25,
+      "detail": "<تحليل مفصل في 2-3 جمل مع استشهاد بما كتبه مقدم الطلب>"
+    },
+    {
+      "name": "استنفاد البدائل",
+      "score": <0-20>,
+      "maxScore": 20,
+      "detail": "<تحليل مفصل>"
+    },
+    {
+      "name": "أثر الذكاء الاصطناعي",
+      "score": <0-20>,
+      "maxScore": 20,
+      "detail": "<تحليل مفصل>"
+    },
+    {
+      "name": "تعريف النجاح والمخرجات",
+      "score": <0-20>,
+      "maxScore": 20,
+      "detail": "<تحليل مفصل>"
+    },
+    {
+      "name": "جودة الطلب والاتساق",
+      "score": <0-15>,
+      "maxScore": 15,
+      "detail": "<تحليل مفصل>"
+    }
+  ],
+  "strengths": ["<نقطة قوة مبنية على بيانات فعلية من الطلب>", ...],
+  "concerns": ["<ملاحظة أو تحفظ محدد مع ذكر السبب>", ...],
+  "aiRiskAssessment": "<تقييم مفصل في 3-4 جمل لخطر استبدال هذا الدور بالذكاء الاصطناعي مع نسبة تقديرية وإطار زمني>",
+  "budgetConsideration": "<تعليق على الأثر المالي: هل التوظيف استثمار مبرر أم تكلفة يمكن تجنبها؟ جملتين>",
+  "recommendation": "<توصية نهائية واضحة ومحددة في 2-3 جمل>",
+  "suggestedQuestions": ["<سؤال يجب طرحه على مقدم الطلب لتقوية القرار>", "<سؤال آخر>"]
+}
+
+## تعليمات مهمة:
+- كن صريحاً ومباشراً — لا تجامل. إذا كان الطلب ضعيفاً قل ذلك بوضوح.
+- استشهد بكلام مقدم الطلب الفعلي عند الإشارة لنقاط القوة أو الضعف.
+- إذا كانت الإجابات عامة أو منسوخة، أشر لذلك.
+- قيّم بناءً على ما كُتب فعلاً وليس على افتراضات.
+- النسبة يجب أن تعكس التقييم الفعلي — لا تعطِ نسباً عالية من باب المجاملة.`;
+
 function buildAnalysisPrompt(form: Record<string, string>): string {
-  const vacancyTypeLabel = form.vacancyType === "replacement" ? "بديل" : "مستحدث";
+  const vacancyTypeLabel = form.vacancyType === "replacement" ? "بديل لموظف سابق" : "شاغر مستحدث";
   const triedAlt = form.triedAlternatives === "yes" ? "نعم" : "لا";
+  const roleNatureMap: Record<string, string> = {
+    full_time: "دوام كامل",
+    part_time: "دوام جزئي",
+    contract: "عقد محدد المدة",
+    freelance: "مستقل",
+    intern: "متدرب",
+  };
 
-  let prompt = `حلل طلب فتح الشاغر التالي وقدم تقييمك:
+  let prompt = `# طلب فتح شاغر وظيفي — تحليل شامل
 
-## بيانات الطلب
-- **الإدارة**: ${form.department}
-- **القسم/الفريق**: ${form.section} / ${form.team}
-- **المشروع**: ${form.project || "غير محدد"}
-- **نوع الشاغر**: ${vacancyTypeLabel}
-- **العدد المطلوب**: ${form.positionsCount}
+## البيانات الأساسية
+| البند | القيمة |
+|-------|--------|
+| مقدم الطلب | ${form.requesterName} (${form.requesterEmail}) |
+| الإدارة | ${form.department} |
+| القسم | ${form.section || "غير محدد"} |
+| الفريق | ${form.team} |
+| المشروع | ${form.project || "غير محدد"} |
+| صاحب الميزانية | ${form.budgetOwner} |
+| نوع الشاغر | ${vacancyTypeLabel} |
+| العدد المطلوب | ${form.positionsCount} |
 `;
 
   if (form.vacancyType === "replacement") {
     prompt += `
-## بيانات الاستبدال
-- **الموظف السابق**: ${form.previousEmployeeName}
-- **نوع المغادرة**: ${form.departureType === "resignation" ? "استقالة" : "فصل"}
-- **سبب المغادرة**: ${form.departureReason}
+## بيانات الموظف السابق
+| البند | القيمة |
+|-------|--------|
+| الاسم | ${form.previousEmployeeName} |
+| تاريخ المغادرة | ${form.departureDate} |
+| نوع المغادرة | ${form.departureType === "resignation" ? "استقالة" : "فصل"} |
+| سبب المغادرة | ${form.departureReason} |
 `;
   }
 
   if (form.vacancyType === "new_position") {
     prompt += `
-## شاغر مستحدث
-- **ضمن الهيكلة المعتمدة**: ${form.isInApprovedStructure === "yes" ? "نعم" : "لا"}
-${form.structureJustification ? `- **تبرير خارج الهيكلة**: ${form.structureJustification}` : ""}
+## تفاصيل الشاغر المستحدث
+| البند | القيمة |
+|-------|--------|
+| ضمن الهيكلة المعتمدة | ${form.isInApprovedStructure === "yes" ? "نعم" : "لا"} |
+${form.structureJustification ? `| تبرير خارج الهيكلة | ${form.structureJustification} |` : ""}
 `;
   }
 
   prompt += `
-## تفاصيل الدور
-- **المسمى**: ${form.jobTitle}
-- **المستوى**: ${form.jobLevel}
-- **طبيعة الدور**: ${form.roleNature}
-- **الوصف الوظيفي**: ${form.jobDescription}
-- **الدولة**: ${form.country}
+## تفاصيل الدور الوظيفي
+| البند | القيمة |
+|-------|--------|
+| المسمى الوظيفي | ${form.jobTitle} |
+| المستوى | ${form.jobLevel} |
+| طبيعة الدور | ${roleNatureMap[form.roleNature] || form.roleNature} |
+| الدولة | ${form.country} |
+| الجنسية | ${form.nationality === "saudi" ? "سعودي" : "عربي"} |
+
+### الوصف الوظيفي:
+${form.jobDescription}
 
 ## تقييم الحاجة
-- **جرب حلول بديلة**: ${triedAlt}
-${form.alternativesDescription ? `- **الحلول المجربة**: ${form.alternativesDescription}` : ""}
-${form.whyNoAlternatives ? `- **سبب عدم تجربة بدائل**: ${form.whyNoAlternatives}` : ""}
-- **المخاطر في حال عدم التوظيف**: ${form.risksIfNotHired}
+- **هل جرب حلول بديلة؟**: ${triedAlt}
+${form.triedAlternatives === "yes" ? `- **الحلول المجربة ونتائجها**: ${form.alternativesDescription}` : ""}
+${form.triedAlternatives === "no" ? `- **سبب عدم تجربة بدائل**: ${form.whyNoAlternatives || "لم يُذكر"}` : ""}
 
-## تقييم الذكاء الاصطناعي
-- **تفعيل AI في الدور**: ${form.aiRoleIntegration}
-- **إمكانية الأتمتة**: ${form.aiAutomationPotential}
-- **إمكانية الاستبدال بـ AI**: ${form.aiReplacementAssessment}
+### المخاطر والآثار السلبية في حال عدم التوظيف:
+${form.risksIfNotHired}
 
-## معيار التوظيف
+## تقييم الذكاء الاصطناعي (كما كتبه مقدم الطلب)
+
+### كيف يمكن تفعيل AI في هذا الدور:
+${form.aiRoleIntegration}
+
+### المهام القابلة للأتمتة:
+${form.aiAutomationPotential}
+
+### تقييم إمكانية الاستبدال بالذكاء الاصطناعي:
+${form.aiReplacementAssessment}
+
+## رفع معيار اختيار المواهب
 ${form.hiringBarCommitment}
 
 ## تعريف النجاح
-- **المخرجات خلال 3 أشهر**: ${form.expectedOutputs3Months || "غير محدد"}
-- **المخرجات خلال 6 أشهر**: ${form.expectedOutputs6Months || "غير محدد"}
-- **مؤشرات النجاح**: ${form.successMetrics || "غير محدد"}
-`;
+### المخرجات المتوقعة خلال أول 3 أشهر:
+${form.expectedOutputs3Months || "لم يُحدد"}
+
+### المخرجات المتوقعة خلال أول 6 أشهر:
+${form.expectedOutputs6Months || "لم يُحدد"}
+
+### مؤشرات قياس النجاح والأثر:
+${form.successMetrics || "لم يُحدد"}
+
+---
+قدّم تحليلك الشامل بتنسيق JSON فقط.`;
 
   return prompt;
 }

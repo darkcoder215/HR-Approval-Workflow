@@ -143,21 +143,41 @@ export default function SubmitPage() {
   );
 }
 
+interface AnalysisDimension {
+  name: string;
+  score: number;
+  maxScore: number;
+  detail: string;
+}
+
 interface AnalysisResult {
   overallScore: number;
   scoreLabel: string;
   summary: string;
+  dimensions?: AnalysisDimension[];
   strengths: string[];
   concerns: string[];
-  aiImpact: string;
+  aiRiskAssessment?: string;
+  budgetConsideration?: string;
   recommendation: string;
+  suggestedQuestions?: string[];
 }
+
+const ANALYSIS_STEPS = [
+  "قراءة بيانات الطلب...",
+  "تحليل الحاجة والتبرير...",
+  "تقييم البدائل المتاحة...",
+  "تحليل أثر الذكاء الاصطناعي...",
+  "مراجعة مخرجات النجاح...",
+  "بناء التقرير النهائي...",
+];
 
 function SubmitForm() {
   const router = useRouter();
   const [form, setForm] = useState<FormData>(initial);
   const [submitting, setSubmitting] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [analysisStep, setAnalysisStep] = useState(0);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -268,7 +288,18 @@ function SubmitForm() {
 
   const runAnalysis = async () => {
     setAnalyzing(true);
+    setAnalysisStep(0);
     setAnalysisError(null);
+    setAnalysis(null);
+
+    // Animate through progress steps while API call runs
+    const stepInterval = setInterval(() => {
+      setAnalysisStep((prev) => {
+        if (prev < ANALYSIS_STEPS.length - 1) return prev + 1;
+        return prev;
+      });
+    }, 2200);
+
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -276,15 +307,21 @@ function SubmitForm() {
         body: JSON.stringify({ formData: form }),
       });
       const data = await res.json();
+      clearInterval(stepInterval);
+      setAnalysisStep(ANALYSIS_STEPS.length - 1);
+
+      // Small delay to let final step render
+      await new Promise((r) => setTimeout(r, 400));
+
       if (!res.ok || data.error) {
         setAnalysisError(data.error || "فشل التحليل");
-        // Still show modal so user can proceed without AI
         setShowAnalysis(true);
       } else {
         setAnalysis(data.analysis);
         setShowAnalysis(true);
       }
     } catch {
+      clearInterval(stepInterval);
       setAnalysisError("تعذر الاتصال بخدمة التحليل");
       setShowAnalysis(true);
     } finally {
@@ -998,56 +1035,86 @@ function SubmitForm() {
                 سيتم تحليل طلبك آليًا قبل الإرسال لتقييم الحاجة الفعلية للتوظيف.
               </p>
             </div>
-            <Button
-              type="submit"
-              variant="accent"
-              size="lg"
-              loading={submitting || analyzing}
-              icon={analyzing ? <Brain className="w-4 h-4 animate-pulse" /> : <Send className="w-4 h-4" />}
-              className="min-w-[200px]"
-            >
-              {analyzing ? "جاري التحليل..." : submitting ? "جاري الإرسال..." : "تحليل وإرسال الطلب"}
-            </Button>
+
+            {/* Progress bar during analysis */}
+            {analyzing && (
+              <div className="max-w-md mx-auto space-y-3 animate-fade-in-up">
+                <div className="flex items-center gap-3">
+                  <Brain className="w-5 h-5 text-thmanyah-green animate-pulse" />
+                  <span className="font-ui font-black text-[14px] text-thmanyah-charcoal">
+                    {ANALYSIS_STEPS[analysisStep]}
+                  </span>
+                </div>
+                <div className="w-full bg-thmanyah-cream rounded-full h-2.5 overflow-hidden">
+                  <div
+                    className="h-full bg-thmanyah-green rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${((analysisStep + 1) / ANALYSIS_STEPS.length) * 100}%` }}
+                  />
+                </div>
+                <div className="flex justify-between">
+                  {ANALYSIS_STEPS.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        i <= analysisStep ? "bg-thmanyah-green scale-110" : "bg-thmanyah-warm-border"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {!analyzing && (
+              <Button
+                type="submit"
+                variant="accent"
+                size="lg"
+                loading={submitting}
+                icon={<Send className="w-4 h-4" />}
+                className="min-w-[200px]"
+              >
+                {submitting ? "جاري الإرسال..." : "تحليل وإرسال الطلب"}
+              </Button>
+            )}
           </div>
         </Card>
       </form>
 
-      {/* AI Analysis Modal */}
+      {/* AI Analysis Report Modal */}
       {showAnalysis && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
             {/* Header */}
-            <div className="sticky top-0 bg-thmanyah-black text-white rounded-t-3xl p-6 md:p-8">
-              <div className="flex items-center gap-3 mb-3">
+            <div className="sticky top-0 z-10 bg-thmanyah-black text-white rounded-t-3xl p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-1">
                 <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
                   <Brain className="w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="font-display font-black text-[20px] md:text-[24px]">تقرير التحليل الذكي</h2>
-                  <p className="font-ui font-bold text-[12px] text-white/50">تحليل آلي لاحتمالية الحاجة الفعلية للتوظيف</p>
+                  <p className="font-ui font-bold text-[12px] text-white/50">تحليل شامل لاحتمالية الحاجة الفعلية للتوظيف</p>
                 </div>
               </div>
 
               {analysis && (
-                <div className="mt-4 flex items-center gap-4">
-                  {/* Score circle */}
-                  <div className={`w-20 h-20 rounded-full flex flex-col items-center justify-center shrink-0 ${
-                    analysis.overallScore >= 75 ? "bg-thmanyah-green/20" :
+                <div className="mt-5 flex items-center gap-4">
+                  <div className={`w-20 h-20 rounded-2xl flex flex-col items-center justify-center shrink-0 ${
+                    analysis.overallScore >= 70 ? "bg-thmanyah-green/20" :
                     analysis.overallScore >= 50 ? "bg-thmanyah-amber/20" :
                     "bg-thmanyah-red/20"
                   }`}>
-                    <span className={`font-display font-black text-[28px] leading-none ${
-                      analysis.overallScore >= 75 ? "text-thmanyah-green" :
+                    <span className={`font-display font-black text-[32px] leading-none ${
+                      analysis.overallScore >= 70 ? "text-thmanyah-green" :
                       analysis.overallScore >= 50 ? "text-thmanyah-amber" :
                       "text-thmanyah-red"
                     }`}>
                       {analysis.overallScore}
                     </span>
-                    <span className="font-ui font-bold text-[10px] text-white/50">من ١٠٠</span>
+                    <span className="font-ui font-bold text-[10px] text-white/40 mt-0.5">من ١٠٠</span>
                   </div>
                   <div className="flex-1">
                     <span className={`inline-block px-3 py-1 rounded-full font-ui font-black text-[12px] mb-2 ${
-                      analysis.overallScore >= 75 ? "bg-thmanyah-green/20 text-thmanyah-green" :
+                      analysis.overallScore >= 70 ? "bg-thmanyah-green/20 text-thmanyah-green" :
                       analysis.overallScore >= 50 ? "bg-thmanyah-amber/20 text-thmanyah-amber" :
                       "bg-thmanyah-red/20 text-thmanyah-red"
                     }`}>
@@ -1076,6 +1143,39 @@ function SubmitForm() {
 
               {analysis && (
                 <>
+                  {/* Dimension Breakdown */}
+                  {analysis.dimensions && analysis.dimensions.length > 0 && (
+                    <div>
+                      <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-4 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-thmanyah-charcoal" />
+                        تحليل مفصل حسب المعايير
+                      </h3>
+                      <div className="space-y-3">
+                        {analysis.dimensions.map((dim, i) => {
+                          const pct = Math.round((dim.score / dim.maxScore) * 100);
+                          const color = pct >= 70 ? "thmanyah-green" : pct >= 50 ? "thmanyah-amber" : "thmanyah-red";
+                          return (
+                            <div key={i} className="bg-thmanyah-off-white rounded-xl p-4 border border-thmanyah-warm-border">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-ui font-black text-[13px] text-thmanyah-charcoal">{dim.name}</span>
+                                <span className={`font-display font-black text-[14px] text-${color}`}>
+                                  {dim.score}/{dim.maxScore}
+                                </span>
+                              </div>
+                              <div className="w-full bg-thmanyah-cream rounded-full h-2 mb-2.5 overflow-hidden">
+                                <div
+                                  className={`h-full bg-${color} rounded-full transition-all duration-500`}
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                              <p className="font-ui font-bold text-[12px] text-thmanyah-muted leading-relaxed">{dim.detail}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Strengths */}
                   {analysis.strengths.length > 0 && (
                     <div>
@@ -1112,22 +1212,55 @@ function SubmitForm() {
                     </div>
                   )}
 
-                  {/* AI Impact */}
-                  <div>
-                    <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-3 flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-thmanyah-blue" />
-                      أثر الذكاء الاصطناعي
-                    </h3>
-                    <div className="bg-thmanyah-sky/10 rounded-xl px-4 py-3">
-                      <p className="font-ui font-bold text-[13px] text-thmanyah-charcoal leading-relaxed">{analysis.aiImpact}</p>
+                  {/* AI Risk Assessment */}
+                  {analysis.aiRiskAssessment && (
+                    <div>
+                      <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-thmanyah-blue" />
+                        تقييم مخاطر الذكاء الاصطناعي
+                      </h3>
+                      <div className="bg-thmanyah-sky/10 rounded-xl px-4 py-3 border border-thmanyah-sky/20">
+                        <p className="font-ui font-bold text-[13px] text-thmanyah-charcoal leading-relaxed">{analysis.aiRiskAssessment}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Budget Consideration */}
+                  {analysis.budgetConsideration && (
+                    <div>
+                      <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-thmanyah-peach" />
+                        الأثر المالي
+                      </h3>
+                      <div className="bg-thmanyah-blush/10 rounded-xl px-4 py-3 border border-thmanyah-blush/20">
+                        <p className="font-ui font-bold text-[13px] text-thmanyah-charcoal leading-relaxed">{analysis.budgetConsideration}</p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Recommendation */}
                   <div className="bg-thmanyah-black rounded-xl p-5">
-                    <h3 className="font-ui font-black text-[13px] text-white/60 mb-2">التوصية</h3>
+                    <h3 className="font-ui font-black text-[13px] text-white/50 mb-2">التوصية النهائية</h3>
                     <p className="font-body font-bold text-[16px] text-white leading-relaxed">{analysis.recommendation}</p>
                   </div>
+
+                  {/* Suggested Questions */}
+                  {analysis.suggestedQuestions && analysis.suggestedQuestions.length > 0 && (
+                    <div>
+                      <h3 className="font-ui font-black text-[14px] text-thmanyah-charcoal mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-thmanyah-muted" />
+                        أسئلة مقترحة للنقاش
+                      </h3>
+                      <div className="space-y-2">
+                        {analysis.suggestedQuestions.map((q, i) => (
+                          <div key={i} className="flex items-start gap-2 bg-thmanyah-cream/60 rounded-xl px-4 py-3 border border-thmanyah-warm-border">
+                            <span className="font-ui font-black text-[12px] text-thmanyah-muted mt-0.5 shrink-0">{i + 1}.</span>
+                            <p className="font-ui font-bold text-[13px] text-thmanyah-charcoal">{q}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
 
