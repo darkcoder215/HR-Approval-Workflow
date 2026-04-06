@@ -275,8 +275,6 @@ function SubmitForm() {
 
     if (!form.directManagerName.trim()) newErrors.directManagerName = "مطلوب";
     if (!form.directManagerEmail.trim()) newErrors.directManagerEmail = "مطلوب";
-    if (!form.deptCeoName.trim()) newErrors.deptCeoName = "مطلوب";
-    if (!form.deptCeoEmail.trim()) newErrors.deptCeoEmail = "مطلوب";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
@@ -835,23 +833,6 @@ function SubmitForm() {
               error={errors.nationality}
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Input
-              label="اسم المدير المباشر"
-              placeholder="الاسم الكامل"
-              value={form.directManagerName}
-              onChange={set("directManagerName")}
-              error={errors.directManagerName}
-              required
-              data-error={!!errors.directManagerName}
-            />
-            <Input
-              label="اسم المدير غير المباشر"
-              placeholder="الاسم الكامل (اختياري)"
-              value={form.dottedLineManagerName}
-              onChange={set("dottedLineManagerName")}
-            />
-          </div>
         </FormSection>
 
         {/* Section 4: AI Assessment */}
@@ -977,52 +958,33 @@ function SubmitForm() {
         {/* Section 7: Approval Chain Contacts */}
         <FormSection
           title="بيانات المعتمدين"
-          subtitle="المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام."
           icon={<ShieldCheck className="w-5 h-5" />}
           highlight
         >
-          <Input
-            label="البريد الإلكتروني للمدير المباشر"
-            type="email"
-            placeholder="manager@thmanyah.com"
-            value={form.directManagerEmail}
-            onChange={set("directManagerEmail")}
-            error={errors.directManagerEmail}
-            required
-            data-error={!!errors.directManagerEmail}
-          />
-          <div className="bg-thmanyah-cream/40 rounded-xl p-3 flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <p className="font-ui text-[12px] text-amber-800 leading-relaxed">
-              بعض الأدوار تتطلب مدير مباشر ومدير غير مباشر (dotted line). إذا ينطبق ذلك، يرجى تعبئة الحقل التالي.
+          <div className="bg-thmanyah-black rounded-xl p-4 mb-2">
+            <p className="font-ui text-[13px] text-white/80 leading-relaxed">
+              المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام. يرجى تعبئة بيانات المدير المباشر فقط.
             </p>
           </div>
-          <Input
-            label="البريد الإلكتروني للمدير غير المباشر"
-            type="email"
-            placeholder="dotted-manager@thmanyah.com"
-            value={form.dottedLineManagerEmail}
-            onChange={set("dottedLineManagerEmail")}
-          />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
-              label="اسم الرئيس التنفيذي للإدارة"
+              label="اسم المدير المباشر"
               placeholder="الاسم الكامل"
-              value={form.deptCeoName}
-              onChange={set("deptCeoName")}
-              error={errors.deptCeoName}
+              value={form.directManagerName}
+              onChange={set("directManagerName")}
+              error={errors.directManagerName}
               required
-              data-error={!!errors.deptCeoName}
+              data-error={!!errors.directManagerName}
             />
             <Input
-              label="البريد الإلكتروني للرئيس التنفيذي للإدارة"
+              label="البريد الإلكتروني للمدير المباشر"
               type="email"
-              placeholder="ceo-dept@thmanyah.com"
-              value={form.deptCeoEmail}
-              onChange={set("deptCeoEmail")}
-              error={errors.deptCeoEmail}
+              placeholder="manager@thmanyah.com"
+              value={form.directManagerEmail}
+              onChange={set("directManagerEmail")}
+              error={errors.directManagerEmail}
               required
-              data-error={!!errors.deptCeoEmail}
+              data-error={!!errors.directManagerEmail}
             />
           </div>
         </FormSection>
