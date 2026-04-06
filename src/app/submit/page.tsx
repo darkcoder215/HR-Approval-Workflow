@@ -973,11 +973,10 @@ function SubmitForm() {
         {/* Section 7: Approval Chain Contacts */}
         <FormSection
           title="بيانات المعتمدين"
+          subtitle="المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام."
           icon={<ShieldCheck className="w-5 h-5" />}
+          highlight
         >
-          <p className="font-ui text-[13px] text-thmanyah-muted leading-relaxed">
-            المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام.
-          </p>
           <Input
             label="البريد الإلكتروني للمدير المباشر"
             type="email"
