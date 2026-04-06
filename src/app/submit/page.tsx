@@ -63,6 +63,7 @@ type FormData = {
   structureJustification: string;
   jobTitle: string;
   jobLevel: string;
+  roleType: string;
   roleNature: string;
   jobDescription: string;
   country: string;
@@ -105,6 +106,7 @@ const initial: FormData = {
   structureJustification: "",
   jobTitle: "",
   jobLevel: "",
+  roleType: "",
   roleNature: "",
   jobDescription: "",
   country: "",
@@ -251,6 +253,7 @@ function SubmitForm() {
 
     if (!form.jobTitle.trim()) newErrors.jobTitle = "مطلوب";
     if (!form.jobLevel) newErrors.jobLevel = "مطلوب";
+    if (!form.roleType) newErrors.roleType = "مطلوب";
     if (!form.roleNature) newErrors.roleNature = "مطلوب";
     if (!form.jobDescription.trim()) newErrors.jobDescription = "مطلوب";
     if (!form.country) newErrors.country = "مطلوب";
@@ -794,14 +797,25 @@ function SubmitForm() {
               required
             />
             <Select
-              label="طبيعة الدور"
-              options={roleNatures}
-              value={form.roleNature}
-              onChange={set("roleNature")}
-              error={errors.roleNature}
+              label="نوع الدور"
+              options={[
+                { value: "leadership", label: "قيادي" },
+                { value: "individual_contributor", label: "مساهم فردي" },
+              ]}
+              value={form.roleType}
+              onChange={set("roleType")}
+              error={errors.roleType}
               required
             />
           </div>
+          <Select
+            label="طبيعة الدور"
+            options={roleNatures}
+            value={form.roleNature}
+            onChange={set("roleNature")}
+            error={errors.roleNature}
+            required
+          />
           <Textarea
             label="الوصف الوظيفي"
             hint="اكتب وصفًا تفصيليًا للمهام والمسؤوليات المتوقعة"
