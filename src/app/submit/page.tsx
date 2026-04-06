@@ -947,7 +947,7 @@ function SubmitForm() {
 
         {/* Section 6c: Manager Confirmation */}
         <FormSection
-          title="تأكيد المدير"
+          title="تأكيد مدير الشاغر"
           icon={<ShieldCheck className="w-5 h-5" />}
           highlight
         >
