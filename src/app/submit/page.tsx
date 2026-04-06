@@ -835,6 +835,23 @@ function SubmitForm() {
               error={errors.nationality}
             />
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Input
+              label="اسم المدير المباشر"
+              placeholder="الاسم الكامل"
+              value={form.directManagerName}
+              onChange={set("directManagerName")}
+              error={errors.directManagerName}
+              required
+              data-error={!!errors.directManagerName}
+            />
+            <Input
+              label="اسم المدير غير المباشر"
+              placeholder="الاسم الكامل (اختياري)"
+              value={form.dottedLineManagerName}
+              onChange={set("dottedLineManagerName")}
+            />
+          </div>
         </FormSection>
 
         {/* Section 4: AI Assessment */}
@@ -960,48 +977,29 @@ function SubmitForm() {
           <p className="font-ui text-[13px] text-thmanyah-muted leading-relaxed">
             المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Input
-              label="اسم المدير المباشر"
-              placeholder="الاسم الكامل"
-              value={form.directManagerName}
-              onChange={set("directManagerName")}
-              error={errors.directManagerName}
-              required
-              data-error={!!errors.directManagerName}
-            />
-            <Input
-              label="البريد الإلكتروني للمدير المباشر"
-              type="email"
-              placeholder="manager@thmanyah.com"
-              value={form.directManagerEmail}
-              onChange={set("directManagerEmail")}
-              error={errors.directManagerEmail}
-              required
-              data-error={!!errors.directManagerEmail}
-            />
-          </div>
+          <Input
+            label="البريد الإلكتروني للمدير المباشر"
+            type="email"
+            placeholder="manager@thmanyah.com"
+            value={form.directManagerEmail}
+            onChange={set("directManagerEmail")}
+            error={errors.directManagerEmail}
+            required
+            data-error={!!errors.directManagerEmail}
+          />
           <div className="bg-thmanyah-cream/40 rounded-xl p-3 flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <p className="font-ui text-[12px] text-amber-800 leading-relaxed">
-              بعض الأدوار تتطلب مدير مباشر ومدير غير مباشر (dotted line). إذا ينطبق ذلك، يرجى تعبئة الحقول التالية.
+              بعض الأدوار تتطلب مدير مباشر ومدير غير مباشر (dotted line). إذا ينطبق ذلك، يرجى تعبئة الحقل التالي.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Input
-              label="اسم المدير غير المباشر (Dotted Line)"
-              placeholder="الاسم الكامل (اختياري)"
-              value={form.dottedLineManagerName}
-              onChange={set("dottedLineManagerName")}
-            />
-            <Input
-              label="البريد الإلكتروني للمدير غير المباشر"
-              type="email"
-              placeholder="dotted-manager@thmanyah.com"
-              value={form.dottedLineManagerEmail}
-              onChange={set("dottedLineManagerEmail")}
-            />
-          </div>
+          <Input
+            label="البريد الإلكتروني للمدير غير المباشر"
+            type="email"
+            placeholder="dotted-manager@thmanyah.com"
+            value={form.dottedLineManagerEmail}
+            onChange={set("dottedLineManagerEmail")}
+          />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
               label="اسم الرئيس التنفيذي للإدارة"
