@@ -100,50 +100,34 @@ function HomeContent() {
 
         {/* Flying notification bubbles */}
         <div className="absolute inset-0 overflow-hidden hidden md:block">
-          {/* Approvals - green */}
+          {/* Approved */}
           <span className="flying-bubble fly-right bg-thmanyah-green/15 text-thmanyah-green border border-thmanyah-green/20" style={{ top: "18%", right: "8%", "--duration": "11s", "--delay": "0.5s" } as React.CSSProperties}>
-            تم اعتماد الطلب ✓
+            مُعتمد: المبررات واضحة، واضح فكرت بإحسان 👌
           </span>
           <span className="flying-bubble fly-left bg-thmanyah-green/15 text-thmanyah-green border border-thmanyah-green/20" style={{ top: "72%", left: "5%", "--duration": "13s", "--delay": "4s" } as React.CSSProperties}>
-            مبروك! تمت الموافقة على التوظيف
+            مُعتمد: فريق استقطاب المواهب بطريقه لدعمك 🚀
+          </span>
+          <span className="flying-bubble fly-up bg-thmanyah-green/15 text-thmanyah-green border border-thmanyah-green/20" style={{ top: "40%", right: "4%", "--duration": "14s", "--delay": "5.5s" } as React.CSSProperties}>
+            مُعتمد: دورك كقائد تستثمر في أفضل الكفاءات بعوائد مُستدامة 🔥
           </span>
 
-          {/* Rejections - red */}
+          {/* Rejected */}
           <span className="flying-bubble fly-left bg-thmanyah-red/15 text-thmanyah-red border border-thmanyah-red/20" style={{ top: "28%", left: "3%", "--duration": "10s", "--delay": "2s" } as React.CSSProperties}>
-            تم رفض الطلب — الميزانية غير كافية
+            مرفوض: الدور ممكن تنفيذه باستخدام أدوات الذكاء الاصطناعي 🤖
           </span>
           <span className="flying-bubble fly-right bg-thmanyah-red/15 text-thmanyah-red border border-thmanyah-red/20" style={{ top: "82%", right: "12%", "--duration": "12s", "--delay": "7s" } as React.CSSProperties}>
-            مرفوض: الدور قابل للأتمتة بالذكاء الاصطناعي
+            مرفوض: مبررات فتح الشاغر غير مُقنعة، راجع تقرير الرفض 😱
+          </span>
+          <span className="flying-bubble fly-left bg-thmanyah-red/15 text-thmanyah-red border border-thmanyah-red/20" style={{ top: "55%", left: "15%", "--duration": "9s", "--delay": "1s" } as React.CSSProperties}>
+            مرفوض: يؤسفنا رفض طلبك، لعدم توفر ميزانية وبسبب السيولة 💰
           </span>
 
-          {/* Funny / salary */}
-          <span className="flying-bubble fly-up bg-thmanyah-amber/15 text-thmanyah-amber border border-thmanyah-amber/20" style={{ top: "55%", left: "15%", "--duration": "9s", "--delay": "1s" } as React.CSSProperties}>
-            يريد راتب ٥٠,٠٠٠ ريال 💸
-          </span>
-          <span className="flying-bubble fly-right bg-thmanyah-amber/15 text-thmanyah-amber border border-thmanyah-amber/20" style={{ top: "40%", right: "4%", "--duration": "14s", "--delay": "5.5s" } as React.CSSProperties}>
-            المرشح لم يحضر المقابلة 🫠
-          </span>
-
-          {/* Interviews / pending - blue */}
+          {/* Review / pending */}
           <span className="flying-bubble fly-left bg-thmanyah-blue/15 text-thmanyah-blue border border-thmanyah-blue/20" style={{ top: "15%", left: "12%", "--duration": "12s", "--delay": "3s" } as React.CSSProperties}>
-            تمت جدولة المقابلة — الأحد القادم
+            قيد المراجعة: وصلنا طلبك، وحاليًا تحت المراجعة 👀
           </span>
           <span className="flying-bubble fly-up bg-thmanyah-blue/15 text-thmanyah-blue border border-thmanyah-blue/20" style={{ top: "65%", right: "20%", "--duration": "10s", "--delay": "8s" } as React.CSSProperties}>
-            بانتظار اعتماد المدير المالي
-          </span>
-
-          {/* More fun ones */}
-          <span className="flying-bubble fly-right bg-thmanyah-peach/20 text-thmanyah-peach border border-thmanyah-peach/20" style={{ top: "48%", right: "2%", "--duration": "11s", "--delay": "6s" } as React.CSSProperties}>
-            إنهاء خدمات — عدم الالتزام
-          </span>
-          <span className="flying-bubble fly-left bg-thmanyah-pink-light/20 text-thmanyah-pink-light border border-thmanyah-pink-light/20" style={{ top: "35%", left: "8%", "--duration": "13s", "--delay": "9s" } as React.CSSProperties}>
-            &quot;خبرة ١٥ سنة&quot; — عمره ٢٣ سنة
-          </span>
-          <span className="flying-bubble fly-up bg-thmanyah-sky/15 text-thmanyah-sky border border-thmanyah-sky/20" style={{ top: "78%", left: "30%", "--duration": "10s", "--delay": "3.5s" } as React.CSSProperties}>
-            نحتاج ٥ مطورين... أمس!
-          </span>
-          <span className="flying-bubble fly-right bg-thmanyah-mint/20 text-thmanyah-mint border border-thmanyah-mint/20" style={{ top: "22%", right: "25%", "--duration": "12s", "--delay": "10s" } as React.CSSProperties}>
-            العرض الوظيفي جاهز للإرسال
+            في مرحلة الاعتمادات: بانتظار الموافقات النهائية 🫵🏻
           </span>
         </div>
 
@@ -164,15 +148,7 @@ function HomeContent() {
             </span>
           </h1>
 
-          <p className="font-body font-bold text-[15px] md:text-[19px] text-white/50 leading-relaxed max-w-2xl mx-auto mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            كل شاغر تفتحه هو قرار استثماري.
-            <br className="hidden md:block" />
-            هذه المنظومة تضمن أن قرارات التوظيف تمر بمسار محوكم
-            <br className="hidden md:block" />
-            يدعم نمونا واستدامتنا.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center animate-fade-in-up mt-8 md:mt-10" style={{ animationDelay: "0.2s" }}>
             <Link href="/submit">
               <Button variant="accent" size="lg" icon={<Send className="w-4 h-4" />} className="text-[14px] md:text-[15px] w-full sm:w-auto font-black">
                 تقديم طلب فتح شاغر

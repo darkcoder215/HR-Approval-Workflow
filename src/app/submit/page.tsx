@@ -431,9 +431,6 @@ function SubmitForm() {
           <h1 className="font-display font-black text-[26px] md:text-[40px] leading-tight mb-4">
             كل شاغر هو قرار استثماري
           </h1>
-          <p className="font-body text-[16px] text-white/70 leading-relaxed max-w-2xl mx-auto mb-6">
-            {introOpportunity}
-          </p>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mt-8">
             <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-5 text-right">
@@ -455,7 +452,7 @@ function SubmitForm() {
                 </span>
               </div>
               <p className="font-ui text-[13px] text-white/60 leading-relaxed">
-                الشركة الاستثنائية لا تُبنى بالتوظيف الكثير، بل بالتوظيف الصح.
+                {introOpportunity} الشركة الاستثنائية لا تُبنى بالتوظيف الكثير، بل بالتوظيف الصح.
               </p>
             </div>
           </div>
@@ -604,7 +601,6 @@ function SubmitForm() {
         {/* Section 2: Vacancy Type */}
         <FormSection
           title="تفاصيل الشاغر"
-          subtitle="نوع الشاغر والمعلومات المرتبطة"
           icon={<Building2 className="w-5 h-5" />}
         >
           <RadioGroup
