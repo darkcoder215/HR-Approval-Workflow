@@ -263,7 +263,7 @@ function SubmitForm() {
     if (form.triedAlternatives === "no" && !form.whyNoAlternatives.trim()) {
       newErrors.whyNoAlternatives = "مطلوب";
     }
-    if (!form.risksIfNotHired.trim()) newErrors.risksIfNotHired = "مطلوب";
+    if (form.triedAlternatives !== "no" && !form.risksIfNotHired.trim()) newErrors.risksIfNotHired = "مطلوب";
     if (!form.aiRoleIntegration.trim()) newErrors.aiRoleIntegration = "مطلوب";
     if (!form.aiAutomationPotential.trim()) newErrors.aiAutomationPotential = "مطلوب";
     if (!form.aiReplacementAssessment.trim()) newErrors.aiReplacementAssessment = "مطلوب";
@@ -598,6 +598,63 @@ function SubmitForm() {
           />
         </FormSection>
 
+        {/* Section: Request Assessment */}
+        <FormSection
+          title="تقييم طلب التوظيف"
+          icon={<FileText className="w-5 h-5" />}
+        >
+          <RadioGroup
+            label="هل جربت حلول أخرى غير التوظيف؟"
+            name="triedAlternatives"
+            options={[
+              { value: "yes", label: "نعم" },
+              { value: "no", label: "لا" },
+            ]}
+            value={form.triedAlternatives}
+            onChange={setRadio("triedAlternatives")}
+            required
+            error={errors.triedAlternatives}
+          />
+
+          {form.triedAlternatives === "yes" && (
+            <div className="animate-fade-in-up">
+              <Textarea
+                label="ما الحلول الأخرى التي جربتها قبل طلب التوظيف؟"
+                placeholder="اذكر البدائل التي جربتها ونتائجها..."
+                value={form.alternativesDescription}
+                onChange={set("alternativesDescription")}
+                error={errors.alternativesDescription}
+                required
+              />
+            </div>
+          )}
+
+          {form.triedAlternatives === "no" && (
+            <div className="animate-fade-in-up">
+              <Textarea
+                label="لماذا لم تجرب حلول أخرى حتى الآن؟"
+                placeholder="اشرح لماذا لم يتم تجربة بدائل أخرى قبل طلب التوظيف..."
+                value={form.whyNoAlternatives}
+                onChange={set("whyNoAlternatives")}
+                error={errors.whyNoAlternatives}
+                required
+              />
+            </div>
+          )}
+
+          {form.triedAlternatives !== "no" && (
+            <Textarea
+              label="المخاطر والآثار السلبية في حال لم نوظف"
+              hint="بالتفصيل، شاركنا الأثر على الفريق والمشاريع والأهداف"
+              placeholder="اشرح بالتفصيل ماذا يحدث لو لم نوظف في هذا الشاغر..."
+              value={form.risksIfNotHired}
+              onChange={set("risksIfNotHired")}
+              error={errors.risksIfNotHired}
+              required
+            />
+          )}
+        </FormSection>
+
         {/* Section 2: Vacancy Type */}
         <FormSection
           title="تفاصيل الشاغر"
@@ -659,7 +716,7 @@ function SubmitForm() {
                 name="departureType"
                 options={[
                   { value: "resignation", label: "استقالة" },
-                  { value: "termination", label: "فصل" },
+                  { value: "termination", label: "إنهاء التعاقد" },
                 ]}
                 value={form.departureType}
                 onChange={setRadio("departureType")}
@@ -783,13 +840,13 @@ function SubmitForm() {
         {/* Section 4: AI Assessment */}
         <FormSection
           title="تقييم الذكاء الاصطناعي"
-          subtitle="شاركنا رؤيتك للدور من منظور تقني"
+          subtitle="ثمانية شركة تقنية، وتفعيل أدوات الذكاء الاصطناعي بعملنا ضمن مشروع التحول الرقمي والتقني يُعد إلزامي وليس خيار."
           icon={<Brain className="w-5 h-5" />}
           highlight
         >
           <div className="bg-thmanyah-green-light/10 rounded-xl p-4 mb-2">
             <p className="font-ui text-[13px] text-emerald-800 leading-relaxed">
-              الهدف: رفع جودة قرارات التوظيف وربطها بالكفاءة المستقبلية والتحول التقني.
+              الهدف: تحليل الأدوار واحتياجنا الفعلي من المهام التي تقوم بها المواهب البشرية وما يمكن تفويضه لزملاءنا الرقميين (الذكاء الاصطناعي 🤖).
             </p>
           </div>
           <Textarea
@@ -814,62 +871,6 @@ function SubmitForm() {
             value={form.aiReplacementAssessment}
             onChange={set("aiReplacementAssessment")}
             error={errors.aiReplacementAssessment}
-            required
-          />
-        </FormSection>
-
-        {/* Section 5: Assessment */}
-        <FormSection
-          title="تقييم الحاجة"
-          subtitle="ساعدنا نفهم ليش هذا الشاغر مهم الآن"
-          icon={<FileText className="w-5 h-5" />}
-        >
-          <RadioGroup
-            label="هل جربت حلول أخرى غير التوظيف؟"
-            name="triedAlternatives"
-            options={[
-              { value: "yes", label: "نعم" },
-              { value: "no", label: "لا" },
-            ]}
-            value={form.triedAlternatives}
-            onChange={setRadio("triedAlternatives")}
-            required
-            error={errors.triedAlternatives}
-          />
-
-          {form.triedAlternatives === "yes" && (
-            <div className="animate-fade-in-up">
-              <Textarea
-                label="ما الحلول الأخرى التي جربتها قبل طلب التوظيف؟"
-                placeholder="اذكر البدائل التي جربتها ونتائجها..."
-                value={form.alternativesDescription}
-                onChange={set("alternativesDescription")}
-                error={errors.alternativesDescription}
-                required
-              />
-            </div>
-          )}
-
-          {form.triedAlternatives === "no" && (
-            <div className="animate-fade-in-up">
-              <Textarea
-                label="لماذا لم تجرب حلول أخرى حتى الآن؟"
-                placeholder="اشرح لماذا لم يتم تجربة بدائل أخرى قبل طلب التوظيف..."
-                value={form.whyNoAlternatives}
-                onChange={set("whyNoAlternatives")}
-                error={errors.whyNoAlternatives}
-                required
-              />
-            </div>
-          )}
-
-          <Textarea
-            label="المخاطر والآثار السلبية في حال لم نوظف"
-            hint="بالتفصيل، شاركنا الأثر على الفريق والمشاريع والأهداف"
-            placeholder="اشرح بالتفصيل ماذا يحدث لو لم نوظف في هذا الشاغر..."
-            value={form.risksIfNotHired}
-            onChange={set("risksIfNotHired")}
-            error={errors.risksIfNotHired}
             required
           />
         </FormSection>
