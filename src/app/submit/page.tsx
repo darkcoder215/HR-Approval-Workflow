@@ -856,8 +856,8 @@ function SubmitForm() {
           icon={<Brain className="w-5 h-5" />}
           highlight
         >
-          <div className="bg-thmanyah-black rounded-xl p-4 mb-2">
-            <p className="font-ui text-[13px] text-white/80 leading-relaxed">
+          <div className="bg-thmanyah-black rounded-xl p-5 text-white">
+            <p className="font-body text-[15px] leading-relaxed text-white/80">
               الهدف: تحليل الأدوار واحتياجنا الفعلي من المهام التي تقوم بها المواهب البشرية وما يمكن تفويضه لزملاءنا الرقميين (الذكاء الاصطناعي 🤖).
             </p>
           </div>
@@ -914,8 +914,8 @@ function SubmitForm() {
           icon={<CheckCircle2 className="w-5 h-5" />}
           highlight
         >
-          <div className="bg-thmanyah-black rounded-xl p-4 mb-2">
-            <p className="font-ui text-[13px] text-white/80 leading-relaxed">
+          <div className="bg-thmanyah-black rounded-xl p-5 text-white">
+            <p className="font-body text-[15px] leading-relaxed text-white/80">
               خطة فترة التجربة الناجحة تُبنى بالتوازي مع تحليل الدور وقبل المقابلات وليس بعد مرحلة قبول العرض الوظيفي. هناك بعض المرونة في تعديلها بلا شك خلال مراحل التوظيف ولكن الأصل لا تُبنى من الأساس بعد المقابلات.
             </p>
           </div>
@@ -975,8 +975,8 @@ function SubmitForm() {
           icon={<ShieldCheck className="w-5 h-5" />}
           highlight
         >
-          <div className="bg-thmanyah-black rounded-xl p-4 mb-2">
-            <p className="font-ui text-[13px] text-white/80 leading-relaxed">
+          <div className="bg-thmanyah-black rounded-xl p-5 text-white">
+            <p className="font-body text-[15px] leading-relaxed text-white/80">
               المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام. يرجى تعبئة بيانات المدير المباشر فقط.
             </p>
           </div>
