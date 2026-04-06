@@ -861,8 +861,8 @@ function SubmitForm() {
           icon={<Brain className="w-5 h-5" />}
           highlight
         >
-          <div className="bg-thmanyah-green-light/10 rounded-xl p-4 mb-2">
-            <p className="font-ui text-[13px] text-emerald-800 leading-relaxed">
+          <div className="bg-thmanyah-black rounded-xl p-4 mb-2">
+            <p className="font-ui text-[13px] text-white/80 leading-relaxed">
               الهدف: تحليل الأدوار واحتياجنا الفعلي من المهام التي تقوم بها المواهب البشرية وما يمكن تفويضه لزملاءنا الرقميين (الذكاء الاصطناعي 🤖).
             </p>
           </div>
