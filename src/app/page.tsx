@@ -301,7 +301,7 @@ function HomeContent() {
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Image src="/thamanyah.png" alt="ثمانية" width={20} height={20} className="rounded opacity-60" />
-            <span className="font-ui font-bold text-[11px] md:text-[12px]">ثمانية — إدارة الثقافة</span>
+            <span className="font-ui font-bold text-[11px] md:text-[12px]">ثمانية — إدارة ثقافة المنظومة</span>
           </div>
           <span className="font-ui font-bold text-[11px] md:text-[12px]">{new Date().getFullYear()}</span>
         </div>
