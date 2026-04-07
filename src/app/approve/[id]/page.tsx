@@ -286,7 +286,7 @@ function ApproveView() {
 
                 <div className="mt-4">
                   <Textarea
-                    label="ملاحظة داخلية (تظهر فقط للمعتمدين وفريق الثقافة)"
+                    label="ملاحظة داخلية (تظهر فقط للمعتمدين وفريق ثقافة المنظومة)"
                     placeholder="ملاحظة داخلية بين المعتمدين..."
                     value={internalComment}
                     onChange={(e) => setInternalComment(e.target.value)}

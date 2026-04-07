@@ -27,7 +27,7 @@ export const APPROVAL_CHAIN_TEMPLATE: Omit<ApprovalStep, "id">[] = [
   },
   {
     order: 4,
-    role: "إدارة الثقافة",
+    role: "إدارة ثقافة المنظومة",
     approverName: "البراء العوهلي",
     approverEmail: "albaraa@thmanyah.com",
     slaHours: 24,

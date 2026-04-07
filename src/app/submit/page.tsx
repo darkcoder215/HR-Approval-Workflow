@@ -977,7 +977,7 @@ function SubmitForm() {
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
-              المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام. يرجى تعبئة بيانات المدير المباشر فقط.
+              المعتمدون الآخرون (المواهب، ثقافة المنظومة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام. يرجى تعبئة بيانات المدير المباشر فقط.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
