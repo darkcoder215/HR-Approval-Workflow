@@ -404,6 +404,7 @@ ${form.structureJustification ? `| تبرير خارج الهيكلة | ${form.s
 | البند | القيمة |
 |-------|--------|
 | المسمى الوظيفي | ${form.jobTitle} |
+| المسمى باللغة الانقليزية | ${form.jobTitleEn} |
 | المستوى | ${form.jobLevel} |
 | طبيعة الدور | ${roleNatureMap[form.roleNature] || form.roleNature} |
 | الدولة | ${form.country} |
