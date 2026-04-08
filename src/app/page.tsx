@@ -23,6 +23,10 @@ import {
   FlaskConical,
   Trash2,
   Database,
+  Search,
+  Cog,
+  Rocket,
+  TrafficCone,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
@@ -227,6 +231,113 @@ function HomeContent() {
         </div>
       </section>
 
+      {/* Hiring Pipeline */}
+      <section className="py-14 md:py-24 bg-thmanyah-black text-white overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="text-center mb-12 md:mb-20">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-amber/15 border border-thmanyah-amber/30 rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-5">
+              <Sparkles className="w-3.5 h-3.5" />
+              مسار التوظيف الكامل
+            </span>
+            <h2 className="font-display font-black text-[26px] md:text-[44px] leading-tight mb-4 max-w-3xl mx-auto">
+              يدًا بيد لقرارات تليق
+              <br className="hidden md:block" />
+              بثمانية ومواهبها
+            </h2>
+            <p className="font-body font-bold text-[14px] md:text-[16px] text-white/50 max-w-2xl mx-auto">
+              أربع مراحل متصلة — من تحليل الدور إلى فترة التجربة — كل مرحلة لها أدواتها ومعاييرها الواضحة
+            </p>
+          </div>
+
+          {/* Desktop timeline */}
+          <div className="hidden md:block relative">
+            {/* Dashed connector line */}
+            <svg className="absolute top-[52px] right-0 left-0 w-full h-4 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1000 4">
+              <line x1="60" y1="2" x2="940" y2="2" stroke="#facc15" strokeWidth="2" strokeDasharray="6 6" strokeLinecap="round" className="pipeline-line" opacity="0.5" />
+            </svg>
+
+            <div className="relative grid grid-cols-4 gap-6">
+              <PipelineStage
+                index={0}
+                icon={<Search className="w-7 h-7" />}
+                title="تحليل الدور"
+                tagline="وظّف بالمهمة لا بالمسمى الوظيفي"
+                notes={[
+                  "وصف المهمة لا الوصف الوظيفي التقليدي",
+                  "تحديد الأثر المطلوب بعد 3 و6 أشهر",
+                  "تحليل إمكانية تفويض المهام للذكاء الاصطناعي",
+                ]}
+              />
+              <PipelineStage
+                index={1}
+                icon={<Cog className="w-7 h-7" />}
+                title="عملية التوظيف"
+                tagline="كل توظيف يرفع السقف"
+                notes={[
+                  "Bar Raiser — مراقب جودة خارج الفريق",
+                  "منهجية STAR في التقييم",
+                  "Debrief جماعي قبل القرار النهائي",
+                ]}
+              />
+              <PipelineStage
+                index={2}
+                icon={<Rocket className="w-7 h-7" />}
+                title="ما قبل الانضمام"
+                tagline="ابدأ العلاقة قبل اليوم الأول"
+                notes={[
+                  "خطة الـ 90 يوم الأولى جاهزة مسبقًا",
+                  "ربط المرشح بفريقه وأدواته مبكرًا",
+                  "توضيح المؤشرات وتوقعات الأداء",
+                ]}
+              />
+              <PipelineStage
+                index={3}
+                icon={<TrafficCone className="w-7 h-7" />}
+                title="فترة التجربة"
+                tagline="قرار مبني على الأدلة"
+                notes={[
+                  "مراجعة شهرية بمعايير واضحة",
+                  "تغذية راجعة مستمرة من القائد",
+                  "قرار استمرار أو انفصال مبكر بشفافية",
+                ]}
+              />
+            </div>
+          </div>
+
+          {/* Mobile timeline — vertical */}
+          <div className="md:hidden relative space-y-6">
+            <div className="absolute top-8 bottom-8 right-7 w-px bg-gradient-to-b from-thmanyah-amber/50 via-thmanyah-amber/30 to-thmanyah-amber/10" />
+            {[
+              { icon: <Search className="w-5 h-5" />, title: "تحليل الدور", tagline: "وظّف بالمهمة لا بالمسمى" },
+              { icon: <Cog className="w-5 h-5" />, title: "عملية التوظيف", tagline: "كل توظيف يرفع السقف" },
+              { icon: <Rocket className="w-5 h-5" />, title: "ما قبل الانضمام", tagline: "ابدأ قبل اليوم الأول" },
+              { icon: <TrafficCone className="w-5 h-5" />, title: "فترة التجربة", tagline: "قرار مبني على الأدلة" },
+            ].map((s, i) => (
+              <div key={i} className="relative flex items-start gap-4 pipeline-node-enter" style={{ animationDelay: `${i * 0.15}s` }}>
+                <div className="relative z-10 w-14 h-14 rounded-full bg-thmanyah-amber flex items-center justify-center text-thmanyah-black shrink-0 shadow-[0_0_0_4px_rgba(250,204,21,0.15)]">
+                  {s.icon}
+                </div>
+                <div className="flex-1 pt-2">
+                  <h3 className="font-display font-black text-[17px] text-white mb-1">{s.title}</h3>
+                  <p className="font-ui text-[12px] text-thmanyah-amber/80 font-bold">{s.tagline}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom key message */}
+          <div className="mt-14 md:mt-20 text-center max-w-2xl mx-auto">
+            <div className="inline-block bg-thmanyah-amber/10 border border-thmanyah-amber/30 rounded-2xl px-6 md:px-8 py-4 md:py-5">
+              <p className="font-display font-black text-[15px] md:text-[17px] text-thmanyah-amber leading-relaxed">
+                المرشح الاستثنائي يتصفح إعلان المهمة بعقلية المهمة
+                <br className="hidden md:block" />
+                بينما يتردد العادي لأن الإعلان لم يتحدث عن قائمة مهام يستطيع القيام بها
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Approval chain */}
       <section className="py-14 md:py-20 bg-thmanyah-off-white">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
@@ -336,6 +447,60 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode; titl
       <div className="w-10 h-10 rounded-xl bg-thmanyah-green-light/30 flex items-center justify-center mb-4 text-thmanyah-green">{icon}</div>
       <h3 className="font-ui font-black text-[14px] md:text-[15px] mb-2">{title}</h3>
       <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-muted leading-relaxed">{description}</p>
+    </div>
+  );
+}
+
+function PipelineStage({
+  index,
+  icon,
+  title,
+  tagline,
+  notes,
+}: {
+  index: number;
+  icon: React.ReactNode;
+  title: string;
+  tagline: string;
+  notes: string[];
+}) {
+  return (
+    <div
+      className="relative group pipeline-node-enter"
+      style={{ animationDelay: `${index * 0.18}s` }}
+    >
+      {/* Node circle */}
+      <div className="flex justify-center mb-6">
+        <div className="relative">
+          <div className="pipeline-node w-[104px] h-[104px] rounded-full bg-thmanyah-amber flex items-center justify-center text-thmanyah-black shadow-[0_0_0_6px_rgba(250,204,21,0.12)] transition-transform duration-300 group-hover:scale-110">
+            {icon}
+          </div>
+          {/* Stage number badge */}
+          <span className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-thmanyah-black border-2 border-thmanyah-amber text-thmanyah-amber font-display font-black text-[12px] flex items-center justify-center">
+            {index + 1}
+          </span>
+        </div>
+      </div>
+
+      {/* Title */}
+      <h3 className="font-display font-black text-[20px] text-white text-center mb-2">
+        {title}
+      </h3>
+      <p className="font-ui font-bold text-[12px] text-thmanyah-amber/80 text-center mb-5 leading-relaxed px-2">
+        {tagline}
+      </p>
+
+      {/* Notes card — appears on hover */}
+      <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-4 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/[0.08] group-hover:border-thmanyah-amber/30">
+        <ul className="space-y-2">
+          {notes.map((note, i) => (
+            <li key={i} className="flex items-start gap-2 font-ui text-[12px] text-white/70 leading-relaxed">
+              <span className="w-1 h-1 rounded-full bg-thmanyah-amber mt-1.5 shrink-0" />
+              <span>{note}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
