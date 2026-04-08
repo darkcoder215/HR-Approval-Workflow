@@ -14,7 +14,6 @@ import {
   FileText,
   Users,
   Sparkles,
-  Zap,
   Building2,
   Target,
   Mail,
@@ -24,9 +23,6 @@ import {
   Trash2,
   Database,
   Search,
-  Cog,
-  Rocket,
-  TrafficCone,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
@@ -210,27 +206,6 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="py-14 md:py-20 bg-white">
-        <div className="max-w-5xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-green-light/30 rounded-full font-ui text-[12px] text-emerald-700 font-bold mb-4">
-              <Zap className="w-3.5 h-3.5" />
-              كيف يعمل النظام
-            </span>
-            <h2 className="font-display font-black text-[26px] md:text-[40px]">
-              مسار واضح من الطلب إلى التوظيف
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 stagger-children">
-            <StepCard number="1" icon={<FileText className="w-6 h-6" />} title="تقديم الطلب" description="املأ النموذج بتفاصيل الشاغر، التبرير، وتقييم الحاجة. النموذج يتكيّف مع إجاباتك تلقائيًا." color="green" />
-            <StepCard number="2" icon={<ShieldCheck className="w-6 h-6" />} title="مسار الاعتماد" description="الطلب يمر بـ 6 مراحل اعتماد متسلسلة مع SLA محدد لكل مرحلة. تتبّع طلبك لحظة بلحظة." color="blue" />
-            <StepCard number="3" icon={<CheckCircle2 className="w-6 h-6" />} title="بدء التوظيف" description="بعد اعتماد جميع الأطراف، يتواصل معك فريق المواهب خلال 24 ساعة عمل." color="amber" />
-          </div>
-        </div>
-      </section>
-
       {/* Hiring Pipeline */}
       <section className="py-14 md:py-24 bg-thmanyah-black text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
@@ -273,7 +248,7 @@ function HomeContent() {
                 index={2}
                 icon={<CheckCircle2 className="w-7 h-7" />}
                 title="اتّخاذ القرار"
-                description="حال قبول الطلب، يتم تعيين مسؤول استقطاب للعمل مباشرة معك لجذب الكادر المناسب. وفي حال الرفض، يُرسَل تقرير يوضّح سبب الرفض."
+                description="حال قبول الطلب، يتم تعيين مسؤول استقطاب للعمل مباشرة معك، وفي حال الرفض، يُرسل تقرير يُوضّح السبب مُباشرة لك."
               />
             </div>
           </div>
@@ -295,7 +270,7 @@ function HomeContent() {
               {
                 icon: <CheckCircle2 className="w-5 h-5" />,
                 title: "اتّخاذ القرار",
-                description: "حال قبول الطلب، يتم تعيين مسؤول استقطاب للعمل مباشرة معك. وفي حال الرفض، يُرسَل تقرير يوضّح السبب.",
+                description: "حال قبول الطلب، يتم تعيين مسؤول استقطاب للعمل مباشرة معك، وفي حال الرفض، يُرسل تقرير يُوضّح السبب مُباشرة لك.",
               },
             ].map((s, i) => (
               <div key={i} className="relative flex items-start gap-4 pipeline-node-enter" style={{ animationDelay: `${i * 0.12}s` }}>
@@ -409,18 +384,6 @@ export default function HomePage() {
     <AuthProvider>
       <HomeContent />
     </AuthProvider>
-  );
-}
-
-function StepCard({ number, icon, title, description, color }: { number: string; icon: React.ReactNode; title: string; description: string; color: "green" | "blue" | "amber" }) {
-  const colors = { green: "bg-thmanyah-green-light/30 text-thmanyah-green", blue: "bg-thmanyah-sky/20 text-thmanyah-blue", amber: "bg-thmanyah-pale-yellow/40 text-amber-600" };
-  return (
-    <div className="relative bg-thmanyah-off-white rounded-2xl p-6 md:p-7 text-center hover-lift">
-      <span className="absolute top-3 left-3 md:top-4 md:left-4 font-display font-black text-[40px] md:text-[48px] text-thmanyah-warm-border leading-none">{number}</span>
-      <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl mx-auto flex items-center justify-center mb-4 ${colors[color]}`}>{icon}</div>
-      <h3 className="font-display font-black text-[16px] md:text-[18px] mb-2">{title}</h3>
-      <p className="font-ui font-bold text-[13px] md:text-[14px] text-thmanyah-muted leading-relaxed">{description}</p>
-    </div>
   );
 }
 
