@@ -217,7 +217,7 @@ function HomeContent() {
             <h2 className="font-display font-black text-[26px] md:text-[44px] leading-tight mb-4 max-w-3xl mx-auto">
               يدًا بيد لقرارات تليق
               <br className="hidden md:block" />
-              بثمانية ومواهبها
+              بثمانية وبناسها
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-white/50 max-w-2xl mx-auto">
               ثلاث مراحل واضحة من لحظة رفع الطلب إلى قرار الاستقطاب
@@ -236,19 +236,19 @@ function HomeContent() {
                 index={0}
                 icon={<FileText className="w-7 h-7" />}
                 title="رفع طلب شاغر"
-                description="دورك كقائد أن ترفع طلب الدور الذي تحتاجه في فريقك، وسيتم تقييم الطلب مبدئيًا بواسطة الذكاء الاصطناعي."
+                description="دورك كقائد، ترفع احتياج القوى العاملة في فريقك، وسيُقيم الطلب مبدئيًا بواسطة الذكاء الاصطناعي."
               />
               <PipelineStage
                 index={1}
                 icon={<Search className="w-7 h-7" />}
-                title="تحليل الدور من فريق المواهب"
-                description="بعد المرحلة الأولى، ينظر فريق المواهب في الطلب ونرد عليك في أقرب فرصة ممكنة."
+                title="تحليل الدور"
+                description="بعد التحليل المبدئي، يراجع فريق المواهب طلبك ويرد عليك وفق الخط الزمني المُتفق عليه بالأداة."
               />
               <PipelineStage
                 index={2}
                 icon={<CheckCircle2 className="w-7 h-7" />}
                 title="اتّخاذ القرار"
-                description="حال قبول الطلب، يتم تعيين مسؤول استقطاب للعمل مباشرة معك، وفي حال الرفض، يُرسل تقرير يُوضّح السبب مُباشرة لك."
+                description="عند قبول طلبك، يتم تعيين مسؤول الاستقطاب للعمل معك. وفي حال الرفض، نشاركك تقرير واضح."
               />
             </div>
           </div>
@@ -260,17 +260,17 @@ function HomeContent() {
               {
                 icon: <FileText className="w-5 h-5" />,
                 title: "رفع طلب شاغر",
-                description: "دورك كقائد أن ترفع طلب الدور الذي تحتاجه في فريقك، وسيتم تقييم الطلب مبدئيًا بواسطة الذكاء الاصطناعي.",
+                description: "دورك كقائد، ترفع احتياج القوى العاملة في فريقك، وسيُقيم الطلب مبدئيًا بواسطة الذكاء الاصطناعي.",
               },
               {
                 icon: <Search className="w-5 h-5" />,
-                title: "تحليل الدور من فريق المواهب",
-                description: "بعد المرحلة الأولى، ينظر فريق المواهب في الطلب ونرد عليك في أقرب فرصة ممكنة.",
+                title: "تحليل الدور",
+                description: "بعد التحليل المبدئي، يراجع فريق المواهب طلبك ويرد عليك وفق الخط الزمني المُتفق عليه بالأداة.",
               },
               {
                 icon: <CheckCircle2 className="w-5 h-5" />,
                 title: "اتّخاذ القرار",
-                description: "حال قبول الطلب، يتم تعيين مسؤول استقطاب للعمل مباشرة معك، وفي حال الرفض، يُرسل تقرير يُوضّح السبب مُباشرة لك.",
+                description: "عند قبول طلبك، يتم تعيين مسؤول الاستقطاب للعمل معك. وفي حال الرفض، نشاركك تقرير واضح.",
               },
             ].map((s, i) => (
               <div key={i} className="relative flex items-start gap-4 pipeline-node-enter" style={{ animationDelay: `${i * 0.12}s` }}>
