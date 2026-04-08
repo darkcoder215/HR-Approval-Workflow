@@ -589,7 +589,7 @@ function SubmitForm() {
           </div>
           <Input
             label="صاحب الميزانية"
-            hint="الرئيس التنفيذي لكل قسم هو صاحب الميزانية"
+            hint="الرئيس التنفيذي لكل إدارة هو صاحب الميزانية"
             placeholder="مثال: خالد العتيبي — الرئيس التنفيذي للتقنية"
             value={form.budgetOwner}
             onChange={set("budgetOwner")}
@@ -756,7 +756,7 @@ function SubmitForm() {
                   <div className="bg-thmanyah-pale-yellow/20 rounded-xl p-3 mb-4 flex items-start gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <p className="font-ui text-[12px] text-amber-800 leading-relaxed">
-                      فتح شاغر خارج الهيكلة المعتمدة يتطلب مبررات إضافية واعتماد استثناء، وقد نوافق عليه أو لا.
+                      فتح شاغر خارج الهيكلة المُعتمدة، يتطلب مبررات إضافية واعتماد للاستثناء.
                     </p>
                   </div>
                   <Textarea
