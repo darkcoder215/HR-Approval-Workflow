@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
         402: "رصيد OpenRouter غير كافٍ",
         403: "الوصول مرفوض — تحقق من صلاحيات مفتاح API",
         404: `النموذج ${MODEL} غير متوفر على OpenRouter`,
-        429: "تم تجاوز حد الطلبات — يرجى المحاولة بعد قليل",
+        429: "تجاوزت حد الطلبات — يرجى المحاولة بعد قليل",
         500: "خطأ داخلي في خدمة OpenRouter",
         502: "خدمة OpenRouter غير متاحة مؤقتاً",
         503: "خدمة OpenRouter مشغولة — يرجى المحاولة لاحقاً",
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
       console.error("Empty content in OpenRouter response:", JSON.stringify(data).slice(0, 500));
       return NextResponse.json(
         {
-          error: "لم يتم استلام رد من خدمة التحليل",
+          error: "لم نستلم ردًا من خدمة التحليل",
           debug: `choices: ${JSON.stringify(data.choices?.slice(0, 1)).slice(0, 300)}`,
         },
         { status: 502 }
@@ -227,7 +227,7 @@ export async function POST(request: NextRequest) {
     const validated = {
       overallScore: typeof analysis.overallScore === "number" ? Math.min(100, Math.max(0, analysis.overallScore)) : 50,
       scoreLabel: typeof analysis.scoreLabel === "string" ? analysis.scoreLabel : getScoreLabel(analysis.overallScore),
-      summary: typeof analysis.summary === "string" ? analysis.summary : "لم يتم تقديم ملخص",
+      summary: typeof analysis.summary === "string" ? analysis.summary : "لا يوجد ملخص",
       dimensions: Array.isArray(analysis.dimensions)
         ? analysis.dimensions.map((d: Record<string, unknown>) => ({
             name: String(d.name || ""),
@@ -276,13 +276,13 @@ const SYSTEM_PROMPT = `أنت محلل موارد بشرية استراتيجي 
 - هل هناك ارتباط واضح بمشروع أو هدف استراتيجي؟
 
 ### 2. استنفاد البدائل (20 نقطة)
-- هل تم تجربة حلول بديلة فعلاً (إعادة توزيع، أتمتة، تعاقد خارجي)؟
-- إذا لم يتم، هل السبب مقنع؟
+- هل جُرِّبت حلول بديلة فعلاً (إعادة توزيع، أتمتة، تعاقد خارجي)؟
+- إذا لم تُجرَّب، هل السبب مقنع؟
 - هل يمكن تحقيق المطلوب بأقل من العدد المطلوب؟
 
 ### 3. تقييم أثر الذكاء الاصطناعي (20 نقطة)
 - هل مقدم الطلب واعٍ لأثر AI على هذا الدور؟
-- هل تم تقدير نسبة الأتمتة بشكل واقعي؟
+- هل نسبة الأتمتة مُقدَّرة بواقعية؟
 - هل الدور معرض للاستبدال بالذكاء الاصطناعي خلال 2-3 سنوات؟
 - هل يمكن دمج أدوات AI لتقليل العدد المطلوب؟
 

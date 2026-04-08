@@ -124,15 +124,15 @@ function ApproveView() {
             )}
           </div>
           <h2 className="font-display font-black text-[28px] mb-2">
-            {actionDone === "approved" ? "تمت الموافقة" : "تم الرفض"}
+            {actionDone === "approved" ? "وافقت على الطلب" : "رفضت الطلب"}
           </h2>
           <p className="font-ui text-[14px] text-thmanyah-muted mb-2">
             طلب: {request.jobTitle} — {request.requesterName}
           </p>
           <p className="font-ui text-[13px] text-thmanyah-muted mb-8">
             {actionDone === "approved"
-              ? "تم تمرير الطلب للمعتمد التالي في المسار."
-              : "تم إيقاف المسار وإشعار مقدم الطلب بالرفض."}
+              ? "مرّرنا الطلب للمعتمد التالي في المسار."
+              : "أوقفنا المسار وأشعرنا مقدم الطلب بالرفض."}
           </p>
           <div className="flex gap-3 justify-center">
             <Link href={`/track/${request.id}`}>
@@ -286,7 +286,7 @@ function ApproveView() {
 
                 <div className="mt-4">
                   <Textarea
-                    label="ملاحظة داخلية (تظهر فقط للمعتمدين وفريق ثقافة المنظومة)"
+                    label="ملاحظة داخلية (تظهر فقط للمعتمدين وفريق الثقافة)"
                     placeholder="ملاحظة داخلية بين المعتمدين..."
                     value={internalComment}
                     onChange={(e) => setInternalComment(e.target.value)}
@@ -362,16 +362,16 @@ function ApproveView() {
                   <div>
                     <p className="font-ui font-bold text-[14px]">
                       {step.status === "approved"
-                        ? "تمت الموافقة على هذه المرحلة"
+                        ? "وافق المعتمد على هذه المرحلة"
                         : step.status === "rejected"
-                        ? "تم رفض الطلب في هذه المرحلة"
+                        ? "رفض المعتمد الطلب في هذه المرحلة"
                         : "ليس دورك بعد"}
                     </p>
                     <p className="font-ui text-[13px] text-thmanyah-muted">
                       {step.status === "pending" && request.currentApprovalStep !== stepIndex
                         ? "الطلب لم يصل لمرحلتك بعد"
                         : step.decidedAt
-                        ? `تم القرار في ${new Date(step.decidedAt).toLocaleDateString("ar-SA")}`
+                        ? `القرار بتاريخ ${new Date(step.decidedAt).toLocaleDateString("ar-SA")}`
                         : ""}
                     </p>
                   </div>

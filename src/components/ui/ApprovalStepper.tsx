@@ -101,7 +101,7 @@ export default function ApprovalStepper({
                   `}
                 >
                   {isCompleted
-                    ? "تمت الموافقة"
+                    ? "موافق"
                     : isRejectedStep
                     ? "مرفوض"
                     : isActive

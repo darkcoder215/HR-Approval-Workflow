@@ -39,7 +39,7 @@ function buildChain(
     if (rejectedAt !== undefined && i === rejectedAt) {
       step.status = "rejected";
       step.decidedAt = hoursAgo((approvedUpTo - i) * 18);
-      step.comment = REJECTION_COMMENTS[rejectedAt] || "غير مبرر بشكل كافٍ";
+      step.comment = REJECTION_COMMENTS[rejectedAt] || "غير مبرر كفاية";
     } else if (i < approvedUpTo) {
       step.status = "approved";
       step.decidedAt = hoursAgo((approvedUpTo - i) * 20);
@@ -51,7 +51,7 @@ function buildChain(
 
 const APPROVAL_COMMENTS = [
   "الطلب مبرر وواضح، موافق",
-  "تم مراجعة التبرير والهيكلة — معتمد",
+  "راجعنا التبرير والهيكلة — معتمد",
   "الحاجة واضحة، نحتاج نسرّع التوظيف",
   "موافق — يرجى مراعاة سلم الرواتب المعتمد",
   "الدور ضروري لاستمرارية العمل، معتمد",
@@ -159,7 +159,7 @@ export function seedDemoData(): VacancyRequest[] {
       vacancyType: "new_position",
       positionsCount: 1,
       isInApprovedStructure: false,
-      structureJustification: "نحتاج هذا الدور بشكل مؤقت (6 أشهر) لدعم حملة إطلاق المنتج الجديد.",
+      structureJustification: "نحتاج هذا الدور مؤقتًا (6 أشهر) لدعم حملة إطلاق المنتج الجديد.",
       jobTitle: "مسؤول تسويق رقمي",
       jobLevel: "متوسط (Mid-level)",
       roleNature: "contract",
