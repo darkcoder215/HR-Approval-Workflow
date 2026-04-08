@@ -120,7 +120,7 @@ function SettingsContent() {
               {saved ? (
                 <div className="flex items-center gap-2 text-thmanyah-green animate-fade-in">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span className="font-ui font-black text-[13px]">تم الحفظ بنجاح</span>
+                  <span className="font-ui font-black text-[13px]">حفظنا التغييرات</span>
                 </div>
               ) : (
                 <span className="font-ui font-bold text-[13px] text-thmanyah-muted">

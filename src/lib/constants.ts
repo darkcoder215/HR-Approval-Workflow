@@ -27,10 +27,10 @@ export const APPROVAL_CHAIN_TEMPLATE: Omit<ApprovalStep, "id">[] = [
   },
   {
     order: 4,
-    role: "إدارة ثقافة المنظومة",
+    role: "إدارة الثقافة",
     approverName: "البراء العوهلي",
     approverEmail: "albaraa@thmanyah.com",
-    slaHours: 24,
+    slaHours: 48,
     status: "pending",
   },
   {
@@ -44,7 +44,7 @@ export const APPROVAL_CHAIN_TEMPLATE: Omit<ApprovalStep, "id">[] = [
   {
     order: 6,
     role: "الرئيس التنفيذي",
-    approverName: "عبدالرحمن أبو مالح",
+    approverName: "عبدالرحمن أبومالح",
     approverEmail: "abdulrahman@thmanyah.com",
     slaHours: 48,
     status: "pending",
@@ -52,7 +52,7 @@ export const APPROVAL_CHAIN_TEMPLATE: Omit<ApprovalStep, "id">[] = [
 ];
 
 export const STATUS_LABELS: Record<string, string> = {
-  received: "تم استلام طلبك",
+  received: "استلمنا طلبك",
   under_review: "قيد المراجعة",
   pending_approval: "بانتظار الاعتماد",
   approved: "معتمد",
@@ -128,6 +128,6 @@ export const HIRING_BAR_MESSAGE =
   "معايير ثمانية للنجاح ترتفع مع كل مشروع جديد. ومع كل تحول نمر به، معاييرنا بالأمس قد تتغير اليوم. ولكن، فكّر بصوت عالي بقرارات التوظيف السابقة التي اتّخذتها لمصلحة ثمانية.";
 
 export const APPROVAL_FLOW_NOTE =
-  "موافقة أبو مالح المبدئية لا تُغني عن المرور بمسار الاعتماد الكامل.";
+  "موافقة أبومالح المبدئية لا تُغني عن المرور بمسار الاعتماد الكامل.";
 
 export const SLA_TOTAL = "5–10 أيام عمل لتقييم الطلب";

@@ -123,9 +123,9 @@ function TrackView() {
               />
               <h1 className="font-display font-black text-[28px] md:text-[36px] leading-tight">
                 {isApproved
-                  ? "تم اعتماد طلبك"
+                  ? "اعتمدنا طلبك"
                   : isRejected
-                  ? "تم رفض طلبك"
+                  ? "رفضنا طلبك"
                   : "طلبك قيد المعالجة"}
               </h1>
               <p className="font-ui text-[14px] text-white/70 mt-2">
@@ -148,7 +148,7 @@ function TrackView() {
                 onClick={copyLink}
                 className="!text-white/70 hover:!text-white hover:!bg-white/10"
               >
-                {copied ? "تم النسخ" : "نسخ الرابط"}
+                {copied ? "نسخناه" : "نسخ الرابط"}
               </Button>
             </div>
           </div>
@@ -157,7 +157,7 @@ function TrackView() {
             <div className="mt-6 bg-white/10 rounded-xl p-4 flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
               <p className="font-ui text-[14px] text-white/90">
-                سيتم التواصل معك من قبل فريق التوظيف خلال 24 ساعة عمل.
+                سيتواصل معك فريق التوظيف خلال 24 ساعة عمل.
               </p>
             </div>
           )}

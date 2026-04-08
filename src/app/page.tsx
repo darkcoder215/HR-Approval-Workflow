@@ -242,7 +242,7 @@ function HomeContent() {
                 index={1}
                 icon={<Search className="w-7 h-7" />}
                 title="تحليل الدور من فريق المواهب"
-                description="بعد المرحلة الأولى، ينظر فريق المواهب في الطلب ويتم الرد عليك في أقرب فرصة ممكنة."
+                description="بعد المرحلة الأولى، ينظر فريق المواهب في الطلب ونرد عليك في أقرب فرصة ممكنة."
               />
               <PipelineStage
                 index={2}
@@ -265,7 +265,7 @@ function HomeContent() {
               {
                 icon: <Search className="w-5 h-5" />,
                 title: "تحليل الدور من فريق المواهب",
-                description: "بعد المرحلة الأولى، ينظر فريق المواهب في الطلب ويتم الرد عليك في أقرب فرصة ممكنة.",
+                description: "بعد المرحلة الأولى، ينظر فريق المواهب في الطلب ونرد عليك في أقرب فرصة ممكنة.",
               },
               {
                 icon: <CheckCircle2 className="w-5 h-5" />,
@@ -320,7 +320,7 @@ function HomeContent() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-ui font-black text-[14px] md:text-[15px]">{step.role}</p>
-                  {step.approverName && (
+                  {step.approverName && step.role !== "الرئيس التنفيذي" && (
                     <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-muted mt-0.5 truncate">{step.approverName}</p>
                   )}
                 </div>
@@ -370,7 +370,7 @@ function HomeContent() {
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Image src="/thamanyah.png" alt="ثمانية" width={20} height={20} className="rounded opacity-60" />
-            <span className="font-ui font-bold text-[11px] md:text-[12px]">ثمانية — إدارة ثقافة المنظومة</span>
+            <span className="font-ui font-bold text-[11px] md:text-[12px]">ثمانية — إدارة الثقافة</span>
           </div>
           <span className="font-ui font-bold text-[11px] md:text-[12px]">{new Date().getFullYear()}</span>
         </div>

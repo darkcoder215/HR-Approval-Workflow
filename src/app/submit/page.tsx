@@ -634,7 +634,7 @@ function SubmitForm() {
             <div className="animate-fade-in-up">
               <Textarea
                 label="لماذا لم تجرب حلول أخرى حتى الآن؟"
-                placeholder="اشرح لماذا لم يتم تجربة بدائل أخرى قبل طلب التوظيف..."
+                placeholder="اشرح لماذا لم تُجرَّب بدائل أخرى قبل طلب التوظيف..."
                 value={form.whyNoAlternatives}
                 onChange={set("whyNoAlternatives")}
                 error={errors.whyNoAlternatives}
@@ -726,7 +726,7 @@ function SubmitForm() {
               />
               <Textarea
                 label="سبب المغادرة بالتفصيل"
-                placeholder="اشرح سبب مغادرة الموظف السابق بشكل مفصل..."
+                placeholder="اشرح سبب مغادرة الموظف السابق بالتفصيل..."
                 value={form.departureReason}
                 onChange={set("departureReason")}
                 error={errors.departureReason}
@@ -756,7 +756,7 @@ function SubmitForm() {
                   <div className="bg-thmanyah-pale-yellow/20 rounded-xl p-3 mb-4 flex items-start gap-2">
                     <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <p className="font-ui text-[12px] text-amber-800 leading-relaxed">
-                      فتح شاغر خارج الهيكلة المعتمدة يتطلب مبررات إضافية واعتماد استثناء، وقد يتم الموافقة عليه أو لا.
+                      فتح شاغر خارج الهيكلة المعتمدة يتطلب مبررات إضافية واعتماد استثناء، وقد نوافق عليه أو لا.
                     </p>
                   </div>
                   <Textarea
@@ -953,7 +953,7 @@ function SubmitForm() {
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
-              أؤكد بأن هذا الطلب مبني على احتياج حقيقي والتوظيف يقع ضمن ميزانية إدارتي، كما تم تقييم البدائل قبل طلب التوظيف وأتحمل أثر هذا القرار في حال عدم تحقيق النتائج المتوقعة.
+              أؤكد بأن هذا الطلب مبني على احتياج حقيقي والتوظيف يقع ضمن ميزانية إدارتي، كما قيّمتُ البدائل قبل طلب التوظيف وأتحمل أثر هذا القرار في حال عدم تحقيق النتائج المتوقعة.
             </p>
           </div>
           <RadioGroup
@@ -977,7 +977,7 @@ function SubmitForm() {
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
-              المعتمدون الآخرون (المواهب، ثقافة المنظومة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام. يرجى تعبئة بيانات المدير المباشر فقط.
+              المعتمدون الآخرون (المواهب، الثقافة، المالية، الرئيس التنفيذي) محددون مسبقًا في النظام. يرجى تعبئة بيانات المدير المباشر فقط.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1008,7 +1008,7 @@ function SubmitForm() {
           <div className="text-center space-y-4">
             <div className="bg-thmanyah-green/10 rounded-xl p-4 max-w-lg mx-auto">
               <p className="font-ui text-[13px] text-emerald-800 leading-relaxed">
-                سيتم تحليل طلبك آليًا قبل الإرسال لتقييم الحاجة الفعلية للتوظيف.
+                سنحلّل طلبك آليًا قبل الإرسال لتقييم الحاجة الفعلية للتوظيف.
               </p>
             </div>
 
