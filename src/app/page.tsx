@@ -289,7 +289,7 @@ function HomeContent() {
           <div className="mt-14 md:mt-20 text-center max-w-2xl mx-auto">
             <div className="inline-block bg-thmanyah-amber/10 border border-thmanyah-amber/30 rounded-2xl px-6 md:px-8 py-4 md:py-5">
               <p className="font-display font-black text-[15px] md:text-[17px] text-thmanyah-amber leading-relaxed">
-                وظّف بالمهمة لا بالمسمى الوظيفي — كل توظيف يليق بثمانية
+                جودة قراراتك = كفاءة فريقك. كيف سترفع من جودة قرارتك بالمواهب؟
               </p>
             </div>
           </div>
