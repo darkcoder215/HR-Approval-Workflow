@@ -62,6 +62,7 @@ type FormData = {
   isInApprovedStructure: string;
   structureJustification: string;
   jobTitle: string;
+  jobTitleEn: string;
   jobLevel: string;
   roleType: string;
   roleNature: string;
@@ -105,6 +106,7 @@ const initial: FormData = {
   isInApprovedStructure: "",
   structureJustification: "",
   jobTitle: "",
+  jobTitleEn: "",
   jobLevel: "",
   roleType: "",
   roleNature: "",
@@ -252,6 +254,7 @@ function SubmitForm() {
     }
 
     if (!form.jobTitle.trim()) newErrors.jobTitle = "مطلوب";
+    if (!form.jobTitleEn.trim()) newErrors.jobTitleEn = "مطلوب";
     if (!form.jobLevel) newErrors.jobLevel = "مطلوب";
     if (!form.roleType) newErrors.roleType = "مطلوب";
     if (!form.roleNature) newErrors.roleNature = "مطلوب";
@@ -358,6 +361,7 @@ function SubmitForm() {
       isInApprovedStructure: form.isInApprovedStructure === "yes" ? true : form.isInApprovedStructure === "no" ? false : undefined,
       structureJustification: form.structureJustification || undefined,
       jobTitle: form.jobTitle,
+      jobTitleEn: form.jobTitleEn,
       jobLevel: form.jobLevel,
       roleNature: form.roleNature as "full_time" | "part_time" | "contract" | "freelance" | "intern",
       jobDescription: form.jobDescription,
@@ -786,6 +790,16 @@ function SubmitForm() {
             error={errors.jobTitle}
             required
             data-error={!!errors.jobTitle}
+          />
+          <Input
+            label="المسمى الوظيفي باللغة الانقليزية"
+            placeholder="Example: Senior Software Engineer"
+            value={form.jobTitleEn}
+            onChange={set("jobTitleEn")}
+            error={errors.jobTitleEn}
+            required
+            data-error={!!errors.jobTitleEn}
+            dir="ltr"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Select

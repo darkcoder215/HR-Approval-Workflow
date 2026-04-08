@@ -59,6 +59,7 @@ export interface VacancyRequest {
 
   // Role details
   jobTitle: string;
+  jobTitleEn: string;
   jobLevel: string;
   roleNature: RoleNature;
   jobDescription: string;
