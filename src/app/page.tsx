@@ -60,14 +60,14 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-thmanyah-off-white">
       {/* Nav */}
-      <header className="sticky top-0 z-40 bg-thmanyah-black/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 bg-thmanyah-black border-b border-white/10 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 md:gap-3">
             <Image src="/thamanyah.png" alt="ثمانية" width={28} height={28} className="rounded-lg" />
             <span className="font-display font-black text-white text-[14px] md:text-[15px] hidden sm:block">ثمانية</span>
           </Link>
           <nav className="flex items-center gap-1 md:gap-2">
-            <Link href="/dashboard" className="px-3 md:px-4 py-2 text-[12px] md:text-[13px] font-ui font-bold text-white/60 hover:text-white rounded-full transition-all">
+            <Link href="/dashboard" className="px-3 md:px-4 py-2 text-[12px] md:text-[13px] font-ui font-bold text-white/85 hover:text-white rounded-full transition-all">
               لوحة المتابعة
             </Link>
             <Link href="/submit">
@@ -78,7 +78,7 @@ function HomeContent() {
             </Link>
             <button
               onClick={logout}
-              className="px-2 py-2 text-white/30 hover:text-thmanyah-red rounded-full transition-all cursor-pointer"
+              className="px-2 py-2 text-white/60 hover:text-thmanyah-red rounded-full transition-all cursor-pointer"
               title="تسجيل الخروج"
             >
               <LogOut className="w-4 h-4" />
@@ -90,7 +90,7 @@ function HomeContent() {
       {/* Hero */}
       <section className="relative bg-thmanyah-black text-white overflow-hidden">
         {/* Ambient glow */}
-        <div className="absolute inset-0 opacity-[0.04]">
+        <div className="absolute inset-0 opacity-[0.08]">
           <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-thmanyah-green blur-3xl animate-float-slow" />
           <div className="absolute bottom-10 left-10 w-64 h-64 rounded-full bg-thmanyah-blue blur-3xl animate-float-slow-reverse" />
         </div>
@@ -98,38 +98,38 @@ function HomeContent() {
         {/* Flying notification bubbles */}
         <div className="absolute inset-0 overflow-hidden hidden md:block">
           {/* Approved */}
-          <span className="flying-bubble fly-right bg-thmanyah-green/15 text-thmanyah-green border border-thmanyah-green/20" style={{ top: "18%", right: "8%", "--duration": "11s", "--delay": "0.5s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-right bg-thmanyah-green/25 text-thmanyah-green border border-thmanyah-green/50" style={{ top: "18%", right: "8%", "--duration": "11s", "--delay": "0.5s" } as React.CSSProperties}>
             مُعتمد: المبررات واضحة، واضح فكرت بإحسان 👌
           </span>
-          <span className="flying-bubble fly-left bg-thmanyah-green/15 text-thmanyah-green border border-thmanyah-green/20" style={{ top: "72%", left: "5%", "--duration": "13s", "--delay": "4s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-left bg-thmanyah-green/25 text-thmanyah-green border border-thmanyah-green/50" style={{ top: "72%", left: "5%", "--duration": "13s", "--delay": "4s" } as React.CSSProperties}>
             مُعتمد: فريق استقطاب المواهب بطريقه لدعمك 🚀
           </span>
-          <span className="flying-bubble fly-up bg-thmanyah-green/15 text-thmanyah-green border border-thmanyah-green/20" style={{ top: "40%", right: "4%", "--duration": "14s", "--delay": "5.5s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-up bg-thmanyah-green/25 text-thmanyah-green border border-thmanyah-green/50" style={{ top: "40%", right: "4%", "--duration": "14s", "--delay": "5.5s" } as React.CSSProperties}>
             مُعتمد: دورك كقائد تستثمر في أفضل الكفاءات بعوائد مُستدامة 🔥
           </span>
 
           {/* Rejected */}
-          <span className="flying-bubble fly-left bg-thmanyah-red/15 text-thmanyah-red border border-thmanyah-red/20" style={{ top: "28%", left: "3%", "--duration": "10s", "--delay": "2s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-left bg-thmanyah-red/25 text-thmanyah-red border border-thmanyah-red/50" style={{ top: "28%", left: "3%", "--duration": "10s", "--delay": "2s" } as React.CSSProperties}>
             مرفوض: الدور ممكن تنفيذه باستخدام أدوات الذكاء الاصطناعي 🤖
           </span>
-          <span className="flying-bubble fly-right bg-thmanyah-red/15 text-thmanyah-red border border-thmanyah-red/20" style={{ top: "82%", right: "12%", "--duration": "12s", "--delay": "7s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-right bg-thmanyah-red/25 text-thmanyah-red border border-thmanyah-red/50" style={{ top: "82%", right: "12%", "--duration": "12s", "--delay": "7s" } as React.CSSProperties}>
             مرفوض: مبررات فتح الشاغر غير مُقنعة، راجع تقرير الرفض 😱
           </span>
-          <span className="flying-bubble fly-left bg-thmanyah-red/15 text-thmanyah-red border border-thmanyah-red/20" style={{ top: "55%", left: "15%", "--duration": "9s", "--delay": "1s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-left bg-thmanyah-red/25 text-thmanyah-red border border-thmanyah-red/50" style={{ top: "55%", left: "15%", "--duration": "9s", "--delay": "1s" } as React.CSSProperties}>
             مرفوض: يؤسفنا رفض طلبك، لعدم توفر ميزانية وبسبب السيولة 💰
           </span>
 
           {/* Review / pending */}
-          <span className="flying-bubble fly-left bg-thmanyah-blue/15 text-thmanyah-blue border border-thmanyah-blue/20" style={{ top: "15%", left: "12%", "--duration": "12s", "--delay": "3s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-left bg-thmanyah-blue/25 text-thmanyah-sky border border-thmanyah-blue/50" style={{ top: "15%", left: "12%", "--duration": "12s", "--delay": "3s" } as React.CSSProperties}>
             قيد المراجعة: وصلنا طلبك، وحاليًا تحت المراجعة 👀
           </span>
-          <span className="flying-bubble fly-up bg-thmanyah-blue/15 text-thmanyah-blue border border-thmanyah-blue/20" style={{ top: "65%", right: "20%", "--duration": "10s", "--delay": "8s" } as React.CSSProperties}>
+          <span className="flying-bubble fly-up bg-thmanyah-blue/25 text-thmanyah-sky border border-thmanyah-blue/50" style={{ top: "65%", right: "20%", "--duration": "10s", "--delay": "8s" } as React.CSSProperties}>
             في مرحلة الاعتمادات: بانتظار الموافقات النهائية 🫵🏻
           </span>
         </div>
 
         <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-14 md:pt-20 pb-16 md:pb-24 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-thmanyah-green/10 border border-thmanyah-green/20 rounded-full mb-6 md:mb-8 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-thmanyah-green/20 border border-thmanyah-green/60 rounded-full mb-6 md:mb-8 animate-fade-in">
             <Sparkles className="w-4 h-4 text-thmanyah-green" />
             <span className="font-ui text-[12px] md:text-[13px] text-thmanyah-green font-bold">
               منظومة اعتماد الشواغر الوظيفية
@@ -141,7 +141,7 @@ function HomeContent() {
             <br />
             <span className="relative">
               يبدأ من هنا
-              <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/20 -z-10 rounded-sm" />
+              <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/50 -z-10 rounded-sm" />
             </span>
           </h1>
 
@@ -162,16 +162,16 @@ function HomeContent() {
 
           {/* Demo Data Panel */}
           <div className="mt-10 md:mt-14 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
-            <div className="inline-block bg-white/[0.06] border border-white/10 rounded-2xl p-5 md:p-6 backdrop-blur-sm max-w-md mx-auto">
+            <div className="inline-block bg-white/[0.08] border border-white/25 rounded-2xl p-5 md:p-6 backdrop-blur-sm max-w-md mx-auto">
               <div className="flex items-center gap-2 mb-3">
                 <FlaskConical className="w-4 h-4 text-thmanyah-amber" />
-                <span className="font-ui font-black text-[13px] text-white/80">بيانات تجريبية</span>
+                <span className="font-ui font-black text-[13px] text-white">بيانات تجريبية</span>
               </div>
-              <p className="font-ui text-[12px] text-white/40 mb-4 leading-relaxed">
+              <p className="font-ui text-[12px] text-white/70 mb-4 leading-relaxed">
                 أنشئ طلبات تجريبية بمراحل مختلفة (معتمدة، مرفوضة، قيد المعالجة) لاستعراض جميع واجهات المنصة.
               </p>
               {seedCount > 0 && (
-                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-thmanyah-green/10 rounded-xl">
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-thmanyah-green/20 border border-thmanyah-green/50 rounded-xl">
                   <Database className="w-3.5 h-3.5 text-thmanyah-green" />
                   <span className="font-ui font-bold text-[12px] text-thmanyah-green">{seedCount} طلب في النظام</span>
                 </div>
@@ -179,7 +179,7 @@ function HomeContent() {
               <div className="flex gap-2">
                 <button
                   onClick={handleSeed}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber/90 hover:bg-thmanyah-amber text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber hover:brightness-110 text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
                 >
                   <FlaskConical className="w-3.5 h-3.5" />
                   {seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
@@ -187,7 +187,7 @@ function HomeContent() {
                 {seedCount > 0 && (
                   <button
                     onClick={handleClear}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-thmanyah-red/20 text-white/60 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/15 hover:bg-thmanyah-red/30 text-white/90 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     مسح
@@ -198,7 +198,7 @@ function HomeContent() {
           </div>
 
           <div className="mt-6 md:mt-8 animate-bounce">
-            <ChevronDown className="w-5 h-5 text-white/20 mx-auto" />
+            <ChevronDown className="w-5 h-5 text-white/50 mx-auto" />
           </div>
         </div>
       </section>
@@ -207,7 +207,7 @@ function HomeContent() {
       <section className="py-14 md:py-24 bg-thmanyah-black text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="text-center mb-12 md:mb-20">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-amber/15 border border-thmanyah-amber/30 rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-amber/25 border border-thmanyah-amber/60 rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-5">
               <Sparkles className="w-3.5 h-3.5" />
               مسار طلب الشاغر
             </span>
@@ -216,7 +216,7 @@ function HomeContent() {
               <br className="hidden md:block" />
               بثمانية وبناسها
             </h2>
-            <p className="font-body font-bold text-[14px] md:text-[16px] text-white/50 max-w-2xl mx-auto">
+            <p className="font-body font-bold text-[14px] md:text-[16px] text-white/75 max-w-2xl mx-auto">
               ثلاث مراحل واضحة من لحظة رفع الطلب إلى قرار الاستقطاب
             </p>
           </div>
@@ -225,7 +225,7 @@ function HomeContent() {
           <div className="hidden md:block relative">
             {/* Dashed connector line (animates right → left) */}
             <svg className="absolute top-[52px] right-0 left-0 w-full h-4 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1000 4">
-              <line x1="80" y1="2" x2="920" y2="2" stroke="#facc15" strokeWidth="2" strokeDasharray="6 6" strokeLinecap="round" className="pipeline-line" opacity="0.35" />
+              <line x1="80" y1="2" x2="920" y2="2" stroke="#FFBC0A" strokeWidth="2.5" strokeDasharray="6 6" strokeLinecap="round" className="pipeline-line" opacity="0.6" />
             </svg>
 
             <div className="relative grid grid-cols-3 gap-8">
@@ -275,8 +275,8 @@ function HomeContent() {
                   {s.icon}
                 </div>
                 <div className="flex-1 pt-1.5">
-                  <h3 className="font-display font-black text-[17px] text-white mb-1.5">{s.title}</h3>
-                  <p className="font-ui text-[12px] text-white/60 leading-relaxed">{s.description}</p>
+                  <h3 className="font-display font-black text-[17px] text-thmanyah-amber mb-1.5">{s.title}</h3>
+                  <p className="font-ui text-[12px] text-white/85 leading-relaxed">{s.description}</p>
                 </div>
               </div>
             ))}
@@ -284,7 +284,7 @@ function HomeContent() {
 
           {/* Bottom key message */}
           <div className="mt-14 md:mt-20 text-center max-w-2xl mx-auto">
-            <div className="inline-block bg-thmanyah-amber/10 border border-thmanyah-amber/30 rounded-2xl px-6 md:px-8 py-4 md:py-5">
+            <div className="inline-block bg-thmanyah-amber/20 border-2 border-thmanyah-amber/70 rounded-2xl px-6 md:px-8 py-4 md:py-5">
               <p className="font-display font-black text-[15px] md:text-[17px] text-thmanyah-amber leading-relaxed">
                 جودة قراراتك = كفاءة فريقك. كيف سترفع من جودة قرارتك بالمواهب؟
               </p>
@@ -297,33 +297,33 @@ function HomeContent() {
       <section className="py-14 md:py-20 bg-thmanyah-off-white">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
           <div className="text-center mb-10 md:mb-14">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-cream rounded-full font-ui text-[12px] text-thmanyah-muted font-bold mb-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-thmanyah-black rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-4">
               <Building2 className="w-3.5 h-3.5" />
               مسار الاعتماد
             </span>
-            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3">
+            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">
               6 مراحل — {SLA_TOTAL}
             </h2>
-            <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-muted">
+            <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">
               كل مرحلة لها مسؤول محدد ومهلة زمنية واضحة
             </p>
           </div>
 
           <div className="space-y-3 max-w-2xl mx-auto stagger-children">
             {APPROVAL_CHAIN_TEMPLATE.map((step, i) => (
-              <div key={i} className="flex items-center gap-3 md:gap-4 bg-white rounded-2xl p-4 md:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover-lift">
-                <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-thmanyah-black text-white flex items-center justify-center font-display font-black text-[14px] md:text-[16px] shrink-0">
+              <div key={i} className="flex items-center gap-3 md:gap-4 bg-white rounded-2xl p-4 md:p-5 border border-thmanyah-warm-border shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover-lift">
+                <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-thmanyah-black text-thmanyah-amber flex items-center justify-center font-display font-black text-[14px] md:text-[16px] shrink-0">
                   {i + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-ui font-black text-[14px] md:text-[15px]">{step.role}</p>
+                  <p className="font-ui font-black text-[14px] md:text-[15px] text-thmanyah-black">{step.role}</p>
                   {step.approverName && step.role !== "الرئيس التنفيذي" && (
-                    <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-muted mt-0.5 truncate">{step.approverName}</p>
+                    <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-charcoal mt-0.5 truncate">{step.approverName}</p>
                   )}
                 </div>
-                <div className="flex items-center gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 bg-thmanyah-cream rounded-full shrink-0">
-                  <Clock className="w-3 md:w-3.5 h-3 md:h-3.5 text-thmanyah-muted" />
-                  <span className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-charcoal">{step.slaHours}h</span>
+                <div className="flex items-center gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 bg-thmanyah-black rounded-full shrink-0">
+                  <Clock className="w-3 md:w-3.5 h-3 md:h-3.5 text-thmanyah-amber" />
+                  <span className="font-ui font-black text-[12px] md:text-[13px] text-thmanyah-amber">{step.slaHours}h</span>
                 </div>
               </div>
             ))}
@@ -335,8 +335,8 @@ function HomeContent() {
       <section className="py-14 md:py-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-10 md:mb-14">
-            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3">مبنية للإحسان</h2>
-            <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-muted">أداة تعكس معايير ثمانية في كل تفصيل</p>
+            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">مبنية للإحسان</h2>
+            <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">أداة تعكس معايير ثمانية في كل تفصيل</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 stagger-children">
             <FeatureCard icon={<Target className="w-5 h-5" />} title="أسئلة متكيّفة" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
@@ -347,7 +347,7 @@ function HomeContent() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 md:py-20 bg-thmanyah-black text-white text-center">
+      <section className="py-14 md:py-20 bg-thmanyah-black text-white text-center border-t border-white/10">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
           <h2 className="font-display font-black text-[24px] md:text-[40px] mb-4">
             الشركة الاستثنائية لا تُبنى بالتوظيف الكثير
@@ -360,10 +360,10 @@ function HomeContent() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-thmanyah-dark-slate text-white/40 py-6 md:py-8">
+      <footer className="bg-thmanyah-dark-slate text-white/75 py-6 md:py-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="/thamanyah.png" alt="ثمانية" width={20} height={20} className="rounded opacity-60" />
+            <Image src="/thamanyah.png" alt="ثمانية" width={20} height={20} className="rounded" />
             <span className="font-ui font-bold text-[11px] md:text-[12px]">ثمانية — إدارة الثقافة</span>
           </div>
           <span className="font-ui font-bold text-[11px] md:text-[12px]">{new Date().getFullYear()}</span>
@@ -383,10 +383,10 @@ export default function HomePage() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="bg-thmanyah-off-white rounded-2xl p-5 md:p-6 hover-lift">
-      <div className="w-10 h-10 rounded-xl bg-thmanyah-green-light/30 flex items-center justify-center mb-4 text-thmanyah-green">{icon}</div>
-      <h3 className="font-ui font-black text-[14px] md:text-[15px] mb-2">{title}</h3>
-      <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-muted leading-relaxed">{description}</p>
+    <div className="bg-thmanyah-off-white border border-thmanyah-warm-border rounded-2xl p-5 md:p-6 hover-lift">
+      <div className="w-11 h-11 rounded-xl bg-thmanyah-green flex items-center justify-center mb-4 text-white shadow-[0_4px_12px_rgba(0,193,122,0.25)]">{icon}</div>
+      <h3 className="font-ui font-black text-[14px] md:text-[15px] mb-2 text-thmanyah-black">{title}</h3>
+      <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-charcoal leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -426,7 +426,7 @@ function PipelineStage({
       </h3>
 
       {/* Description */}
-      <p className="font-ui font-bold text-[13px] md:text-[14px] text-white/65 leading-[1.8] max-w-[280px] mx-auto">
+      <p className="font-ui font-bold text-[13px] md:text-[14px] text-white/85 leading-[1.8] max-w-[280px] mx-auto">
         {description}
       </p>
     </div>
