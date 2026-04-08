@@ -199,6 +199,9 @@ function ApproveView() {
                 } />
                 <MiniInfo label="الدولة" value={request.country} />
                 <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي" : "عربي"} />
+                {request.workLocation && (
+                  <MiniInfo label="موقع العمل" value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"} />
+                )}
               </div>
             </Card>
 

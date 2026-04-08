@@ -64,6 +64,7 @@ export interface VacancyRequest {
   roleNature: RoleNature;
   jobDescription: string;
   country: string;
+  workLocation?: string;
   nationality: Nationality;
 
   // Assessment

@@ -200,6 +200,12 @@ function TrackView() {
                   }
                 />
                 <InfoRow label="الدولة" value={request.country} />
+                {request.workLocation && (
+                  <InfoRow
+                    label="موقع العمل"
+                    value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"}
+                  />
+                )}
                 <InfoRow
                   label="الجنسية"
                   value={request.nationality === "saudi" ? "سعودي" : "عربي"}
