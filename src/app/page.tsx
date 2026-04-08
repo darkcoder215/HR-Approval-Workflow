@@ -5,18 +5,15 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Briefcase,
-  ShieldCheck,
   BarChart3,
   Clock,
   Send,
   CheckCircle2,
   Eye,
   FileText,
-  Users,
   Sparkles,
   Building2,
   Target,
-  Mail,
   ChevronDown,
   LogOut,
   FlaskConical,
@@ -341,13 +338,10 @@ function HomeContent() {
             <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3">مبنية للإحسان</h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-muted">أداة تعكس معايير ثمانية في كل تفصيل</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 stagger-children">
-            <FeatureCard icon={<Eye className="w-5 h-5" />} title="تتبع لحظي" description="اعرف وين وصل طلبك بالضبط مع شريط تقدم بصري واضح" />
-            <FeatureCard icon={<Mail className="w-5 h-5" />} title="إشعارات تلقائية" description="إشعار عند كل انتقال حالة وتذكير تلقائي عند تجاوز SLA" />
-            <FeatureCard icon={<ShieldCheck className="w-5 h-5" />} title="صلاحيات محكمة" description="كل شخص يرى ما يخصه فقط مع فصل بين التعليقات العامة والداخلية" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 stagger-children">
             <FeatureCard icon={<Target className="w-5 h-5" />} title="أسئلة متكيّفة" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
+            <FeatureCard icon={<Eye className="w-5 h-5" />} title="تتبع لحظي" description="اعرف وين وصل طلبك بالضبط مع شريط تقدم بصري واضح" />
             <FeatureCard icon={<BarChart3 className="w-5 h-5" />} title="لوحة تحليلية" description="إحصائيات شاملة حسب الإدارة مع نسب القبول والرفض" />
-            <FeatureCard icon={<Users className="w-5 h-5" />} title="تعليقات ثنائية" description="تعليقات عامة لمقدم الطلب وملاحظات داخلية للمعتمدين فقط" />
           </div>
         </div>
       </section>
