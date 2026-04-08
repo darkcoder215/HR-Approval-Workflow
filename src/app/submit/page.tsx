@@ -68,6 +68,7 @@ type FormData = {
   roleNature: string;
   jobDescription: string;
   country: string;
+  workLocation: string;
   nationality: string;
   triedAlternatives: string;
   alternativesDescription: string;
@@ -112,6 +113,7 @@ const initial: FormData = {
   roleNature: "",
   jobDescription: "",
   country: "",
+  workLocation: "",
   nationality: "",
   triedAlternatives: "",
   alternativesDescription: "",
@@ -260,6 +262,7 @@ function SubmitForm() {
     if (!form.roleNature) newErrors.roleNature = "مطلوب";
     if (!form.jobDescription.trim()) newErrors.jobDescription = "مطلوب";
     if (!form.country) newErrors.country = "مطلوب";
+    if (!form.workLocation) newErrors.workLocation = "مطلوب";
     if (!form.nationality) newErrors.nationality = "مطلوب";
 
     if (!form.triedAlternatives) newErrors.triedAlternatives = "مطلوب";
@@ -366,6 +369,7 @@ function SubmitForm() {
       roleNature: form.roleNature as "full_time" | "part_time" | "contract" | "freelance" | "intern",
       jobDescription: form.jobDescription,
       country: form.country,
+      workLocation: form.workLocation || undefined,
       nationality: form.nationality as "saudi" | "arab",
       triedAlternatives: form.triedAlternatives === "yes",
       alternativesDescription: form.alternativesDescription || undefined,
@@ -434,7 +438,7 @@ function SubmitForm() {
             </span>
           </div>
           <h1 className="font-display font-black text-[26px] md:text-[40px] leading-tight mb-4">
-            كل شاغر هو قرار استثماري
+            كل قرار توظيف هو إما استثمار بعائد أو دين بفوائد
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mt-8">
@@ -457,7 +461,7 @@ function SubmitForm() {
                 </span>
               </div>
               <p className="font-ui text-[13px] text-white/60 leading-relaxed">
-                {introOpportunity} الشركة الاستثنائية لا تُبنى بالتوظيف الكثير، بل بالتوظيف الصح.
+                {introOpportunity}
               </p>
             </div>
           </div>
@@ -840,14 +844,6 @@ function SubmitForm() {
             required
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Select
-              label="الدولة"
-              options={countries.map((c) => ({ value: c, label: c }))}
-              value={form.country}
-              onChange={set("country")}
-              error={errors.country}
-              required
-            />
             <RadioGroup
               label="الجنسية"
               name="nationality"
@@ -860,7 +856,29 @@ function SubmitForm() {
               required
               error={errors.nationality}
             />
+            <RadioGroup
+              label="موقع العمل"
+              name="workLocation"
+              options={[
+                { value: "remote", label: "عن بُعد" },
+                { value: "onsite", label: "حضوري" },
+              ]}
+              value={form.workLocation}
+              onChange={setRadio("workLocation")}
+              required
+              error={errors.workLocation}
+            />
           </div>
+          <RadioGroup
+            label="الدولة"
+            name="country"
+            options={countries.map((c) => ({ value: c, label: c }))}
+            value={form.country}
+            onChange={setRadio("country")}
+            error={errors.country}
+            required
+          />
+
         </FormSection>
 
         {/* Section 4: AI Assessment */}

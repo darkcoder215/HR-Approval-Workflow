@@ -128,7 +128,7 @@ function HomeContent() {
           </span>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-14 md:pt-20 pb-16 md:pb-24 text-center">
+        <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-10 md:pt-14 pb-10 md:pb-14 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-thmanyah-green/20 border border-thmanyah-green/60 rounded-full mb-6 md:mb-8 animate-fade-in">
             <Sparkles className="w-4 h-4 text-thmanyah-green" />
             <span className="font-ui text-[12px] md:text-[13px] text-thmanyah-green font-bold">
@@ -204,9 +204,9 @@ function HomeContent() {
       </section>
 
       {/* Hiring Pipeline */}
-      <section className="py-14 md:py-24 bg-thmanyah-black text-white overflow-hidden">
+      <section className="py-10 md:py-14 bg-thmanyah-black text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-12 md:mb-20">
+          <div className="text-center mb-8 md:mb-12">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-amber/25 border border-thmanyah-amber/60 rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-5">
               <Sparkles className="w-3.5 h-3.5" />
               مسار طلب الشاغر
@@ -283,7 +283,7 @@ function HomeContent() {
           </div>
 
           {/* Bottom key message */}
-          <div className="mt-14 md:mt-20 text-center max-w-2xl mx-auto">
+          <div className="mt-10 md:mt-14 text-center max-w-2xl mx-auto">
             <div className="inline-block bg-thmanyah-amber/20 border-2 border-thmanyah-amber/70 rounded-2xl px-6 md:px-8 py-4 md:py-5">
               <p className="font-display font-black text-[15px] md:text-[17px] text-thmanyah-amber leading-relaxed">
                 جودة قراراتك = كفاءة فريقك. كيف سترفع من جودة قرارتك بالمواهب؟
@@ -294,9 +294,9 @@ function HomeContent() {
       </section>
 
       {/* Approval chain */}
-      <section className="py-14 md:py-20 bg-thmanyah-off-white">
+      <section className="py-10 md:py-14 bg-thmanyah-off-white">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
+          <div className="text-center mb-8 md:mb-10">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-thmanyah-black rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-4">
               <Building2 className="w-3.5 h-3.5" />
               مسار الاعتماد
@@ -332,9 +332,9 @@ function HomeContent() {
       </section>
 
       {/* Features */}
-      <section className="py-14 md:py-20 bg-white">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
+          <div className="text-center mb-8 md:mb-10">
             <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">مبنية للإحسان</h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">أداة تعكس معايير ثمانية في كل تفصيل</p>
           </div>
@@ -343,19 +343,6 @@ function HomeContent() {
             <FeatureCard icon={<Eye className="w-5 h-5" />} title="تتبع لحظي" description="اعرف وين وصل طلبك بالضبط مع شريط تقدم بصري واضح" />
             <FeatureCard icon={<BarChart3 className="w-5 h-5" />} title="لوحة تحليلية" description="إحصائيات شاملة حسب الإدارة مع نسب القبول والرفض" />
           </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-14 md:py-20 bg-thmanyah-black text-white text-center border-t border-white/10">
-        <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <h2 className="font-display font-black text-[24px] md:text-[40px] mb-4">
-            الشركة الاستثنائية لا تُبنى بالتوظيف الكثير
-          </h2>
-          <p className="font-display font-black text-[20px] md:text-[24px] text-thmanyah-green mb-8">بل بالتوظيف الصح</p>
-          <Link href="/submit">
-            <Button variant="accent" size="lg" icon={<Send className="w-4 h-4" />} className="text-[15px] font-black">ابدأ بتقديم طلبك</Button>
-          </Link>
         </div>
       </section>
 
