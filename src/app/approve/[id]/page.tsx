@@ -198,7 +198,10 @@ function ApproveView() {
                   { full_time: "دوام كامل", part_time: "دوام جزئي", contract: "عقد محدد", freelance: "مستقل", intern: "متدرب" }[request.roleNature] || ""
                 } />
                 <MiniInfo label="الدولة" value={request.country} />
-                <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي" : "عربي"} />
+                <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي" : "غير سعودي"} />
+                {request.preferredCountry && (
+                  <MiniInfo label="دولة مُفضّلة" value={request.preferredCountry} />
+                )}
                 {request.workLocation && (
                   <MiniInfo label="موقع العمل" value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"} />
                 )}

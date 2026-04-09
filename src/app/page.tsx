@@ -139,9 +139,8 @@ function HomeContent() {
           <h1 className="font-display font-black text-[32px] md:text-[52px] lg:text-[64px] leading-[1.1] mb-5 md:mb-6 animate-fade-in-up">
             التوظيف الصح
             <br />
-            <span className="relative">
+            <span className="inline-block bg-thmanyah-green/60 text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl">
               يبدأ من هنا
-              <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/50 -z-10 rounded-sm" />
             </span>
           </h1>
 
@@ -212,11 +211,10 @@ function HomeContent() {
               آليّة العمل
             </span>
             <h2 className="font-display font-black text-[26px] md:text-[44px] leading-tight mb-4 max-w-3xl mx-auto">
-              يدًا بيد لقرارات تليق
+              يدًا بيد لقرارات تليق{" "}
               <br className="hidden md:block" />
-              <span className="relative inline-block">
+              <span className="inline-block bg-thmanyah-green/60 text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl mt-2">
                 بثمانية وبناسها
-                <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-amber/55 -z-10 rounded-sm" />
               </span>
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-white/75 max-w-2xl mx-auto">
@@ -305,9 +303,8 @@ function HomeContent() {
               كيف نعتمد؟
             </span>
             <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">
-              <span className="relative inline-block">
+              <span className="inline-block bg-thmanyah-green text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl">
                 6 مراحل
-                <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/50 -z-10 rounded-sm" />
               </span>
               {" — "}
               {SLA_TOTAL}
@@ -345,9 +342,8 @@ function HomeContent() {
           <div className="text-center mb-8 md:mb-10">
             <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">
               مبنية{" "}
-              <span className="relative inline-block">
+              <span className="inline-block bg-thmanyah-green text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl">
                 للإحسان
-                <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/50 -z-10 rounded-sm" />
               </span>
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">أداة تعكس معايير ثمانية في كل تفصيل</p>

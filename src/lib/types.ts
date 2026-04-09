@@ -1,6 +1,6 @@
 export type VacancyType = "replacement" | "new_position";
 export type DepartureType = "resignation" | "termination";
-export type Nationality = "saudi" | "arab";
+export type Nationality = "saudi" | "non_saudi";
 export type RoleNature = "full_time" | "part_time" | "contract" | "freelance" | "intern";
 
 export type RequestStatus =
@@ -64,6 +64,7 @@ export interface VacancyRequest {
   roleNature: RoleNature;
   jobDescription: string;
   country: string;
+  preferredCountry?: string;
   workLocation?: string;
   nationality: Nationality;
 
