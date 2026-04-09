@@ -200,7 +200,7 @@ function ApproveView() {
                 <MiniInfo label="الدولة" value={request.country} />
                 <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي" : "غير سعودي"} />
                 {request.preferredCountry && (
-                  <MiniInfo label="دولة مُفضّلة" value={request.preferredCountry} />
+                  <MiniInfo label="دولة" value={request.preferredCountry} />
                 )}
                 {request.workLocation && (
                   <MiniInfo label="موقع العمل" value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"} />
