@@ -340,13 +340,11 @@ function HomeContent() {
       <section className="py-10 md:py-14 bg-white">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-8 md:mb-10">
-            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">
-              مبنية{" "}
+            <h2 className="font-display font-black text-[26px] md:text-[40px] text-thmanyah-black">
               <span className="inline-block bg-thmanyah-green text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl">
-                للإحسان
+                كيف صممنا الأداة؟
               </span>
             </h2>
-            <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">أداة تعكس معايير ثمانية في كل تفصيل</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 stagger-children">
             <FeatureCard icon={<Target className="w-5 h-5" />} title="أسئلة متكيّفة" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
