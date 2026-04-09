@@ -103,6 +103,7 @@ export const ROLE_NATURES: { value: string; label: string }[] = [
 ];
 
 export const COUNTRIES = [
+  "الرياض فقط",
   "السعودية فقط",
   "مرن جغرافيًا",
 ];

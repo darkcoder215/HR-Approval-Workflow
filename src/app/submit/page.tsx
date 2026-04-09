@@ -517,7 +517,7 @@ function SubmitForm() {
                       <p className="font-ui font-medium text-[13px]">
                         {step.role}
                       </p>
-                      {step.approverName && (
+                      {step.approverName && step.role !== "الرئيس التنفيذي" && (
                         <p className="font-ui text-[12px] text-thmanyah-muted">
                           {step.approverName}
                         </p>
@@ -883,7 +883,7 @@ function SubmitForm() {
           />
           {form.country === "مرن جغرافيًا" && (
             <Input
-              label="دولة مُفضّلة (اختياري)"
+              label="دولة (اختياري)"
               hint="لو في بالك دولة معينة، اكتبها هنا"
               placeholder="مثلًا: الإمارات، مصر، الأردن..."
               value={form.preferredCountry}

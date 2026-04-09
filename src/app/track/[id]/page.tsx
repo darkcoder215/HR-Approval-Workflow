@@ -201,7 +201,7 @@ function TrackView() {
                 />
                 <InfoRow label="الدولة" value={request.country} />
                 {request.preferredCountry && (
-                  <InfoRow label="دولة مُفضّلة" value={request.preferredCountry} />
+                  <InfoRow label="دولة" value={request.preferredCountry} />
                 )}
                 {request.workLocation && (
                   <InfoRow
