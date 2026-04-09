@@ -198,7 +198,7 @@ function ApproveView() {
                   { full_time: "دوام كامل", part_time: "دوام جزئي", contract: "عقد محدد", freelance: "مستقل", intern: "متدرب" }[request.roleNature] || ""
                 } />
                 <MiniInfo label="الدولة" value={request.country} />
-                <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي" : "غير سعودي"} />
+                <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي" : request.nationality === "arab" ? "عربي" : "غير عربي"} />
                 {request.preferredCountry && (
                   <MiniInfo label="دولة" value={request.preferredCountry} />
                 )}

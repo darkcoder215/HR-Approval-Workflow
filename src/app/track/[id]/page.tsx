@@ -211,7 +211,13 @@ function TrackView() {
                 )}
                 <InfoRow
                   label="الجنسية"
-                  value={request.nationality === "saudi" ? "سعودي" : "غير سعودي"}
+                  value={
+                    request.nationality === "saudi"
+                      ? "سعودي"
+                      : request.nationality === "arab"
+                      ? "عربي"
+                      : "غير عربي"
+                  }
                 />
               </div>
             </Card>
