@@ -287,7 +287,7 @@ function HomeContent() {
           <div className="mt-10 md:mt-14 text-center max-w-2xl mx-auto">
             <div className="inline-block bg-thmanyah-amber/20 border-2 border-thmanyah-amber/70 rounded-2xl px-6 md:px-8 py-4 md:py-5">
               <p className="font-display font-black text-[15px] md:text-[17px] text-thmanyah-amber leading-relaxed">
-                جودة قراراتك = كفاءة فريقك. كيف سترفع من جودة قرارتك بالمواهب؟
+                جودة قراراتك = كفاءة فريقك. كيف سترفع من جودة قراراتك في اختيار أفضل المواهب؟
               </p>
             </div>
           </div>
