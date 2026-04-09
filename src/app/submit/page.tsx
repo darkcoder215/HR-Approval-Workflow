@@ -438,7 +438,7 @@ function SubmitForm() {
             </span>
           </div>
           <h1 className="font-display font-black text-[26px] md:text-[40px] leading-tight mb-4">
-            كل قرار توظيف هو إما استثمار بعائد أو دين بفوائد
+            كل قرار توظيف، إما استثمار بعائد أو دين بفوائد
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mt-8">
