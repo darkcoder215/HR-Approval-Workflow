@@ -200,6 +200,9 @@ function TrackView() {
                   }
                 />
                 <InfoRow label="الدولة" value={request.country} />
+                {request.preferredCountry && (
+                  <InfoRow label="دولة مُفضّلة" value={request.preferredCountry} />
+                )}
                 {request.workLocation && (
                   <InfoRow
                     label="موقع العمل"
@@ -208,7 +211,7 @@ function TrackView() {
                 )}
                 <InfoRow
                   label="الجنسية"
-                  value={request.nationality === "saudi" ? "سعودي" : "عربي"}
+                  value={request.nationality === "saudi" ? "سعودي" : "غير سعودي"}
                 />
               </div>
             </Card>

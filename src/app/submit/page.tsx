@@ -68,6 +68,7 @@ type FormData = {
   roleNature: string;
   jobDescription: string;
   country: string;
+  preferredCountry: string;
   workLocation: string;
   nationality: string;
   triedAlternatives: string;
@@ -113,6 +114,7 @@ const initial: FormData = {
   roleNature: "",
   jobDescription: "",
   country: "",
+  preferredCountry: "",
   workLocation: "",
   nationality: "",
   triedAlternatives: "",
@@ -369,8 +371,9 @@ function SubmitForm() {
       roleNature: form.roleNature as "full_time" | "part_time" | "contract" | "freelance" | "intern",
       jobDescription: form.jobDescription,
       country: form.country,
+      preferredCountry: form.preferredCountry || undefined,
       workLocation: form.workLocation || undefined,
-      nationality: form.nationality as "saudi" | "arab",
+      nationality: form.nationality as "saudi" | "non_saudi",
       triedAlternatives: form.triedAlternatives === "yes",
       alternativesDescription: form.alternativesDescription || undefined,
       risksIfNotHired: form.risksIfNotHired,
@@ -849,7 +852,7 @@ function SubmitForm() {
               name="nationality"
               options={[
                 { value: "saudi", label: "سعودي" },
-                { value: "arab", label: "عربي" },
+                { value: "non_saudi", label: "غير سعودي" },
               ]}
               value={form.nationality}
               onChange={setRadio("nationality")}
@@ -878,6 +881,15 @@ function SubmitForm() {
             error={errors.country}
             required
           />
+          {form.country === "مرن جغرافيًا" && (
+            <Input
+              label="دولة مُفضّلة (اختياري)"
+              hint="لو في بالك دولة معينة، اكتبها هنا"
+              placeholder="مثلًا: الإمارات، مصر، الأردن..."
+              value={form.preferredCountry}
+              onChange={set("preferredCountry")}
+            />
+          )}
 
         </FormSection>
 
