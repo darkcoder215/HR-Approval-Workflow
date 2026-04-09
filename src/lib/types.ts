@@ -1,6 +1,6 @@
 export type VacancyType = "replacement" | "new_position";
 export type DepartureType = "resignation" | "termination";
-export type Nationality = "saudi" | "non_saudi";
+export type Nationality = "saudi" | "arab" | "non_arab";
 export type RoleNature = "full_time" | "part_time" | "contract" | "freelance" | "intern";
 
 export type RequestStatus =

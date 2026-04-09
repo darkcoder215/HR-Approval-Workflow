@@ -373,7 +373,7 @@ function SubmitForm() {
       country: form.country,
       preferredCountry: form.preferredCountry || undefined,
       workLocation: form.workLocation || undefined,
-      nationality: form.nationality as "saudi" | "non_saudi",
+      nationality: form.nationality as "saudi" | "arab" | "non_arab",
       triedAlternatives: form.triedAlternatives === "yes",
       alternativesDescription: form.alternativesDescription || undefined,
       risksIfNotHired: form.risksIfNotHired,
@@ -852,7 +852,8 @@ function SubmitForm() {
               name="nationality"
               options={[
                 { value: "saudi", label: "سعودي" },
-                { value: "non_saudi", label: "غير سعودي" },
+                { value: "arab", label: "عربي" },
+                { value: "non_arab", label: "غير عربي" },
               ]}
               value={form.nationality}
               onChange={setRadio("nationality")}
