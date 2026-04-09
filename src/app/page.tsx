@@ -209,12 +209,15 @@ function HomeContent() {
           <div className="text-center mb-8 md:mb-12">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-amber/25 border border-thmanyah-amber/60 rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-5">
               <Sparkles className="w-3.5 h-3.5" />
-              مسار طلب الشاغر
+              آليّة العمل
             </span>
             <h2 className="font-display font-black text-[26px] md:text-[44px] leading-tight mb-4 max-w-3xl mx-auto">
               يدًا بيد لقرارات تليق
               <br className="hidden md:block" />
-              بثمانية وبناسها
+              <span className="relative inline-block">
+                بثمانية وبناسها
+                <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-amber/55 -z-10 rounded-sm" />
+              </span>
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-white/75 max-w-2xl mx-auto">
               ثلاث مراحل واضحة من لحظة رفع الطلب إلى قرار الاستقطاب
@@ -245,7 +248,7 @@ function HomeContent() {
                 index={2}
                 icon={<CheckCircle2 className="w-7 h-7" />}
                 title="اتّخاذ القرار"
-                description="عند قبول طلبك، يتم تعيين مسؤول الاستقطاب للعمل معك. وفي حال الرفض، نشاركك تقرير واضح."
+                description="عند قبول طلبك، يُعين مسؤول الاستقطاب للعمل معك، وفي حال الرفض، نشاركك تقرير واضح."
               />
             </div>
           </div>
@@ -267,7 +270,7 @@ function HomeContent() {
               {
                 icon: <CheckCircle2 className="w-5 h-5" />,
                 title: "اتّخاذ القرار",
-                description: "عند قبول طلبك، يتم تعيين مسؤول الاستقطاب للعمل معك. وفي حال الرفض، نشاركك تقرير واضح.",
+                description: "عند قبول طلبك، يُعين مسؤول الاستقطاب للعمل معك، وفي حال الرفض، نشاركك تقرير واضح.",
               },
             ].map((s, i) => (
               <div key={i} className="relative flex items-start gap-4 pipeline-node-enter" style={{ animationDelay: `${i * 0.12}s` }}>
@@ -299,10 +302,15 @@ function HomeContent() {
           <div className="text-center mb-8 md:mb-10">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-thmanyah-black rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-4">
               <Building2 className="w-3.5 h-3.5" />
-              مسار الاعتماد
+              كيف نعتمد؟
             </span>
             <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">
-              6 مراحل — {SLA_TOTAL}
+              <span className="relative inline-block">
+                6 مراحل
+                <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/50 -z-10 rounded-sm" />
+              </span>
+              {" — "}
+              {SLA_TOTAL}
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">
               كل مرحلة لها مسؤول محدد ومهلة زمنية واضحة
@@ -335,7 +343,13 @@ function HomeContent() {
       <section className="py-10 md:py-14 bg-white">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
           <div className="text-center mb-8 md:mb-10">
-            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">مبنية للإحسان</h2>
+            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">
+              مبنية{" "}
+              <span className="relative inline-block">
+                للإحسان
+                <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/50 -z-10 rounded-sm" />
+              </span>
+            </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">أداة تعكس معايير ثمانية في كل تفصيل</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 stagger-children">
