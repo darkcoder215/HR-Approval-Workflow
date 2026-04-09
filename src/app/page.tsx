@@ -218,7 +218,7 @@ function HomeContent() {
               </span>
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-white/75 max-w-2xl mx-auto">
-              ثلاث مراحل واضحة من لحظة رفع الطلب إلى قرار الاستقطاب
+              ٣ مراحل من رفع الطلب إلى قرار التوظيف.
             </p>
           </div>
 
