@@ -47,10 +47,20 @@ function TrackView() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const id = params.id as string;
-    const r = getRequestById(id);
-    setRequest(r || null);
-    setLoading(false);
+    let cancelled = false;
+    (async () => {
+      try {
+        const id = params.id as string;
+        const r = await getRequestById(id);
+        if (cancelled) return;
+        setRequest(r || null);
+      } catch (err) {
+        console.error("Failed to load request", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [params.id]);
 
   const copyLink = () => {
