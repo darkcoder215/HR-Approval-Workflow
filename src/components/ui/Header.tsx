@@ -49,7 +49,7 @@ export default function Header() {
           >
             لوحة المتابعة
           </Link>
-          {user?.username === "admin" && (
+          {user?.role === "culture_admin" && (
             <Link
               href="/settings"
               className="px-3 py-2 text-[12px] font-ui font-bold text-white/40 hover:text-white hover:bg-white/10 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
@@ -60,7 +60,7 @@ export default function Header() {
           )}
           {user && (
             <button
-              onClick={logout}
+              onClick={() => { void logout(); }}
               className="px-3 py-2 text-[12px] font-ui font-bold text-white/40 hover:text-thmanyah-red hover:bg-white/5 rounded-full transition-all flex items-center gap-1.5 mr-2 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -85,12 +85,12 @@ export default function Header() {
             <MobileLink href="/" onClick={() => setMobileOpen(false)}>الرئيسية</MobileLink>
             <MobileLink href="/submit" onClick={() => setMobileOpen(false)}>تقديم طلب</MobileLink>
             <MobileLink href="/dashboard" onClick={() => setMobileOpen(false)}>لوحة المتابعة</MobileLink>
-            {user?.username === "admin" && (
+            {user?.role === "culture_admin" && (
               <MobileLink href="/settings" onClick={() => setMobileOpen(false)}>الإعدادات</MobileLink>
             )}
             {user && (
               <button
-                onClick={() => { logout(); setMobileOpen(false); }}
+                onClick={() => { void logout(); setMobileOpen(false); }}
                 className="px-4 py-3 text-[14px] font-ui font-bold text-thmanyah-red/70 hover:text-thmanyah-red hover:bg-white/5 rounded-xl transition-all text-right flex items-center gap-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -43,7 +43,7 @@ import {
   APPROVAL_FLOW_NOTE,
   APPROVAL_CHAIN_TEMPLATE,
 } from "@/lib/constants";
-import { getSettings } from "@/lib/settings";
+import { getSettings, AppSettings } from "@/lib/settings";
 
 type FormData = {
   requesterName: string;
@@ -194,8 +194,16 @@ function SubmitForm() {
   const [prefillFlash, setPrefillFlash] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
-  // Load admin-customizable settings (falls back to constants.ts defaults)
-  const s = typeof window !== "undefined" ? getSettings() : null;
+  // Load admin-customizable settings (falls back to constants.ts defaults).
+  // Settings live in Supabase (hr_settings singleton), so the fetch is async.
+  const [s, setS] = useState<AppSettings | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getSettings()
+      .then((res) => { if (!cancelled) setS(res); })
+      .catch(() => { /* keep defaults */ });
+    return () => { cancelled = true; };
+  }, []);
   const departments = s?.departments ?? DEPARTMENTS;
   const jobLevels = s?.jobLevels ?? JOB_LEVELS;
   const roleNatures = s?.roleNatures ?? ROLE_NATURES;
@@ -345,47 +353,52 @@ function SubmitForm() {
     runAnalysis();
   };
 
-  const confirmSubmit = () => {
+  const confirmSubmit = async () => {
     setShowAnalysis(false);
     setSubmitting(true);
 
-    const request = createRequest({
-      requesterName: form.requesterName,
-      requesterEmail: form.requesterEmail,
-      department: form.department,
-      section: form.section,
-      team: form.team,
-      project: form.project,
-      budgetOwner: form.budgetOwner,
-      vacancyType: form.vacancyType as "replacement" | "new_position",
-      positionsCount: parseInt(form.positionsCount) || 1,
-      previousEmployeeName: form.previousEmployeeName || undefined,
-      departureDate: form.departureDate || undefined,
-      departureType: (form.departureType as "resignation" | "termination") || undefined,
-      departureReason: form.departureReason || undefined,
-      isInApprovedStructure: form.isInApprovedStructure === "yes" ? true : form.isInApprovedStructure === "no" ? false : undefined,
-      structureJustification: form.structureJustification || undefined,
-      jobTitle: form.jobTitle,
-      jobTitleEn: form.jobTitleEn,
-      jobLevel: form.jobLevel,
-      roleNature: form.roleNature as "full_time" | "part_time" | "contract" | "freelance" | "intern",
-      jobDescription: form.jobDescription,
-      country: form.country,
-      preferredCountry: form.preferredCountry || undefined,
-      workLocation: form.workLocation || undefined,
-      nationality: form.nationality as "saudi" | "arab" | "non_arab",
-      triedAlternatives: form.triedAlternatives === "yes",
-      alternativesDescription: form.alternativesDescription || undefined,
-      risksIfNotHired: form.risksIfNotHired,
-      aiRoleIntegration: form.aiRoleIntegration,
-      aiAutomationPotential: form.aiAutomationPotential,
-      aiReplacementAssessment: form.aiReplacementAssessment,
-      hiringBarCommitment: form.hiringBarCommitment,
-    });
+    try {
+      const request = await createRequest({
+        requesterName: form.requesterName,
+        requesterEmail: form.requesterEmail,
+        department: form.department,
+        section: form.section,
+        team: form.team,
+        project: form.project,
+        budgetOwner: form.budgetOwner,
+        vacancyType: form.vacancyType as "replacement" | "new_position",
+        positionsCount: parseInt(form.positionsCount) || 1,
+        previousEmployeeName: form.previousEmployeeName || undefined,
+        departureDate: form.departureDate || undefined,
+        departureType: (form.departureType as "resignation" | "termination") || undefined,
+        departureReason: form.departureReason || undefined,
+        isInApprovedStructure: form.isInApprovedStructure === "yes" ? true : form.isInApprovedStructure === "no" ? false : undefined,
+        structureJustification: form.structureJustification || undefined,
+        jobTitle: form.jobTitle,
+        jobTitleEn: form.jobTitleEn,
+        jobLevel: form.jobLevel,
+        roleNature: form.roleNature as "full_time" | "part_time" | "contract" | "freelance" | "intern",
+        jobDescription: form.jobDescription,
+        country: form.country,
+        preferredCountry: form.preferredCountry || undefined,
+        workLocation: form.workLocation || undefined,
+        nationality: form.nationality as "saudi" | "arab" | "non_arab",
+        triedAlternatives: form.triedAlternatives === "yes",
+        alternativesDescription: form.alternativesDescription || undefined,
+        risksIfNotHired: form.risksIfNotHired,
+        aiRoleIntegration: form.aiRoleIntegration,
+        aiAutomationPotential: form.aiAutomationPotential,
+        aiReplacementAssessment: form.aiReplacementAssessment,
+        hiringBarCommitment: form.hiringBarCommitment,
+      });
 
-    setTimeout(() => {
       router.push(`/track/${request.id}`);
-    }, 800);
+    } catch (err) {
+      console.error("Failed to create request", err);
+      setSubmitting(false);
+      setAnalysisError("تعذر حفظ الطلب، حاول مرة أخرى.");
+      setShowAnalysis(true);
+    }
   };
 
   const cancelSubmit = () => {

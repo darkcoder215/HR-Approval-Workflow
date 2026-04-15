@@ -54,31 +54,51 @@ function ApproveView() {
   const stepIndex = stepParam ? parseInt(stepParam) : -1;
 
   useEffect(() => {
-    const r = getRequestById(params.id as string);
-    setRequest(r || null);
-    setLoading(false);
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await getRequestById(params.id as string);
+        if (cancelled) return;
+        setRequest(r || null);
+      } catch (err) {
+        console.error("Failed to load request", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [params.id]);
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     if (!request) return;
     setProcessing(true);
-    const updated = approveStep(request.id, stepIndex, comment, internalComment);
-    if (updated) {
-      setRequest(updated);
-      setActionDone("approved");
+    try {
+      const updated = await approveStep(request.id, stepIndex, comment, internalComment);
+      if (updated) {
+        setRequest(updated);
+        setActionDone("approved");
+      }
+    } catch (err) {
+      console.error("Failed to approve step", err);
+    } finally {
+      setProcessing(false);
     }
-    setProcessing(false);
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
     if (!request || !rejectionReason.trim()) return;
     setProcessing(true);
-    const updated = rejectStep(request.id, stepIndex, rejectionReason, internalComment);
-    if (updated) {
-      setRequest(updated);
-      setActionDone("rejected");
+    try {
+      const updated = await rejectStep(request.id, stepIndex, rejectionReason, internalComment);
+      if (updated) {
+        setRequest(updated);
+        setActionDone("rejected");
+      }
+    } catch (err) {
+      console.error("Failed to reject step", err);
+    } finally {
+      setProcessing(false);
     }
-    setProcessing(false);
   };
 
   if (loading) {

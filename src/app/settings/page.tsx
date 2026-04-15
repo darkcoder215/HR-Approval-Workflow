@@ -39,7 +39,9 @@ import {
 function SettingsContent() {
   const { isAuthenticated, user } = useAuth();
   const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [hasCustom, setHasCustom] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     approvalChain: true,
@@ -51,19 +53,39 @@ function SettingsContent() {
   });
 
   useEffect(() => {
-    setSettings(getSettings());
+    let cancelled = false;
+    (async () => {
+      const [s, custom] = await Promise.all([getSettings(), hasCustomSettings()]);
+      if (cancelled) return;
+      setSettings(s);
+      setHasCustom(custom);
+    })();
+    return () => { cancelled = true; };
   }, []);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (!settings) return;
-    saveSettings(settings);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setSaving(true);
+    try {
+      await saveSettings(settings);
+      setSaved(true);
+      setHasCustom(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      console.error("Failed to save settings", err);
+    } finally {
+      setSaving(false);
+    }
   }, [settings]);
 
-  const handleReset = useCallback(() => {
-    resetSettings();
+  const handleReset = useCallback(async () => {
+    try {
+      await resetSettings();
+    } catch (err) {
+      console.error("Failed to reset settings", err);
+    }
     setSettings(getDefaultSettings());
+    setHasCustom(false);
     setResetConfirm(false);
     setSaved(false);
   }, []);
@@ -74,7 +96,7 @@ function SettingsContent() {
 
   if (!isAuthenticated) return <LoginScreen />;
 
-  if (user?.username !== "admin") {
+  if (user?.role !== "culture_admin") {
     return (
       <div className="min-h-screen bg-thmanyah-off-white">
         <Header />
@@ -84,7 +106,7 @@ function SettingsContent() {
           </div>
           <h1 className="font-display font-black text-[28px] mb-3">صفحة محظورة</h1>
           <p className="font-ui font-bold text-thmanyah-muted text-[15px]">
-            هذه الصفحة متاحة فقط لمدير النظام (admin)
+            هذه الصفحة متاحة فقط لمدير النظام (إدارة الثقافة)
           </p>
         </div>
       </div>
@@ -124,7 +146,7 @@ function SettingsContent() {
                 </div>
               ) : (
                 <span className="font-ui font-bold text-[13px] text-thmanyah-muted">
-                  {hasCustomSettings() ? "إعدادات مخصصة نشطة" : "الإعدادات الافتراضية"}
+                  {hasCustom ? "إعدادات مخصصة نشطة" : "الإعدادات الافتراضية"}
                 </span>
               )}
             </div>
@@ -133,7 +155,7 @@ function SettingsContent() {
                 <div className="flex items-center gap-2 animate-fade-in">
                   <span className="font-ui font-bold text-[12px] text-thmanyah-red">متأكد؟</span>
                   <button
-                    onClick={handleReset}
+                    onClick={() => { void handleReset(); }}
                     className="px-3 py-1.5 bg-thmanyah-red text-white rounded-full font-ui font-black text-[12px] cursor-pointer hover:bg-red-600 transition-colors"
                   >
                     نعم، استعادة
@@ -158,7 +180,8 @@ function SettingsContent() {
                 variant="accent"
                 size="sm"
                 icon={<Save className="w-3.5 h-3.5" />}
-                onClick={handleSave}
+                onClick={() => { void handleSave(); }}
+                loading={saving}
               >
                 حفظ التغييرات
               </Button>

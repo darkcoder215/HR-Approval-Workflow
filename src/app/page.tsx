@@ -25,34 +25,60 @@ import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { APPROVAL_CHAIN_TEMPLATE, SLA_TOTAL } from "@/lib/constants";
-import { getAllRequests, getDashboardStats } from "@/lib/store";
+import { getAllRequests } from "@/lib/store";
 import { seedDemoData, hasDemoData, clearAllData } from "@/lib/seedData";
 
 function HomeContent() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [hasRequests, setHasRequests] = useState(false);
-  const [seeded, setSeeded] = useState(false);
+  const [, setSeeded] = useState(false);
   const [seedCount, setSeedCount] = useState(0);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const all = getAllRequests();
-    setHasRequests(all.length > 0);
-    setSeedCount(all.length);
-    setSeeded(hasDemoData());
+    let cancelled = false;
+    (async () => {
+      try {
+        const [all, seededFlag] = await Promise.all([getAllRequests(), hasDemoData()]);
+        if (cancelled) return;
+        setHasRequests(all.length > 0);
+        setSeedCount(all.length);
+        setSeeded(seededFlag);
+      } catch (err) {
+        console.error("Failed to load home data", err);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
-  const handleSeed = () => {
-    const data = seedDemoData();
-    setSeeded(true);
-    setHasRequests(true);
-    setSeedCount(data.length);
+  const handleSeed = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const data = await seedDemoData();
+      setSeeded(true);
+      setHasRequests(true);
+      setSeedCount(data.length);
+    } catch (err) {
+      console.error("Failed to seed demo data", err);
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const handleClear = () => {
-    clearAllData();
-    setSeeded(false);
-    setHasRequests(false);
-    setSeedCount(0);
+  const handleClear = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await clearAllData();
+      setSeeded(false);
+      setHasRequests(false);
+      setSeedCount(0);
+    } catch (err) {
+      console.error("Failed to clear data", err);
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (!isAuthenticated) return <LoginScreen />;
@@ -77,7 +103,7 @@ function HomeContent() {
               </Button>
             </Link>
             <button
-              onClick={logout}
+              onClick={() => { void logout(); }}
               className="px-2 py-2 text-white/60 hover:text-thmanyah-red rounded-full transition-all cursor-pointer"
               title="تسجيل الخروج"
             >
@@ -177,16 +203,18 @@ function HomeContent() {
               )}
               <div className="flex gap-2">
                 <button
-                  onClick={handleSeed}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber hover:brightness-110 text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
+                  onClick={() => { void handleSeed(); }}
+                  disabled={busy}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
                 >
                   <FlaskConical className="w-3.5 h-3.5" />
-                  {seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
+                  {busy ? "جاري..." : seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
                 </button>
                 {seedCount > 0 && (
                   <button
-                    onClick={handleClear}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/15 hover:bg-thmanyah-red/30 text-white/90 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
+                    onClick={() => { void handleClear(); }}
+                    disabled={busy}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/15 hover:bg-thmanyah-red/30 disabled:opacity-50 disabled:cursor-not-allowed text-white/90 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     مسح
