@@ -24,4 +24,16 @@ export function getSupabase(): SupabaseClient {
   return client;
 }
 
-export const supabase = getSupabase();
+/**
+ * Lazy proxy: resolves the real client only on first property access.
+ * This lets the module be imported safely during Next.js static prerender
+ * (where env vars may be temporarily absent) without crashing the build.
+ * Every actual `.from(...)` / `.auth.*` call still routes to a real client.
+ */
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop, receiver) {
+    const real = getSupabase() as unknown as Record<string | symbol, unknown>;
+    const value = real[prop as string];
+    return typeof value === "function" ? (value as (...args: unknown[]) => unknown).bind(real) : value;
+  },
+});

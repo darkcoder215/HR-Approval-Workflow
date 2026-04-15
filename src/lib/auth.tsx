@@ -119,6 +119,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password,
         options: {
           data: { display_name: displayName.trim() },
+          emailRedirectTo:
+            typeof window !== "undefined" ? window.location.origin : undefined,
         },
       });
       if (error) return { ok: false, error: error.message };
