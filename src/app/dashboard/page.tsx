@@ -456,6 +456,22 @@ function DashboardView({ user }: { user: AuthUser }) {
 function RequestCard({ request, canApprove }: { request: VacancyRequest; canApprove: boolean }) {
   const currentApprover =
     request.approvalChain[request.currentApprovalStep];
+  const totalSteps = request.approvalChain.length;
+  const approvedSteps = request.approvalChain.filter((s) => s.status === "approved").length;
+  const isRejected = request.status === "rejected";
+  const isFullyApproved =
+    request.status === "approved" || request.status === "hiring_started";
+
+  // Human-readable progress line — makes partial approvals (e.g. 2/6) visible
+  // so the dashboard no longer hides partial progress behind a single
+  // "قيد المعالجة" status chip.
+  const progressLine = isRejected
+    ? `رُفض بعد ${approvedSteps} من ${totalSteps} مراحل`
+    : isFullyApproved
+    ? `اكتمل اعتماد جميع المراحل (${totalSteps}/${totalSteps})`
+    : `${approvedSteps} من ${totalSteps} مراحل معتمدة${
+        currentApprover ? ` — بانتظار ${currentApprover.role}` : ""
+      }`;
 
   // Tint each card by its lifecycle state so the dashboard reads as a heat-
   // map at a glance: approved = green rail, rejected = peach, hiring = sky,
@@ -509,29 +525,42 @@ function RequestCard({ request, canApprove }: { request: VacancyRequest; canAppr
             </span>
           </div>
 
-          {/* Mini stepper */}
-          <div className="flex items-center gap-1 mt-3">
-            {request.approvalChain.map((step, i) => (
-              <div key={step.id} className="flex items-center gap-1">
-                <div
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    step.status === "approved"
-                      ? "bg-thmanyah-green"
-                      : step.status === "rejected"
-                      ? "bg-thmanyah-red"
-                      : i === request.currentApprovalStep && request.status !== "rejected"
-                      ? "bg-thmanyah-amber animate-pulse-soft"
-                      : "bg-thmanyah-warm-border"
-                  }`}
-                  title={step.role}
-                />
-                {i < request.approvalChain.length - 1 && (
-                  <div className={`w-3 h-0.5 ${
-                    step.status === "approved" ? "bg-thmanyah-green" : "bg-thmanyah-warm-border"
-                  }`} />
-                )}
-              </div>
-            ))}
+          {/* Mini stepper + progress line */}
+          <div className="mt-3 space-y-1.5">
+            <div className="flex items-center gap-1">
+              {request.approvalChain.map((step, i) => (
+                <div key={step.id} className="flex items-center gap-1">
+                  <div
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      step.status === "approved"
+                        ? "bg-thmanyah-green"
+                        : step.status === "rejected"
+                        ? "bg-thmanyah-red"
+                        : i === request.currentApprovalStep && !isRejected
+                        ? "bg-thmanyah-amber animate-pulse-soft"
+                        : "bg-thmanyah-warm-border"
+                    }`}
+                    title={step.role}
+                  />
+                  {i < request.approvalChain.length - 1 && (
+                    <div className={`w-3 h-0.5 ${
+                      step.status === "approved" ? "bg-thmanyah-green" : "bg-thmanyah-warm-border"
+                    }`} />
+                  )}
+                </div>
+              ))}
+            </div>
+            <p
+              className={`font-ui text-[11px] ${
+                isRejected
+                  ? "text-thmanyah-red"
+                  : isFullyApproved
+                  ? "text-thmanyah-green font-bold"
+                  : "text-thmanyah-muted"
+              }`}
+            >
+              {progressLine}
+            </p>
           </div>
         </div>
 
