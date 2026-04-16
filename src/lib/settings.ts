@@ -1,6 +1,6 @@
 /**
- * Settings store — persists admin customizations in localStorage.
- * Falls back to constants.ts defaults when no overrides exist.
+ * Supabase-backed settings store. Falls back to constants.ts defaults when
+ * the singleton row hasn't been written yet.
  */
 
 import {
@@ -15,9 +15,7 @@ import {
   APPROVAL_FLOW_NOTE,
   SLA_TOTAL,
 } from "./constants";
-import { ApprovalStep } from "./types";
-
-const SETTINGS_KEY = "thmanyah_settings";
+import { supabase } from "./supabase";
 
 export interface ApprovalStepConfig {
   order: number;
@@ -28,16 +26,11 @@ export interface ApprovalStepConfig {
 }
 
 export interface AppSettings {
-  // Dropdown options
   departments: string[];
   jobLevels: string[];
   roleNatures: { value: string; label: string }[];
   countries: string[];
-
-  // Approval chain
   approvalChain: ApprovalStepConfig[];
-
-  // Messaging
   introChallenge: string;
   introOpportunity: string;
   hiringBarMessage: string;
@@ -66,31 +59,54 @@ export function getDefaultSettings(): AppSettings {
   };
 }
 
-export function getSettings(): AppSettings {
-  if (typeof window === "undefined") return getDefaultSettings();
-  const raw = localStorage.getItem(SETTINGS_KEY);
-  if (!raw) return getDefaultSettings();
+export async function getSettings(): Promise<AppSettings> {
+  const defaults = getDefaultSettings();
   try {
-    const saved = JSON.parse(raw) as Partial<AppSettings>;
-    // Merge with defaults to handle new fields added later
-    const defaults = getDefaultSettings();
+    const { data, error } = await supabase
+      .from("hr_settings")
+      .select("data")
+      .eq("id", "singleton")
+      .maybeSingle();
+    if (error) return defaults;
+    if (!data) return defaults;
+    const saved = (data.data ?? {}) as Partial<AppSettings>;
     return { ...defaults, ...saved };
   } catch {
-    return getDefaultSettings();
+    return defaults;
   }
 }
 
-export function saveSettings(settings: AppSettings): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+export async function saveSettings(settings: AppSettings): Promise<void> {
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData?.user?.id ?? null;
+
+  const { error } = await supabase
+    .from("hr_settings")
+    .upsert(
+      {
+        id: "singleton",
+        data: settings,
+        updated_by: userId,
+      },
+      { onConflict: "id" }
+    );
+  if (error) throw error;
 }
 
-export function resetSettings(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(SETTINGS_KEY);
+export async function resetSettings(): Promise<void> {
+  const { error } = await supabase
+    .from("hr_settings")
+    .delete()
+    .eq("id", "singleton");
+  if (error) throw error;
 }
 
-export function hasCustomSettings(): boolean {
-  if (typeof window === "undefined") return false;
-  return localStorage.getItem(SETTINGS_KEY) !== null;
+export async function hasCustomSettings(): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("hr_settings")
+    .select("id")
+    .eq("id", "singleton")
+    .maybeSingle();
+  if (error) return false;
+  return !!data;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -43,7 +43,7 @@ import {
   APPROVAL_FLOW_NOTE,
   APPROVAL_CHAIN_TEMPLATE,
 } from "@/lib/constants";
-import { getSettings } from "@/lib/settings";
+import { getSettings, AppSettings } from "@/lib/settings";
 
 type FormData = {
   requesterName: string;
@@ -68,6 +68,8 @@ type FormData = {
   roleNature: string;
   jobDescription: string;
   country: string;
+  preferredCountry: string;
+  workLocation: string;
   nationality: string;
   triedAlternatives: string;
   alternativesDescription: string;
@@ -112,6 +114,8 @@ const initial: FormData = {
   roleNature: "",
   jobDescription: "",
   country: "",
+  preferredCountry: "",
+  workLocation: "",
   nationality: "",
   triedAlternatives: "",
   alternativesDescription: "",
@@ -190,8 +194,16 @@ function SubmitForm() {
   const [prefillFlash, setPrefillFlash] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
-  // Load admin-customizable settings (falls back to constants.ts defaults)
-  const s = typeof window !== "undefined" ? getSettings() : null;
+  // Load admin-customizable settings (falls back to constants.ts defaults).
+  // Settings live in Supabase (hr_settings singleton), so the fetch is async.
+  const [s, setS] = useState<AppSettings | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    getSettings()
+      .then((res) => { if (!cancelled) setS(res); })
+      .catch(() => { /* keep defaults */ });
+    return () => { cancelled = true; };
+  }, []);
   const departments = s?.departments ?? DEPARTMENTS;
   const jobLevels = s?.jobLevels ?? JOB_LEVELS;
   const roleNatures = s?.roleNatures ?? ROLE_NATURES;
@@ -260,6 +272,7 @@ function SubmitForm() {
     if (!form.roleNature) newErrors.roleNature = "مطلوب";
     if (!form.jobDescription.trim()) newErrors.jobDescription = "مطلوب";
     if (!form.country) newErrors.country = "مطلوب";
+    if (!form.workLocation) newErrors.workLocation = "مطلوب";
     if (!form.nationality) newErrors.nationality = "مطلوب";
 
     if (!form.triedAlternatives) newErrors.triedAlternatives = "مطلوب";
@@ -340,45 +353,52 @@ function SubmitForm() {
     runAnalysis();
   };
 
-  const confirmSubmit = () => {
+  const confirmSubmit = async () => {
     setShowAnalysis(false);
     setSubmitting(true);
 
-    const request = createRequest({
-      requesterName: form.requesterName,
-      requesterEmail: form.requesterEmail,
-      department: form.department,
-      section: form.section,
-      team: form.team,
-      project: form.project,
-      budgetOwner: form.budgetOwner,
-      vacancyType: form.vacancyType as "replacement" | "new_position",
-      positionsCount: parseInt(form.positionsCount) || 1,
-      previousEmployeeName: form.previousEmployeeName || undefined,
-      departureDate: form.departureDate || undefined,
-      departureType: (form.departureType as "resignation" | "termination") || undefined,
-      departureReason: form.departureReason || undefined,
-      isInApprovedStructure: form.isInApprovedStructure === "yes" ? true : form.isInApprovedStructure === "no" ? false : undefined,
-      structureJustification: form.structureJustification || undefined,
-      jobTitle: form.jobTitle,
-      jobTitleEn: form.jobTitleEn,
-      jobLevel: form.jobLevel,
-      roleNature: form.roleNature as "full_time" | "part_time" | "contract" | "freelance" | "intern",
-      jobDescription: form.jobDescription,
-      country: form.country,
-      nationality: form.nationality as "saudi" | "arab",
-      triedAlternatives: form.triedAlternatives === "yes",
-      alternativesDescription: form.alternativesDescription || undefined,
-      risksIfNotHired: form.risksIfNotHired,
-      aiRoleIntegration: form.aiRoleIntegration,
-      aiAutomationPotential: form.aiAutomationPotential,
-      aiReplacementAssessment: form.aiReplacementAssessment,
-      hiringBarCommitment: form.hiringBarCommitment,
-    });
+    try {
+      const request = await createRequest({
+        requesterName: form.requesterName,
+        requesterEmail: form.requesterEmail,
+        department: form.department,
+        section: form.section,
+        team: form.team,
+        project: form.project,
+        budgetOwner: form.budgetOwner,
+        vacancyType: form.vacancyType as "replacement" | "new_position",
+        positionsCount: parseInt(form.positionsCount) || 1,
+        previousEmployeeName: form.previousEmployeeName || undefined,
+        departureDate: form.departureDate || undefined,
+        departureType: (form.departureType as "resignation" | "termination") || undefined,
+        departureReason: form.departureReason || undefined,
+        isInApprovedStructure: form.isInApprovedStructure === "yes" ? true : form.isInApprovedStructure === "no" ? false : undefined,
+        structureJustification: form.structureJustification || undefined,
+        jobTitle: form.jobTitle,
+        jobTitleEn: form.jobTitleEn,
+        jobLevel: form.jobLevel,
+        roleNature: form.roleNature as "full_time" | "part_time" | "contract" | "freelance" | "intern",
+        jobDescription: form.jobDescription,
+        country: form.country,
+        preferredCountry: form.preferredCountry || undefined,
+        workLocation: form.workLocation || undefined,
+        nationality: form.nationality as "saudi" | "arab" | "non_arab",
+        triedAlternatives: form.triedAlternatives === "yes",
+        alternativesDescription: form.alternativesDescription || undefined,
+        risksIfNotHired: form.risksIfNotHired,
+        aiRoleIntegration: form.aiRoleIntegration,
+        aiAutomationPotential: form.aiAutomationPotential,
+        aiReplacementAssessment: form.aiReplacementAssessment,
+        hiringBarCommitment: form.hiringBarCommitment,
+      });
 
-    setTimeout(() => {
       router.push(`/track/${request.id}`);
-    }, 800);
+    } catch (err) {
+      console.error("Failed to create request", err);
+      setSubmitting(false);
+      setAnalysisError("تعذر حفظ الطلب، حاول مرة أخرى.");
+      setShowAnalysis(true);
+    }
   };
 
   const cancelSubmit = () => {
@@ -434,7 +454,7 @@ function SubmitForm() {
             </span>
           </div>
           <h1 className="font-display font-black text-[26px] md:text-[40px] leading-tight mb-4">
-            كل شاغر هو قرار استثماري
+            كل قرار توظيف، إما استثمار بعائد أو دين بفوائد
           </h1>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mt-8">
@@ -457,7 +477,7 @@ function SubmitForm() {
                 </span>
               </div>
               <p className="font-ui text-[13px] text-white/60 leading-relaxed">
-                {introOpportunity} الشركة الاستثنائية لا تُبنى بالتوظيف الكثير، بل بالتوظيف الصح.
+                {introOpportunity}
               </p>
             </div>
           </div>
@@ -510,7 +530,7 @@ function SubmitForm() {
                       <p className="font-ui font-medium text-[13px]">
                         {step.role}
                       </p>
-                      {step.approverName && (
+                      {step.approverName && step.role !== "الرئيس التنفيذي" && (
                         <p className="font-ui text-[12px] text-thmanyah-muted">
                           {step.approverName}
                         </p>
@@ -840,27 +860,51 @@ function SubmitForm() {
             required
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Select
-              label="الدولة"
-              options={countries.map((c) => ({ value: c, label: c }))}
-              value={form.country}
-              onChange={set("country")}
-              error={errors.country}
-              required
-            />
             <RadioGroup
               label="الجنسية"
               name="nationality"
               options={[
                 { value: "saudi", label: "سعودي" },
                 { value: "arab", label: "عربي" },
+                { value: "non_arab", label: "غير عربي" },
               ]}
               value={form.nationality}
               onChange={setRadio("nationality")}
               required
               error={errors.nationality}
             />
+            <RadioGroup
+              label="موقع العمل"
+              name="workLocation"
+              options={[
+                { value: "remote", label: "عن بُعد" },
+                { value: "onsite", label: "حضوري" },
+              ]}
+              value={form.workLocation}
+              onChange={setRadio("workLocation")}
+              required
+              error={errors.workLocation}
+            />
           </div>
+          <RadioGroup
+            label="الدولة"
+            name="country"
+            options={countries.map((c) => ({ value: c, label: c }))}
+            value={form.country}
+            onChange={setRadio("country")}
+            error={errors.country}
+            required
+          />
+          {form.country === "مرن جغرافيًا" && (
+            <Input
+              label="دولة (اختياري)"
+              hint="لو في بالك دولة معينة، اكتبها هنا"
+              placeholder="مثلًا: الإمارات، مصر، الأردن..."
+              value={form.preferredCountry}
+              onChange={set("preferredCountry")}
+            />
+          )}
+
         </FormSection>
 
         {/* Section 4: AI Assessment */}

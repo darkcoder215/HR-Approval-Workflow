@@ -25,34 +25,60 @@ import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { APPROVAL_CHAIN_TEMPLATE, SLA_TOTAL } from "@/lib/constants";
-import { getAllRequests, getDashboardStats } from "@/lib/store";
+import { getAllRequests } from "@/lib/store";
 import { seedDemoData, hasDemoData, clearAllData } from "@/lib/seedData";
 
 function HomeContent() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [hasRequests, setHasRequests] = useState(false);
-  const [seeded, setSeeded] = useState(false);
+  const [, setSeeded] = useState(false);
   const [seedCount, setSeedCount] = useState(0);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const all = getAllRequests();
-    setHasRequests(all.length > 0);
-    setSeedCount(all.length);
-    setSeeded(hasDemoData());
+    let cancelled = false;
+    (async () => {
+      try {
+        const [all, seededFlag] = await Promise.all([getAllRequests(), hasDemoData()]);
+        if (cancelled) return;
+        setHasRequests(all.length > 0);
+        setSeedCount(all.length);
+        setSeeded(seededFlag);
+      } catch (err) {
+        console.error("Failed to load home data", err);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
-  const handleSeed = () => {
-    const data = seedDemoData();
-    setSeeded(true);
-    setHasRequests(true);
-    setSeedCount(data.length);
+  const handleSeed = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const data = await seedDemoData();
+      setSeeded(true);
+      setHasRequests(true);
+      setSeedCount(data.length);
+    } catch (err) {
+      console.error("Failed to seed demo data", err);
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const handleClear = () => {
-    clearAllData();
-    setSeeded(false);
-    setHasRequests(false);
-    setSeedCount(0);
+  const handleClear = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await clearAllData();
+      setSeeded(false);
+      setHasRequests(false);
+      setSeedCount(0);
+    } catch (err) {
+      console.error("Failed to clear data", err);
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (!isAuthenticated) return <LoginScreen />;
@@ -77,7 +103,7 @@ function HomeContent() {
               </Button>
             </Link>
             <button
-              onClick={logout}
+              onClick={() => { void logout(); }}
               className="px-2 py-2 text-white/60 hover:text-thmanyah-red rounded-full transition-all cursor-pointer"
               title="تسجيل الخروج"
             >
@@ -128,7 +154,7 @@ function HomeContent() {
           </span>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-14 md:pt-20 pb-16 md:pb-24 text-center">
+        <div className="relative max-w-5xl mx-auto px-4 md:px-6 pt-10 md:pt-14 pb-10 md:pb-14 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-thmanyah-green/20 border border-thmanyah-green/60 rounded-full mb-6 md:mb-8 animate-fade-in">
             <Sparkles className="w-4 h-4 text-thmanyah-green" />
             <span className="font-ui text-[12px] md:text-[13px] text-thmanyah-green font-bold">
@@ -139,9 +165,8 @@ function HomeContent() {
           <h1 className="font-display font-black text-[32px] md:text-[52px] lg:text-[64px] leading-[1.1] mb-5 md:mb-6 animate-fade-in-up">
             التوظيف الصح
             <br />
-            <span className="relative">
+            <span className="inline-block bg-thmanyah-green/60 text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl">
               يبدأ من هنا
-              <span className="absolute bottom-0 md:bottom-1 right-0 left-0 h-2 md:h-3 bg-thmanyah-green/50 -z-10 rounded-sm" />
             </span>
           </h1>
 
@@ -178,16 +203,18 @@ function HomeContent() {
               )}
               <div className="flex gap-2">
                 <button
-                  onClick={handleSeed}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber hover:brightness-110 text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
+                  onClick={() => { void handleSeed(); }}
+                  disabled={busy}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
                 >
                   <FlaskConical className="w-3.5 h-3.5" />
-                  {seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
+                  {busy ? "جاري..." : seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
                 </button>
                 {seedCount > 0 && (
                   <button
-                    onClick={handleClear}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/15 hover:bg-thmanyah-red/30 text-white/90 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
+                    onClick={() => { void handleClear(); }}
+                    disabled={busy}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/15 hover:bg-thmanyah-red/30 disabled:opacity-50 disabled:cursor-not-allowed text-white/90 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     مسح
@@ -204,20 +231,22 @@ function HomeContent() {
       </section>
 
       {/* Hiring Pipeline */}
-      <section className="py-14 md:py-24 bg-thmanyah-black text-white overflow-hidden">
+      <section className="py-10 md:py-14 bg-thmanyah-black text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-12 md:mb-20">
+          <div className="text-center mb-8 md:mb-12">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-thmanyah-amber/25 border border-thmanyah-amber/60 rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-5">
               <Sparkles className="w-3.5 h-3.5" />
-              مسار طلب الشاغر
+              آليّة العمل
             </span>
             <h2 className="font-display font-black text-[26px] md:text-[44px] leading-tight mb-4 max-w-3xl mx-auto">
-              يدًا بيد لقرارات تليق
+              يدًا بيد لقرارات تليق{" "}
               <br className="hidden md:block" />
-              بثمانية وبناسها
+              <span className="inline-block bg-thmanyah-green/60 text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl mt-2">
+                بثمانية وبناسها
+              </span>
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-white/75 max-w-2xl mx-auto">
-              ثلاث مراحل واضحة من لحظة رفع الطلب إلى قرار الاستقطاب
+              ٣ مراحل من رفع الطلب إلى قرار التوظيف.
             </p>
           </div>
 
@@ -245,7 +274,7 @@ function HomeContent() {
                 index={2}
                 icon={<CheckCircle2 className="w-7 h-7" />}
                 title="اتّخاذ القرار"
-                description="عند قبول طلبك، يتم تعيين مسؤول الاستقطاب للعمل معك. وفي حال الرفض، نشاركك تقرير واضح."
+                description="عند قبول طلبك، يُعين مسؤول الاستقطاب للعمل معك، وفي حال الرفض، نشاركك تقرير واضح."
               />
             </div>
           </div>
@@ -267,7 +296,7 @@ function HomeContent() {
               {
                 icon: <CheckCircle2 className="w-5 h-5" />,
                 title: "اتّخاذ القرار",
-                description: "عند قبول طلبك، يتم تعيين مسؤول الاستقطاب للعمل معك. وفي حال الرفض، نشاركك تقرير واضح.",
+                description: "عند قبول طلبك، يُعين مسؤول الاستقطاب للعمل معك، وفي حال الرفض، نشاركك تقرير واضح.",
               },
             ].map((s, i) => (
               <div key={i} className="relative flex items-start gap-4 pipeline-node-enter" style={{ animationDelay: `${i * 0.12}s` }}>
@@ -283,10 +312,10 @@ function HomeContent() {
           </div>
 
           {/* Bottom key message */}
-          <div className="mt-14 md:mt-20 text-center max-w-2xl mx-auto">
+          <div className="mt-10 md:mt-14 text-center max-w-2xl mx-auto">
             <div className="inline-block bg-thmanyah-amber/20 border-2 border-thmanyah-amber/70 rounded-2xl px-6 md:px-8 py-4 md:py-5">
               <p className="font-display font-black text-[15px] md:text-[17px] text-thmanyah-amber leading-relaxed">
-                جودة قراراتك = كفاءة فريقك. كيف سترفع من جودة قرارتك بالمواهب؟
+                جودة قراراتك = كفاءة فريقك. كيف سترفع من جودة قراراتك في اختيار أفضل المواهب؟
               </p>
             </div>
           </div>
@@ -294,15 +323,19 @@ function HomeContent() {
       </section>
 
       {/* Approval chain */}
-      <section className="py-14 md:py-20 bg-thmanyah-off-white">
+      <section className="py-10 md:py-14 bg-thmanyah-off-white">
         <div className="max-w-4xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
+          <div className="text-center mb-8 md:mb-10">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-thmanyah-black rounded-full font-ui text-[12px] text-thmanyah-amber font-bold mb-4">
               <Building2 className="w-3.5 h-3.5" />
-              مسار الاعتماد
+              كيف نعتمد؟
             </span>
             <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">
-              6 مراحل — {SLA_TOTAL}
+              <span className="inline-block bg-thmanyah-green text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl">
+                6 مراحل
+              </span>
+              {" — "}
+              {SLA_TOTAL}
             </h2>
             <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">
               كل مرحلة لها مسؤول محدد ومهلة زمنية واضحة
@@ -332,11 +365,14 @@ function HomeContent() {
       </section>
 
       {/* Features */}
-      <section className="py-14 md:py-20 bg-white">
+      <section className="py-10 md:py-14 bg-white">
         <div className="max-w-5xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
-            <h2 className="font-display font-black text-[26px] md:text-[40px] mb-3 text-thmanyah-black">مبنية للإحسان</h2>
-            <p className="font-body font-bold text-[14px] md:text-[16px] text-thmanyah-charcoal">أداة تعكس معايير ثمانية في كل تفصيل</p>
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="font-display font-black text-[26px] md:text-[40px] text-thmanyah-black">
+              <span className="inline-block bg-thmanyah-green text-white px-3 md:px-4 py-1 md:py-1.5 rounded-xl">
+                كيف صممنا الأداة؟
+              </span>
+            </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 stagger-children">
             <FeatureCard icon={<Target className="w-5 h-5" />} title="أسئلة متكيّفة" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
@@ -346,25 +382,12 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-14 md:py-20 bg-thmanyah-black text-white text-center border-t border-white/10">
-        <div className="max-w-3xl mx-auto px-4 md:px-6">
-          <h2 className="font-display font-black text-[24px] md:text-[40px] mb-4">
-            الشركة الاستثنائية لا تُبنى بالتوظيف الكثير
-          </h2>
-          <p className="font-display font-black text-[20px] md:text-[24px] text-thmanyah-green mb-8">بل بالتوظيف الصح</p>
-          <Link href="/submit">
-            <Button variant="accent" size="lg" icon={<Send className="w-4 h-4" />} className="text-[15px] font-black">ابدأ بتقديم طلبك</Button>
-          </Link>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="bg-thmanyah-dark-slate text-white/75 py-6 md:py-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Image src="/thamanyah.png" alt="ثمانية" width={20} height={20} className="rounded" />
-            <span className="font-ui font-bold text-[11px] md:text-[12px]">ثمانية — إدارة الثقافة</span>
+            <span className="font-ui font-bold text-[11px] md:text-[12px]">إدارة المواهب</span>
           </div>
           <span className="font-ui font-bold text-[11px] md:text-[12px]">{new Date().getFullYear()}</span>
         </div>

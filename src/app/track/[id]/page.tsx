@@ -47,10 +47,20 @@ function TrackView() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const id = params.id as string;
-    const r = getRequestById(id);
-    setRequest(r || null);
-    setLoading(false);
+    let cancelled = false;
+    (async () => {
+      try {
+        const id = params.id as string;
+        const r = await getRequestById(id);
+        if (cancelled) return;
+        setRequest(r || null);
+      } catch (err) {
+        console.error("Failed to load request", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [params.id]);
 
   const copyLink = () => {
@@ -200,9 +210,24 @@ function TrackView() {
                   }
                 />
                 <InfoRow label="الدولة" value={request.country} />
+                {request.preferredCountry && (
+                  <InfoRow label="دولة" value={request.preferredCountry} />
+                )}
+                {request.workLocation && (
+                  <InfoRow
+                    label="موقع العمل"
+                    value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"}
+                  />
+                )}
                 <InfoRow
                   label="الجنسية"
-                  value={request.nationality === "saudi" ? "سعودي" : "عربي"}
+                  value={
+                    request.nationality === "saudi"
+                      ? "سعودي"
+                      : request.nationality === "arab"
+                      ? "عربي"
+                      : "غير عربي"
+                  }
                 />
               </div>
             </Card>

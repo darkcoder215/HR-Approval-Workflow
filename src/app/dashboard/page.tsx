@@ -62,10 +62,25 @@ function DashboardView() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setRequests(getAllRequests());
-    setStats(getDashboardStats());
-    setTopManagers(getTopRequestingManagers());
-    setLoading(false);
+    let cancelled = false;
+    (async () => {
+      try {
+        const [reqs, s, top] = await Promise.all([
+          getAllRequests(),
+          getDashboardStats(),
+          getTopRequestingManagers(),
+        ]);
+        if (cancelled) return;
+        setRequests(reqs);
+        setStats(s);
+        setTopManagers(top);
+      } catch (err) {
+        console.error("Failed to load dashboard data", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const filtered = useMemo(() => {

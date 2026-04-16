@@ -6,8 +6,7 @@
 import { VacancyRequest, ApprovalStep } from "./types";
 import { APPROVAL_CHAIN_TEMPLATE } from "./constants";
 import { v4 as uuidv4 } from "uuid";
-
-const STORAGE_KEY = "thmanyah_vacancy_requests";
+import { supabase } from "./supabase";
 
 function daysAgo(days: number): string {
   const d = new Date();
@@ -64,7 +63,7 @@ const REJECTION_COMMENTS: Record<number, string> = {
   4: "الميزانية المخصصة للإدارة مستنفدة. يرجى تقديم طلب إعادة تخصيص الميزانية أولاً.",
 };
 
-export function seedDemoData(): VacancyRequest[] {
+function buildSeedRequests(): VacancyRequest[] {
   const requests: VacancyRequest[] = [
     // 1: Fully approved - hiring started
     {
@@ -88,7 +87,8 @@ export function seedDemoData(): VacancyRequest[] {
       jobLevel: "أول (Senior)",
       roleNature: "full_time",
       jobDescription: "تصميم وتطوير الحلول التقنية للمنصة الرقمية باستخدام Next.js و Node.js.\n\nالمهام الرئيسية:\n- قيادة تطوير الميزات الجديدة من التصميم إلى الإطلاق\n- مراجعة الكود وتوجيه المهندسين المبتدئين\n- تحسين أداء وموثوقية المنصة\n- التعاون مع فرق المنتج والتصميم",
-      country: "المملكة العربية السعودية",
+      country: "السعودية فقط",
+      workLocation: "onsite",
       nationality: "saudi",
       triedAlternatives: true,
       alternativesDescription: "جربنا توزيع المهام على الفريق الحالي لمدة 3 أشهر لكن الضغط أثر على جودة المخرجات.",
@@ -129,7 +129,8 @@ export function seedDemoData(): VacancyRequest[] {
       jobLevel: "أول (Senior)",
       roleNature: "full_time",
       jobDescription: "إدارة عملية إنتاج البودكاست من الفكرة إلى النشر.\n\n- التنسيق مع المقدمين والضيوف\n- إدارة جلسات التسجيل\n- الإشراف على المونتاج والماسترنج\n- ضبط الجودة النهائية",
-      country: "المملكة العربية السعودية",
+      country: "السعودية فقط",
+      workLocation: "onsite",
       nationality: "saudi",
       triedAlternatives: false,
       risksIfNotHired: "توقف إنتاج حلقات برنامج سوالف بزنس أو انخفاض جودتها. خطر فقدان الجمهور.",
@@ -167,7 +168,8 @@ export function seedDemoData(): VacancyRequest[] {
       jobLevel: "متوسط (Mid-level)",
       roleNature: "contract",
       jobDescription: "إدارة الحملات الإعلانية الرقمية وتحسين معدلات التحويل.\n\n- إدارة حملات Google Ads و Meta Ads\n- تحليل أداء الحملات\n- إنشاء محتوى إعلاني\n- اختبارات A/B",
-      country: "عن بُعد",
+      country: "مرن جغرافيًا",
+      workLocation: "remote",
       nationality: "arab",
       triedAlternatives: true,
       alternativesDescription: "تعاقدنا مع وكالة تسويق لمدة شهرين لكن النتائج كانت أقل من المتوقع.",
@@ -210,7 +212,8 @@ export function seedDemoData(): VacancyRequest[] {
       jobLevel: "متوسط (Mid-level)",
       roleNature: "full_time",
       jobDescription: "إدارة وتشغيل البث المباشر للأحداث والبرامج.\n\n- تجهيز وتشغيل معدات البث\n- إدارة الصوت والصورة أثناء البث\n- حل المشاكل التقنية الطارئة",
-      country: "المملكة العربية السعودية",
+      country: "السعودية فقط",
+      workLocation: "onsite",
       nationality: "saudi",
       triedAlternatives: true,
       alternativesDescription: "استعنا بشركة إنتاج خارجية لكن التكلفة 3 أضعاف والجودة أقل.",
@@ -248,7 +251,8 @@ export function seedDemoData(): VacancyRequest[] {
       jobLevel: "أول (Senior)",
       roleNature: "full_time",
       jobDescription: "إدارة وتحرير المحتوى التحريري لمنصات ثمانية الرقمية.\n\n- تحرير ومراجعة المقالات والتقارير\n- تطوير أفكار محتوى جديدة\n- التنسيق مع فريق التصميم\n- ضمان جودة اللغة والأسلوب",
-      country: "المملكة العربية السعودية",
+      country: "السعودية فقط",
+      workLocation: "onsite",
       nationality: "saudi",
       triedAlternatives: true,
       alternativesDescription: "استعنا بكتّاب مستقلين لكن الجودة غير متسقة والمتابعة صعبة.",
@@ -286,7 +290,8 @@ export function seedDemoData(): VacancyRequest[] {
       jobLevel: "متوسط (Mid-level)",
       roleNature: "full_time",
       jobDescription: "تصميم تجربة المستخدم لمنتجات ثمانية الرقمية.\n\n- إجراء بحوث المستخدمين\n- تصميم واجهات المستخدم\n- بناء النماذج الأولية\n- اختبار قابلية الاستخدام",
-      country: "المملكة العربية السعودية",
+      country: "السعودية فقط",
+      workLocation: "onsite",
       nationality: "arab",
       triedAlternatives: false,
       risksIfNotHired: "تأخر تطوير التطبيق وتراجع تجربة المستخدم مقارنة بالمنافسين.",
@@ -325,7 +330,8 @@ export function seedDemoData(): VacancyRequest[] {
       jobLevel: "متوسط (Mid-level)",
       roleNature: "full_time",
       jobDescription: "تغطية الأحداث والأخبار العاجلة ميدانيًا.\n\n- التغطية الميدانية للأحداث\n- إعداد التقارير الإخبارية\n- إجراء المقابلات\n- التنسيق مع غرفة الأخبار",
-      country: "المملكة العربية السعودية",
+      country: "السعودية فقط",
+      workLocation: "onsite",
       nationality: "saudi",
       triedAlternatives: false,
       risksIfNotHired: "عدم القدرة على تغطية الأحداث المهمة وخسارة السبق الصحفي.",
@@ -341,23 +347,102 @@ export function seedDemoData(): VacancyRequest[] {
     },
   ];
 
-  // Save to localStorage
-  if (typeof window !== "undefined") {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
-  }
+  return requests;
+}
+
+export async function seedDemoData(): Promise<VacancyRequest[]> {
+  const requests = buildSeedRequests();
+
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData?.user?.id ?? null;
+
+  // Bulk insert request rows with explicit timestamps so the seed reflects
+  // realistic ages (some 2 hours old, others 15 days old).
+  const requestRows = requests.map((r) => ({
+    id: r.id,
+    created_at: r.createdAt,
+    updated_at: r.updatedAt,
+    created_by: userId,
+    status: r.status,
+    current_approval_step: r.currentApprovalStep,
+    requester_name: r.requesterName,
+    requester_email: r.requesterEmail,
+    department: r.department,
+    section: r.section,
+    team: r.team,
+    project: r.project,
+    budget_owner: r.budgetOwner,
+    vacancy_type: r.vacancyType,
+    positions_count: r.positionsCount,
+    previous_employee_name: r.previousEmployeeName ?? null,
+    departure_date: r.departureDate ?? null,
+    departure_type: r.departureType ?? null,
+    departure_reason: r.departureReason ?? null,
+    is_in_approved_structure:
+      typeof r.isInApprovedStructure === "boolean" ? r.isInApprovedStructure : null,
+    structure_justification: r.structureJustification ?? null,
+    job_title: r.jobTitle,
+    job_title_en: r.jobTitleEn,
+    job_level: r.jobLevel,
+    role_nature: r.roleNature,
+    job_description: r.jobDescription,
+    country: r.country,
+    preferred_country: r.preferredCountry ?? null,
+    work_location: r.workLocation ?? null,
+    nationality: r.nationality,
+    tried_alternatives: r.triedAlternatives,
+    alternatives_description: r.alternativesDescription ?? null,
+    risks_if_not_hired: r.risksIfNotHired,
+    ai_role_integration: r.aiRoleIntegration,
+    ai_automation_potential: r.aiAutomationPotential,
+    ai_replacement_assessment: r.aiReplacementAssessment,
+    hiring_bar_commitment: r.hiringBarCommitment,
+    rejection_reason: r.rejectionReason ?? null,
+  }));
+
+  const { error: reqErr } = await supabase
+    .from("hr_vacancy_requests")
+    .insert(requestRows);
+  if (reqErr) throw reqErr;
+
+  const stepRows = requests.flatMap((r) =>
+    r.approvalChain.map((step) => ({
+      id: step.id,
+      request_id: r.id,
+      step_order: step.order,
+      role: step.role,
+      approver_name: step.approverName,
+      approver_email: step.approverEmail,
+      sla_hours: step.slaHours,
+      status: step.status,
+      comment: step.comment ?? null,
+      internal_comment: step.internalComment ?? null,
+      decided_at: step.decidedAt ?? null,
+      reminder_sent_at: step.reminderSentAt ?? null,
+    }))
+  );
+
+  const { error: stepErr } = await supabase
+    .from("hr_approval_steps")
+    .insert(stepRows);
+  if (stepErr) throw stepErr;
 
   return requests;
 }
 
-export function hasDemoData(): boolean {
-  if (typeof window === "undefined") return false;
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return false;
-  const data = JSON.parse(raw);
-  return data.length > 0;
+export async function hasDemoData(): Promise<boolean> {
+  const { count, error } = await supabase
+    .from("hr_vacancy_requests")
+    .select("id", { count: "exact", head: true });
+  if (error) return false;
+  return (count ?? 0) > 0;
 }
 
-export function clearAllData(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(STORAGE_KEY);
+export async function clearAllData(): Promise<void> {
+  // Cascade delete handles approval steps.
+  const { error } = await supabase
+    .from("hr_vacancy_requests")
+    .delete()
+    .not("id", "is", null);
+  if (error) throw error;
 }

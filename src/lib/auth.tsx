@@ -1,77 +1,180 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import Image from "next/image";
+import { supabase } from "./supabase";
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string; // display_name (kept "username" for backwards compatibility with consumers)
+  role: "requester" | "approver" | "culture_admin" | "department_head";
+}
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: { username: string; role: string } | null;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
+  user: AuthUser | null;
+  loading: boolean;
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ ok: boolean; error?: string }>;
+  signup: (
+    email: string,
+    password: string,
+    displayName: string
+  ) => Promise<{ ok: boolean; error?: string }>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
-  login: () => false,
-  logout: () => {},
+  loading: true,
+  login: async () => ({ ok: false }),
+  signup: async () => ({ ok: false }),
+  logout: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
-const CREDENTIALS = [
-  { username: "admin", password: "Thmanyah2026!", role: "culture_admin", displayName: "مدير النظام" },
-  { username: "zakiah", password: "Thmanyah2026!", role: "approver", displayName: "زكية حكمي" },
-  { username: "albaraa", password: "Thmanyah2026!", role: "approver", displayName: "البراء العوهلي" },
-  { username: "demo", password: "demo", role: "requester", displayName: "مستخدم تجريبي" },
-];
-
-const AUTH_KEY = "thmanyah_auth";
+async function loadProfile(userId: string, fallbackEmail: string): Promise<AuthUser> {
+  const { data } = await supabase
+    .from("hr_profiles")
+    .select("id, email, display_name, role")
+    .eq("id", userId)
+    .maybeSingle();
+  if (data) {
+    return {
+      id: data.id,
+      email: data.email || fallbackEmail,
+      username: data.display_name || (data.email || fallbackEmail).split("@")[0],
+      role: (data.role as AuthUser["role"]) || "requester",
+    };
+  }
+  // Profile row may not exist yet (trigger lag, RLS race). Return a fallback.
+  return {
+    id: userId,
+    email: fallbackEmail,
+    username: fallbackEmail.split("@")[0],
+    role: "requester",
+  };
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem(AUTH_KEY);
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored));
-      } catch {}
-    }
-    setLoading(false);
+    let mounted = true;
+
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+      if (session?.user && mounted) {
+        const profile = await loadProfile(session.user.id, session.user.email ?? "");
+        if (mounted) setUser(profile);
+      }
+      if (mounted) setLoading(false);
+    })();
+
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const profile = await loadProfile(session.user.id, session.user.email ?? "");
+        if (mounted) setUser(profile);
+      } else {
+        if (mounted) setUser(null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
-  const login = useCallback((username: string, password: string): boolean => {
-    const found = CREDENTIALS.find(
-      (c) => c.username === username && c.password === password
-    );
-    if (found) {
-      const u = { username: found.username, role: found.role };
-      setUser(u);
-      localStorage.setItem(AUTH_KEY, JSON.stringify(u));
-      return true;
+  const login = useCallback(async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    if (error) return { ok: false, error: error.message };
+    if (data.user) {
+      const profile = await loadProfile(data.user.id, data.user.email ?? "");
+      setUser(profile);
     }
-    return false;
+    return { ok: true };
   }, []);
 
-  const logout = useCallback(() => {
+  const signup = useCallback(
+    async (email: string, password: string, displayName: string) => {
+      const trimmedEmail = email.trim();
+      const { data, error } = await supabase.auth.signUp({
+        email: trimmedEmail,
+        password,
+        options: {
+          data: { display_name: displayName.trim() },
+        },
+      });
+      if (error) return { ok: false, error: error.message };
+
+      // A DB trigger auto-confirms new users, so signUp usually returns a session
+      // directly. If it doesn't (e.g. the dashboard setting still blocks the
+      // initial response), log in with the just-created credentials.
+      if (data.session?.user) {
+        const profile = await loadProfile(data.session.user.id, data.session.user.email ?? "");
+        setUser(profile);
+        return { ok: true };
+      }
+
+      const loginRes = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
+        password,
+      });
+      if (loginRes.error) return { ok: false, error: loginRes.error.message };
+      if (loginRes.data.user) {
+        const profile = await loadProfile(
+          loginRes.data.user.id,
+          loginRes.data.user.email ?? ""
+        );
+        setUser(profile);
+      }
+      return { ok: true };
+    },
+    []
+  );
+
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem(AUTH_KEY);
   }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-thmanyah-black flex items-center justify-center">
         <div className="animate-pulse-soft">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/thamanyah.png" alt="ثمانية" className="w-12 h-12 rounded-xl mx-auto" />
+          <Image
+            src="/thamanyah.png"
+            alt="ثمانية"
+            width={48}
+            height={48}
+            className="rounded-xl mx-auto"
+          />
         </div>
       </div>
     );
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated: !!user, user, loading, login, signup, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
