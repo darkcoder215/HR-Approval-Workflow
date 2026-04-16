@@ -210,38 +210,36 @@ export async function getRequestsByEmail(
   return rows.map((r) => rowToRequest(r, stepsMap.get(r.id) ?? []));
 }
 
+// Hard ceiling for the save network call. If Supabase doesn't respond in this
+// window we surface a clear error rather than leaving the overlay spinning
+// forever.
+const CREATE_REQUEST_TIMEOUT_MS = 15_000;
+
 export async function createRequest(
   data: Omit<
     VacancyRequest,
     "id" | "createdAt" | "updatedAt" | "status" | "currentApprovalStep" | "approvalChain"
   >,
-  options?: { settings?: AppSettings; userId?: string | null }
+  options?: { settings?: AppSettings }
 ): Promise<VacancyRequest> {
-  // The submit page already has both settings and the logged-in user cached.
-  // Skip re-fetching them to cut two serial round-trips off the save path.
+  // The submit page already has settings cached. Skip re-fetching it to keep
+  // the hot path to a single Supabase round-trip.
   const chainTemplate =
     options?.settings?.approvalChain ?? (await getSettings()).approvalChain;
 
-  let userId = options?.userId ?? null;
-  if (options?.userId === undefined) {
-    // Fallback for non-authenticated callers: getSession() reads from local
-    // storage (fast), unlike getUser() which always revalidates with the
-    // server.
-    const { data: sessionData } = await supabase.auth.getSession();
-    userId = sessionData.session?.user?.id ?? null;
-  }
-
-  const insertPayload = {
-    created_by: userId,
-    status: "received" as RequestStatus,
-    current_approval_step: 0,
+  // Build request + steps payloads exactly once and hand them to the
+  // server-side `hr_create_vacancy_request` RPC. That function:
+  //   * forces created_by := auth.uid() (so the caller cannot forge it),
+  //   * inserts the request and the full step batch in one transaction,
+  //   * returns both back so we don't need a follow-up fetch.
+  const requestPayload = {
     requester_name: data.requesterName,
     requester_email: data.requesterEmail,
     department: data.department,
-    section: data.section,
-    team: data.team,
-    project: data.project,
-    budget_owner: data.budgetOwner,
+    section: data.section ?? "",
+    team: data.team ?? "",
+    project: data.project ?? "",
+    budget_owner: data.budgetOwner ?? "",
     vacancy_type: data.vacancyType,
     positions_count: data.positionsCount,
     previous_employee_name: data.previousEmployeeName ?? null,
@@ -254,7 +252,7 @@ export async function createRequest(
         : null,
     structure_justification: data.structureJustification ?? null,
     job_title: data.jobTitle,
-    job_title_en: data.jobTitleEn,
+    job_title_en: data.jobTitleEn ?? "",
     job_level: data.jobLevel,
     role_nature: data.roleNature,
     job_description: data.jobDescription,
@@ -265,42 +263,51 @@ export async function createRequest(
     non_arab_justification: data.nonArabJustification ?? null,
     tried_alternatives: data.triedAlternatives,
     alternatives_description: data.alternativesDescription ?? null,
-    risks_if_not_hired: data.risksIfNotHired,
-    ai_role_integration: data.aiRoleIntegration,
-    ai_automation_potential: data.aiAutomationPotential,
-    ai_replacement_assessment: data.aiReplacementAssessment,
-    hiring_bar_commitment: data.hiringBarCommitment,
+    risks_if_not_hired: data.risksIfNotHired ?? "",
+    ai_role_integration: data.aiRoleIntegration ?? "",
+    ai_automation_potential: data.aiAutomationPotential ?? "",
+    ai_replacement_assessment: data.aiReplacementAssessment ?? "",
+    hiring_bar_commitment: data.hiringBarCommitment ?? "",
   };
 
-  const { data: requestRow, error: insertError } = await supabase
-    .from("hr_vacancy_requests")
-    .insert(insertPayload)
-    .select("*")
-    .single();
-  if (insertError) throw insertError;
-
-  const requestId = (requestRow as VacancyRequestRow).id;
-
   const stepsPayload = chainTemplate.map((step, index) => ({
-    request_id: requestId,
     step_order: step.order,
     role: step.role,
     approver_name: index === 0 ? data.budgetOwner : step.approverName || "",
     approver_email: step.approverEmail || "",
     sla_hours: step.slaHours,
-    status: "pending" as ApprovalStatus,
   }));
 
-  const { data: stepsData, error: stepsError } = await supabase
-    .from("hr_approval_steps")
-    .insert(stepsPayload)
-    .select("*");
-  if (stepsError) throw stepsError;
-
-  return rowToRequest(
-    requestRow as VacancyRequestRow,
-    (stepsData ?? []) as ApprovalStepRow[]
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    CREATE_REQUEST_TIMEOUT_MS
   );
+
+  try {
+    const { data: rpcData, error } = await supabase
+      .rpc("hr_create_vacancy_request", {
+        p_request: requestPayload,
+        p_steps: stepsPayload,
+      })
+      .abortSignal(controller.signal);
+    if (error) throw error;
+
+    const payload = rpcData as
+      | { request: VacancyRequestRow; steps: ApprovalStepRow[] }
+      | null;
+    if (!payload?.request) {
+      throw new Error("create_request_returned_no_data");
+    }
+    return rowToRequest(payload.request, payload.steps ?? []);
+  } catch (err) {
+    if (controller.signal.aborted) {
+      throw new Error("تعذر الاتصال بالخادم. يرجى المحاولة مرة أخرى.");
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export async function approveStep(

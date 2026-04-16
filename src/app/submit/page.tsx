@@ -184,7 +184,6 @@ const ANALYSIS_STEPS = [
 
 function SubmitForm() {
   const router = useRouter();
-  const { user } = useAuth();
   const [form, setForm] = useState<FormData>(initial);
   const [submissionStage, setSubmissionStage] = useState<
     "idle" | "saving" | "saved"
@@ -402,7 +401,7 @@ function SubmitForm() {
         aiAutomationPotential: form.aiAutomationPotential,
         aiReplacementAssessment: form.aiReplacementAssessment,
         hiringBarCommitment: form.hiringBarCommitment,
-      }, { settings: s ?? undefined, userId: user?.id ?? null });
+      }, { settings: s ?? undefined });
 
       setSavedRequest(request);
       setSubmissionStage("saved");
