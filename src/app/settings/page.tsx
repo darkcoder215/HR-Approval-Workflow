@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Button from "@/components/ui/Button";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import LoginScreen from "@/components/ui/LoginScreen";
 import {
   AppSettings,
@@ -322,11 +322,7 @@ function SettingsContent() {
 }
 
 export default function SettingsPage() {
-  return (
-    <AuthProvider>
-      <SettingsContent />
-    </AuthProvider>
-  );
+  return <SettingsContent />;
 }
 
 /* ── Section wrapper ── */

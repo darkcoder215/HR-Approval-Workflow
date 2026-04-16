@@ -24,7 +24,7 @@ import {
 import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
 import ThemeToggle from "@/components/ui/ThemeToggle";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { APPROVAL_CHAIN_TEMPLATE, SLA_TOTAL } from "@/lib/constants";
 import { getAllRequests } from "@/lib/store";
 import { seedDemoData, hasDemoData, clearAllData } from "@/lib/seedData";
@@ -471,11 +471,7 @@ function HomeContent() {
 }
 
 export default function HomePage() {
-  return (
-    <AuthProvider>
-      <HomeContent />
-    </AuthProvider>
-  );
+  return <HomeContent />;
 }
 
 function FeatureCard({

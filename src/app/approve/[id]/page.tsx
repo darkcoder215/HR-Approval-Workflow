@@ -23,17 +23,14 @@ import Button from "@/components/ui/Button";
 import Textarea from "@/components/ui/Textarea";
 import ApprovalStepper from "@/components/ui/ApprovalStepper";
 import LoginScreen from "@/components/ui/LoginScreen";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { getRequestById, approveStep, rejectStep } from "@/lib/store";
 import { getSettings, ApproverRole } from "@/lib/settings";
 import { VacancyRequest } from "@/lib/types";
 
 export default function ApprovePage() {
-  return <AuthProvider><ApproveContent /></AuthProvider>;
-}
-
-function ApproveContent() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null;
   if (!isAuthenticated) return <LoginScreen />;
   return <ApproveView />;
 }

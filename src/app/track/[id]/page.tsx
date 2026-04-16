@@ -24,16 +24,13 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import ApprovalStepper from "@/components/ui/ApprovalStepper";
 import LoginScreen from "@/components/ui/LoginScreen";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { getRequestById } from "@/lib/store";
 import { VacancyRequest } from "@/lib/types";
 
 export default function TrackPage() {
-  return <AuthProvider><TrackContent /></AuthProvider>;
-}
-
-function TrackContent() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null;
   if (!isAuthenticated) return <LoginScreen />;
   return <TrackView />;
 }

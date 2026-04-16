@@ -24,7 +24,7 @@ import StatCard from "@/components/ui/StatCard";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
-import { AuthProvider, useAuth, AuthUser } from "@/lib/auth";
+import { useAuth, AuthUser } from "@/lib/auth";
 import {
   getAllRequests,
   getRequestsByEmail,
@@ -37,11 +37,8 @@ import { DEPARTMENTS } from "@/lib/constants";
 type FilterStatus = "all" | "received" | "pending_approval" | "approved" | "rejected";
 
 export default function DashboardPage() {
-  return <AuthProvider><DashboardContent /></AuthProvider>;
-}
-
-function DashboardContent() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
+  if (loading) return null;
   if (!isAuthenticated || !user) return <LoginScreen />;
   return <DashboardView user={user} />;
 }
