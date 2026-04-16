@@ -29,7 +29,7 @@ import RadioGroup from "@/components/ui/RadioGroup";
 import Button from "@/components/ui/Button";
 import FormSection from "@/components/form/FormSection";
 import LoginScreen from "@/components/ui/LoginScreen";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { createRequest } from "@/lib/store";
 import { DUMMY_PROFILES, DummyProfile } from "@/lib/dummyProfiles";
 import {
@@ -146,11 +146,7 @@ function SubmitContent() {
 }
 
 export default function SubmitPage() {
-  return (
-    <AuthProvider>
-      <SubmitContent />
-    </AuthProvider>
-  );
+  return <SubmitContent />;
 }
 
 interface AnalysisDimension {
