@@ -237,13 +237,13 @@ function TrackView() {
                     ] || request.roleNature
                   }
                 />
-                <InfoRow label="الدولة" value={request.country} />
+                <InfoRow label="موقع العمل" value={request.country} />
                 {request.preferredCountry && (
                   <InfoRow label="دولة" value={request.preferredCountry} />
                 )}
                 {request.workLocation && (
                   <InfoRow
-                    label="موقع العمل"
+                    label="طبيعة العمل"
                     value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"}
                   />
                 )}

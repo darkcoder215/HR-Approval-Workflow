@@ -294,13 +294,13 @@ function ApproveView() {
                 <MiniInfo label="طبيعة الدور" value={
                   { full_time: "دوام كامل", part_time: "دوام جزئي", contract: "عقد محدد", freelance: "مستقل", intern: "متدرب" }[request.roleNature] || ""
                 } />
-                <MiniInfo label="الدولة" value={request.country} />
+                <MiniInfo label="موقع العمل" value={request.country} />
                 <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي فقط" : request.nationality === "arab" ? "مرن عربيًا" : "غير عربي"} />
                 {request.preferredCountry && (
                   <MiniInfo label="دولة" value={request.preferredCountry} />
                 )}
                 {request.workLocation && (
-                  <MiniInfo label="موقع العمل" value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"} />
+                  <MiniInfo label="طبيعة العمل" value={request.workLocation === "remote" ? "عن بُعد" : "حضوري"} />
                 )}
               </div>
             </Card>
