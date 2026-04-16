@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -58,6 +59,7 @@ export default function Header() {
               الإعدادات
             </Link>
           )}
+          <ThemeToggle className="mr-1" />
           {user && (
             <button
               onClick={() => { void logout(); }}
@@ -69,13 +71,16 @@ export default function Header() {
           )}
         </nav>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden w-9 h-9 flex items-center justify-center text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition-all cursor-pointer"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile: theme toggle + hamburger */}
+        <div className="md:hidden flex items-center gap-1">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="w-9 h-9 flex items-center justify-center text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition-all cursor-pointer"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}

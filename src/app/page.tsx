@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { APPROVAL_CHAIN_TEMPLATE, SLA_TOTAL } from "@/lib/constants";
 import { getAllRequests } from "@/lib/store";
@@ -113,6 +114,7 @@ function HomeContent() {
                 <span className="sm:hidden">طلب</span>
               </Button>
             </Link>
+            <ThemeToggle />
             <button
               onClick={() => { void logout(); }}
               className="px-2 py-2 text-white/60 hover:text-thmanyah-red rounded-full transition-all cursor-pointer"
