@@ -31,6 +31,10 @@ export interface VacancyRequest {
   id: string;
   createdAt: string;
   updatedAt: string;
+  // Auth user id of whoever submitted the form. Used for ownership checks on
+  // the client (dashboard filter, track page gate) because the free-text
+  // requester_email can legitimately differ from the submitter's auth email.
+  createdBy?: string;
   status: RequestStatus;
   currentApprovalStep: number;
 

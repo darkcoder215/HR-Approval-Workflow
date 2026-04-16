@@ -27,7 +27,7 @@ import LoginScreen from "@/components/ui/LoginScreen";
 import { useAuth, AuthUser } from "@/lib/auth";
 import {
   getAllRequests,
-  getRequestsByEmail,
+  getRequestsByCreator,
   getDashboardStats,
   getTopRequestingManagers,
 } from "@/lib/store";
@@ -76,8 +76,10 @@ function DashboardView({ user }: { user: AuthUser }) {
           setOrgStats(s);
           setTopManagers(top);
         } else {
-          // Requester: only own rows, no org-wide analytics
-          const reqs = await getRequestsByEmail(user.email);
+          // Requester: only own rows, no org-wide analytics. Match on the
+          // auth user id (created_by), not the free-text requester_email,
+          // because the requester can file on behalf of someone else.
+          const reqs = await getRequestsByCreator(user.id);
           if (cancelled) return;
           setRequests(reqs);
         }
@@ -88,7 +90,7 @@ function DashboardView({ user }: { user: AuthUser }) {
       }
     })();
     return () => { cancelled = true; };
-  }, [canSeeAll, user.email]);
+  }, [canSeeAll, user.id]);
 
   const mineStats = useMemo(() => {
     const approved = requests.filter(

@@ -43,27 +43,46 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+// Hard ceiling on the profile fetch. If the network stalls here the login
+// button would spin forever and the dashboard would never render, so we
+// always resolve within this window with a conservative fallback.
+const PROFILE_FETCH_TIMEOUT_MS = 5_000;
+
 async function loadProfile(userId: string, fallbackEmail: string): Promise<AuthUser> {
-  const { data } = await supabase
-    .from("hr_profiles")
-    .select("id, email, display_name, role")
-    .eq("id", userId)
-    .maybeSingle();
-  if (data) {
-    return {
-      id: data.id,
-      email: data.email || fallbackEmail,
-      username: data.display_name || (data.email || fallbackEmail).split("@")[0],
-      role: (data.role as AuthUser["role"]) || "requester",
-    };
-  }
-  // Profile row may not exist yet (trigger lag, RLS race). Return a fallback.
-  return {
+  const fallback: AuthUser = {
     id: userId,
     email: fallbackEmail,
-    username: fallbackEmail.split("@")[0],
+    username: fallbackEmail.split("@")[0] || "user",
     role: "requester",
   };
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), PROFILE_FETCH_TIMEOUT_MS);
+
+  try {
+    const { data } = await supabase
+      .from("hr_profiles")
+      .select("id, email, display_name, role")
+      .eq("id", userId)
+      .abortSignal(controller.signal)
+      .maybeSingle();
+    if (data) {
+      return {
+        id: data.id,
+        email: data.email || fallbackEmail,
+        username: data.display_name || (data.email || fallbackEmail).split("@")[0],
+        role: (data.role as AuthUser["role"]) || "requester",
+      };
+    }
+    // Profile row may not exist yet (trigger lag, RLS race). Return a fallback.
+    return fallback;
+  } catch {
+    // Abort or transient error: don't block the UI. The user gets the
+    // requester fallback and can retry with a refresh once online.
+    return fallback;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -95,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         try {
           const profile = await loadProfile(session.user.id, session.user.email ?? "");
@@ -103,7 +122,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (err) {
           console.error("Profile load failed:", err);
         }
-      } else {
+      } else if (event === "SIGNED_OUT") {
+        // Only clear state on an explicit sign-out. A transient token-refresh
+        // failure or other event without a session shouldn't boot the user
+        // out of the dashboard mid-work.
         if (mounted) setUser(null);
       }
     });
