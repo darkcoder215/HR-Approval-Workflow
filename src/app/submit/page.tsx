@@ -896,7 +896,7 @@ function SubmitForm() {
               error={errors.nationality}
             />
             <RadioGroup
-              label="موقع العمل"
+              label="طبيعة العمل"
               name="workLocation"
               options={[
                 { value: "remote", label: "عن بُعد" },
@@ -920,7 +920,7 @@ function SubmitForm() {
             />
           )}
           <RadioGroup
-            label="الدولة"
+            label="موقع العمل"
             name="country"
             options={countries.map((c) => ({ value: c, label: c }))}
             value={form.country}

@@ -407,7 +407,7 @@ ${form.structureJustification ? `| تبرير خارج الهيكلة | ${form.s
 | المسمى باللغة الانقليزية | ${form.jobTitleEn} |
 | المستوى | ${form.jobLevel} |
 | طبيعة الدور | ${roleNatureMap[form.roleNature] || form.roleNature} |
-| الدولة | ${form.country} |
+| موقع العمل | ${form.country} |
 | الجنسية | ${form.nationality === "saudi" ? "سعودي" : form.nationality === "arab" ? "عربي" : "غير عربي"} |
 
 ### الوصف الوظيفي:
