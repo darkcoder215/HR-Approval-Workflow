@@ -95,7 +95,7 @@ function HomeContent() {
   if (!isAuthenticated) return <LoginScreen />;
 
   return (
-    <div className="min-h-screen bg-thmanyah-off-white">
+    <div className="min-h-screen page-bg-home">
       {/* Nav */}
       <header className="sticky top-0 z-40 bg-thmanyah-black border-b border-white/10 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">

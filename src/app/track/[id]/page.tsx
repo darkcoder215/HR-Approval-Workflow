@@ -70,7 +70,7 @@ function TrackView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-track">
         <Header />
         <div className="flex items-center justify-center py-32">
           <div className="animate-pulse-soft font-ui text-thmanyah-muted">
@@ -83,7 +83,7 @@ function TrackView() {
 
   if (!request) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-track">
         <Header />
         <div className="max-w-lg mx-auto px-4 md:px-6 py-32 text-center">
           <div className="w-16 h-16 rounded-full bg-thmanyah-cream mx-auto flex items-center justify-center mb-4">
@@ -118,7 +118,7 @@ function TrackView() {
 
   if (!isOwner && !isStaff) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-track">
         <Header />
         <div className="max-w-lg mx-auto px-4 md:px-6 py-24 text-center">
           <div className="w-16 h-16 rounded-full bg-red-50 mx-auto flex items-center justify-center mb-4">
@@ -145,7 +145,7 @@ function TrackView() {
   const isRejected = request.status === "rejected";
 
   return (
-    <div className="min-h-screen bg-thmanyah-off-white">
+    <div className="min-h-screen page-bg-track">
       <Header />
 
       {/* Status banner */}
@@ -220,9 +220,9 @@ function TrackView() {
           {/* Main content */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6">
             {/* Request Summary */}
-            <Card>
+            <Card tone="blue">
               <h3 className="font-display font-bold text-[18px] mb-5 flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-thmanyah-green" />
+                <Briefcase className="w-5 h-5 text-thmanyah-blue" />
                 ملخص الطلب
               </h3>
               <div className="space-y-4">
@@ -265,9 +265,9 @@ function TrackView() {
             </Card>
 
             {/* Job Description */}
-            <Card>
+            <Card tone="amber">
               <h3 className="font-display font-bold text-[18px] mb-3 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-thmanyah-green" />
+                <FileText className="w-5 h-5 text-amber-700" />
                 الوصف الوظيفي
               </h3>
               <p className="font-body text-[15px] text-thmanyah-charcoal leading-relaxed whitespace-pre-wrap">
@@ -277,9 +277,9 @@ function TrackView() {
 
             {/* Replacement/New details */}
             {request.vacancyType === "replacement" && request.previousEmployeeName && (
-              <Card>
+              <Card tone="pink">
                 <h3 className="font-display font-bold text-[18px] mb-5 flex items-center gap-2">
-                  <User className="w-5 h-5 text-thmanyah-blue" />
+                  <User className="w-5 h-5 text-thmanyah-burgundy" />
                   بيانات الموظف السابق
                 </h3>
                 <div className="space-y-4">
@@ -307,9 +307,9 @@ function TrackView() {
             )}
 
             {/* AI Assessment */}
-            <Card>
+            <Card tone="lavender">
               <h3 className="font-display font-bold text-[18px] mb-5 flex items-center gap-2">
-                <Brain className="w-5 h-5 text-thmanyah-green" />
+                <Brain className="w-5 h-5 text-thmanyah-charcoal" />
                 تقييم الذكاء الاصطناعي
               </h3>
               <div className="space-y-4">
@@ -320,9 +320,9 @@ function TrackView() {
             </Card>
 
             {/* Risks & Alternatives */}
-            <Card>
+            <Card tone="peach">
               <h3 className="font-display font-bold text-[18px] mb-5 flex items-center gap-2">
-                <Target className="w-5 h-5 text-thmanyah-green" />
+                <Target className="w-5 h-5 text-thmanyah-red" />
                 التقييم والمخاطر
               </h3>
               <div className="space-y-4">
@@ -338,9 +338,9 @@ function TrackView() {
           {/* Sidebar: Approval progress */}
           <div className="space-y-6">
             {/* Requester Info */}
-            <Card>
+            <Card tone="sky">
               <h3 className="font-display font-bold text-[16px] mb-4 flex items-center gap-2">
-                <User className="w-4 h-4 text-thmanyah-green" />
+                <User className="w-4 h-4 text-thmanyah-blue" />
                 مقدم الطلب
               </h3>
               <div className="space-y-3">
@@ -354,9 +354,9 @@ function TrackView() {
             </Card>
 
             {/* Approval Progress */}
-            <Card>
+            <Card tone="mint">
               <h3 className="font-display font-bold text-[16px] mb-5 flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-thmanyah-green" />
+                <Building2 className="w-4 h-4 text-emerald-700" />
                 مسار الاعتماد
               </h3>
               <ApprovalStepper
@@ -367,9 +367,9 @@ function TrackView() {
             </Card>
 
             {/* Contact */}
-            <Card className="bg-thmanyah-cream border border-thmanyah-warm-border">
+            <Card tone="burgundy">
               <div className="flex items-center gap-3 mb-3">
-                <Mail className="w-5 h-5 text-thmanyah-green" />
+                <Mail className="w-5 h-5 text-thmanyah-burgundy" />
                 <h4 className="font-ui font-bold text-[14px]">تحتاج مساعدة؟</h4>
               </div>
               <p className="font-ui text-[13px] text-thmanyah-muted leading-relaxed mb-3">

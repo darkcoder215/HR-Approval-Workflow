@@ -55,10 +55,12 @@ export default function LoginScreen() {
 
   return (
     <div className="min-h-screen bg-thmanyah-black flex items-center justify-center relative overflow-hidden">
-      {/* Ambient glow */}
-      <div className="absolute inset-0 opacity-[0.06]">
+      {/* Ambient glows — three drifting orbs pulling from the full brand
+          palette so the landing feels layered instead of a single green tint. */}
+      <div className="absolute inset-0 opacity-[0.08]">
         <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-thmanyah-green blur-[120px] animate-float-slow" />
-        <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] rounded-full bg-thmanyah-blue blur-[120px] animate-float-slow-reverse" />
+        <div className="absolute bottom-1/4 left-1/4 w-[420px] h-[420px] rounded-full bg-thmanyah-hot-pink blur-[120px] animate-float-slow-reverse" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[360px] h-[360px] rounded-full bg-thmanyah-amber blur-[140px] animate-float-slow" />
       </div>
 
       <div className={`relative w-full max-w-md mx-4 animate-scale-in ${shake ? "animate-shake" : ""}`}>
@@ -75,7 +77,8 @@ export default function LoginScreen() {
           </p>
         </div>
 
-        {/* Mode tabs */}
+        {/* Mode tabs — each tab takes on its own palette role so the user sees
+            a clear identity shift between "returning" and "new" journeys. */}
         <div className="flex bg-white/[0.04] border border-white/10 rounded-full p-1 mb-5 max-w-xs mx-auto">
           <button
             type="button"
@@ -90,7 +93,7 @@ export default function LoginScreen() {
             type="button"
             onClick={() => switchMode("signup")}
             className={`flex-1 py-2 rounded-full font-ui font-black text-[12px] transition-all cursor-pointer ${
-              mode === "signup" ? "bg-thmanyah-green text-white" : "text-white/50 hover:text-white/80"
+              mode === "signup" ? "bg-thmanyah-blue text-white" : "text-white/50 hover:text-white/80"
             }`}
           >
             حساب جديد

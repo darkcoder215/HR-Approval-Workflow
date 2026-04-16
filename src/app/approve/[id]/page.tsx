@@ -118,7 +118,7 @@ function ApproveView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-approve">
         <Header />
         <div className="flex items-center justify-center py-32">
           <div className="animate-pulse-soft font-ui text-thmanyah-muted">جاري التحميل...</div>
@@ -129,7 +129,7 @@ function ApproveView() {
 
   if (!request) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-approve">
         <Header />
         <div className="max-w-lg mx-auto px-4 md:px-6 py-32 text-center">
           <h2 className="font-display font-bold text-[24px] mb-2">الطلب غير موجود</h2>
@@ -186,7 +186,7 @@ function ApproveView() {
 
   if (!canView) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-approve">
         <Header />
         <div className="max-w-lg mx-auto px-4 md:px-6 py-24 text-center">
           <div className="w-20 h-20 rounded-full bg-red-50 mx-auto flex items-center justify-center mb-6">
@@ -210,7 +210,7 @@ function ApproveView() {
 
   if (actionDone) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-approve">
         <Header />
         <div className="max-w-lg mx-auto px-4 md:px-6 py-24 text-center animate-fade-in-up">
           <div
@@ -249,7 +249,7 @@ function ApproveView() {
   }
 
   return (
-    <div className="min-h-screen bg-thmanyah-off-white">
+    <div className="min-h-screen page-bg-approve">
       <Header />
 
       {/* Header */}
@@ -286,9 +286,9 @@ function ApproveView() {
           {/* Request details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Summary */}
-            <Card>
+            <Card tone="blue">
               <h3 className="font-display font-bold text-[18px] mb-5 flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-thmanyah-green" />
+                <Briefcase className="w-5 h-5 text-thmanyah-blue" />
                 ملخص الطلب
               </h3>
               <div className="grid grid-cols-2 gap-4">
@@ -310,9 +310,9 @@ function ApproveView() {
             </Card>
 
             {/* Job Description */}
-            <Card>
+            <Card tone="amber">
               <h3 className="font-display font-bold text-[16px] mb-3 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-thmanyah-green" />
+                <FileText className="w-4 h-4 text-amber-700" />
                 الوصف الوظيفي
               </h3>
               <p className="font-body text-[14px] text-thmanyah-charcoal leading-relaxed whitespace-pre-wrap">
@@ -322,9 +322,9 @@ function ApproveView() {
 
             {/* Replacement info */}
             {request.vacancyType === "replacement" && request.previousEmployeeName && (
-              <Card>
+              <Card tone="pink">
                 <h3 className="font-display font-bold text-[16px] mb-4 flex items-center gap-2">
-                  <User className="w-4 h-4 text-thmanyah-blue" />
+                  <User className="w-4 h-4 text-thmanyah-burgundy" />
                   الموظف السابق
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -341,7 +341,7 @@ function ApproveView() {
 
             {/* New position */}
             {request.vacancyType === "new_position" && (
-              <Card>
+              <Card tone="sky">
                 <h3 className="font-display font-bold text-[16px] mb-4 flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-thmanyah-blue" />
                   تفاصيل الشاغر المستحدث
@@ -362,9 +362,9 @@ function ApproveView() {
             )}
 
             {/* AI + Assessment */}
-            <Card>
+            <Card tone="lavender">
               <h3 className="font-display font-bold text-[16px] mb-4 flex items-center gap-2">
-                <Brain className="w-4 h-4 text-thmanyah-green" />
+                <Brain className="w-4 h-4 text-thmanyah-charcoal" />
                 التقييم
               </h3>
               <div className="space-y-3">
@@ -378,7 +378,7 @@ function ApproveView() {
 
             {/* Action area */}
             {canAct && (
-              <Card className="border-2 border-thmanyah-green/20" padding="lg">
+              <Card tone="green" className="border-2 border-thmanyah-green/20" padding="lg">
                 <h3 className="font-display font-bold text-[20px] mb-5 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-thmanyah-green" />
                   قرارك
@@ -463,9 +463,9 @@ function ApproveView() {
             )}
 
             {!canAct && step && (
-              <Card className="bg-thmanyah-cream border border-thmanyah-warm-border">
+              <Card tone="lavender">
                 <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-thmanyah-muted" />
+                  <Clock className="w-5 h-5 text-thmanyah-lavender" />
                   <div>
                     <p className="font-ui font-bold text-[14px]">
                       {step.status === "approved"
@@ -489,9 +489,9 @@ function ApproveView() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card>
+            <Card tone="sky">
               <h3 className="font-display font-bold text-[16px] mb-4 flex items-center gap-2">
-                <User className="w-4 h-4 text-thmanyah-green" />
+                <User className="w-4 h-4 text-thmanyah-blue" />
                 مقدم الطلب
               </h3>
               <div className="space-y-2.5">
@@ -503,7 +503,7 @@ function ApproveView() {
               </div>
             </Card>
 
-            <Card>
+            <Card tone="mint">
               <h3 className="font-display font-bold text-[16px] mb-5">مسار الاعتماد</h3>
               <ApprovalStepper
                 steps={request.approvalChain}

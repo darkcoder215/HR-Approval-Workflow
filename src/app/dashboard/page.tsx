@@ -149,7 +149,7 @@ function DashboardView({ user }: { user: AuthUser }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-thmanyah-off-white">
+      <div className="min-h-screen page-bg-dashboard">
         <Header />
         <div className="flex items-center justify-center py-32">
           <div className="animate-pulse-soft font-ui text-thmanyah-muted">جاري التحميل...</div>
@@ -159,7 +159,7 @@ function DashboardView({ user }: { user: AuthUser }) {
   }
 
   return (
-    <div className="min-h-screen bg-thmanyah-off-white">
+    <div className="min-h-screen page-bg-dashboard">
       <Header />
 
       <div className="bg-thmanyah-black text-white">
@@ -450,8 +450,26 @@ function RequestCard({ request, canApprove }: { request: VacancyRequest; canAppr
   const currentApprover =
     request.approvalChain[request.currentApprovalStep];
 
+  // Tint each card by its lifecycle state so the dashboard reads as a heat-
+  // map at a glance: approved = green rail, rejected = peach, hiring = sky,
+  // received = lavender, under_review / pending_approval = amber.
+  const statusTone = ((): "green" | "peach" | "sky" | "lavender" | "amber" => {
+    switch (request.status) {
+      case "approved":
+        return "green";
+      case "rejected":
+        return "peach";
+      case "hiring_started":
+        return "sky";
+      case "received":
+        return "lavender";
+      default:
+        return "amber";
+    }
+  })();
+
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card tone={statusTone} className="hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-2">

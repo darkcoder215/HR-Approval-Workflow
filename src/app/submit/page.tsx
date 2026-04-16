@@ -408,7 +408,7 @@ function SubmitForm() {
   };
 
   return (
-    <div className={`min-h-screen bg-thmanyah-off-white ${prefillFlash ? "animate-glow-pulse" : ""}`}>
+    <div className={`min-h-screen page-bg-submit ${prefillFlash ? "animate-glow-pulse" : ""}`}>
       <Header />
 
       {/* Test Prefill FAB */}

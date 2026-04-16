@@ -443,3 +443,51 @@ body {
 .fly-up {
   animation: flyBubbleUp var(--duration, 7s) ease-in-out var(--delay, 0s) infinite;
 }
+
+/* ── Per-page brand backdrops ──
+   Each top-level tool page carries a distinct warm/cool tint so the product
+   reads as a suite rather than a single off-white canvas. The tint is a large
+   soft gradient layered on top of the warm body so cards still float cleanly.
+   Keep saturation low — the accent is the flavor, not the dish. */
+.page-bg-dashboard {
+  background-color: var(--color-thmanyah-off-white);
+  background-image:
+    radial-gradient(1200px 600px at 90% -10%, rgba(209, 196, 226, 0.55), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(209, 237, 239, 0.55), transparent 60%);
+  background-attachment: fixed;
+}
+.page-bg-submit {
+  background-color: var(--color-thmanyah-off-white);
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255, 209, 196, 0.45), transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, rgba(249, 229, 158, 0.40), transparent 60%);
+  background-attachment: fixed;
+}
+.page-bg-settings {
+  background-color: var(--color-thmanyah-warm-gray);
+  background-image:
+    radial-gradient(1100px 600px at 100% 0%, rgba(175, 226, 234, 0.50), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, rgba(255, 201, 216, 0.40), transparent 60%);
+  background-attachment: fixed;
+}
+.page-bg-home {
+  background-color: var(--color-thmanyah-off-white);
+  background-image:
+    radial-gradient(1400px 700px at 50% -10%, rgba(178, 226, 186, 0.40), transparent 55%),
+    radial-gradient(1000px 500px at 0% 100%, rgba(255, 165, 198, 0.28), transparent 60%);
+  background-attachment: fixed;
+}
+.page-bg-approve {
+  background-color: var(--color-thmanyah-off-white);
+  background-image:
+    radial-gradient(1200px 600px at 80% 0%, rgba(132, 219, 229, 0.45), transparent 60%),
+    radial-gradient(900px 500px at 20% 100%, rgba(178, 226, 186, 0.35), transparent 60%);
+  background-attachment: fixed;
+}
+.page-bg-track {
+  background-color: var(--color-thmanyah-off-white);
+  background-image:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255, 188, 10, 0.20), transparent 60%),
+    radial-gradient(900px 500px at 90% 90%, rgba(209, 196, 226, 0.50), transparent 60%);
+  background-attachment: fixed;
+}
