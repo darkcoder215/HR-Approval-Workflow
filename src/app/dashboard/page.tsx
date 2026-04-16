@@ -37,8 +37,7 @@ import { DEPARTMENTS } from "@/lib/constants";
 type FilterStatus = "all" | "received" | "pending_approval" | "approved" | "rejected";
 
 export default function DashboardPage() {
-  const { isAuthenticated, user, loading } = useAuth();
-  if (loading) return null;
+  const { isAuthenticated, user } = useAuth();
   if (!isAuthenticated || !user) return <LoginScreen />;
   return <DashboardView user={user} />;
 }

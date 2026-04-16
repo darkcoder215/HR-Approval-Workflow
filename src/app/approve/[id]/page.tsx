@@ -29,8 +29,7 @@ import { getSettings, ApproverRole } from "@/lib/settings";
 import { VacancyRequest } from "@/lib/types";
 
 export default function ApprovePage() {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return null;
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) return <LoginScreen />;
   return <ApproveView />;
 }
