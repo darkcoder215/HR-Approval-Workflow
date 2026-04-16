@@ -94,6 +94,7 @@ function rowToRequest(
     id: row.id,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    createdBy: row.created_by ?? undefined,
     status: row.status,
     currentApprovalStep: row.current_approval_step,
     requesterName: row.requester_name,
@@ -203,6 +204,28 @@ export async function getRequestsByEmail(
     .from("hr_vacancy_requests")
     .select("*")
     .eq("requester_email", email)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const rows = (data ?? []) as VacancyRequestRow[];
+  const stepsMap = await fetchStepsByRequestIds(rows.map((r) => r.id));
+  return rows.map((r) => rowToRequest(r, stepsMap.get(r.id) ?? []));
+}
+
+/**
+ * Ownership lookup for the requester dashboard.
+ *
+ * A requester can legitimately file a vacancy on behalf of someone else (the
+ * form's requester_email is free-text), so filtering "my requests" by the
+ * auth email misses rows the user actually owns. `created_by` is the single
+ * source of truth set server-side by the RPC, so match on that.
+ */
+export async function getRequestsByCreator(
+  userId: string
+): Promise<VacancyRequest[]> {
+  const { data, error } = await supabase
+    .from("hr_vacancy_requests")
+    .select("*")
+    .eq("created_by", userId)
     .order("created_at", { ascending: false });
   if (error) throw error;
   const rows = (data ?? []) as VacancyRequestRow[];

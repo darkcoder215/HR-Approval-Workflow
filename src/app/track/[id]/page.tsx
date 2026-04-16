@@ -101,10 +101,13 @@ function TrackView() {
 
   // Ownership / role gate: requesters may only see their own requests. Anyone
   // in an approval role (approver, department_head, culture_admin) can view
-  // any request for tracking purposes.
+  // any request for tracking purposes. Ownership is resolved via created_by
+  // first (the authoritative server-side column) and falls back to email
+  // matching for rows submitted before that field was exposed.
   const isOwner =
     !!user &&
-    (user.email.toLowerCase() === request.requesterEmail.toLowerCase() ||
+    (user.id === request.createdBy ||
+      user.email.toLowerCase() === request.requesterEmail.toLowerCase() ||
       (!!request.budgetOwner &&
         user.email.toLowerCase() === request.budgetOwner.toLowerCase()));
   const isStaff =
