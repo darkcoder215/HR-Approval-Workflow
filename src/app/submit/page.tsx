@@ -19,6 +19,9 @@ import {
   FlaskConical,
   Wand2,
   CheckCircle2,
+  Loader2,
+  LayoutDashboard,
+  Clock,
 } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Card from "@/components/ui/Card";
@@ -44,6 +47,7 @@ import {
   APPROVAL_CHAIN_TEMPLATE,
 } from "@/lib/constants";
 import { getSettings, AppSettings } from "@/lib/settings";
+import { VacancyRequest } from "@/lib/types";
 
 type FormData = {
   requesterName: string;
@@ -181,7 +185,11 @@ const ANALYSIS_STEPS = [
 function SubmitForm() {
   const router = useRouter();
   const [form, setForm] = useState<FormData>(initial);
-  const [submitting, setSubmitting] = useState(false);
+  const [submissionStage, setSubmissionStage] = useState<
+    "idle" | "saving" | "saved"
+  >("idle");
+  const [savedRequest, setSavedRequest] = useState<VacancyRequest | null>(null);
+  const submitting = submissionStage === "saving";
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState(0);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -356,7 +364,7 @@ function SubmitForm() {
 
   const confirmSubmit = async () => {
     setShowAnalysis(false);
-    setSubmitting(true);
+    setSubmissionStage("saving");
 
     try {
       const request = await createRequest({
@@ -395,10 +403,11 @@ function SubmitForm() {
         hiringBarCommitment: form.hiringBarCommitment,
       });
 
-      router.push(`/track/${request.id}`);
+      setSavedRequest(request);
+      setSubmissionStage("saved");
     } catch (err) {
       console.error("Failed to create request", err);
-      setSubmitting(false);
+      setSubmissionStage("idle");
       setAnalysisError("تعذر حفظ الطلب، حاول مرة أخرى.");
       setShowAnalysis(true);
     }
@@ -1359,6 +1368,121 @@ function SubmitForm() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Submission status overlay — stays visible from "saving" through
+          "saved" so the user always sees progress and a clear next step. */}
+      {submissionStage !== "idle" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+            {submissionStage === "saving" && (
+              <div className="p-8 md:p-10 text-center">
+                <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-thmanyah-sky/25 flex items-center justify-center">
+                  <Loader2 className="w-7 h-7 text-thmanyah-blue animate-spin" />
+                </div>
+                <h2 className="font-display font-black text-[22px] md:text-[26px] text-thmanyah-black mb-2">
+                  جاري حفظ الطلب...
+                </h2>
+                <p className="font-ui font-bold text-[13px] text-thmanyah-charcoal/70 leading-relaxed">
+                  نجهّز مسار الاعتماد ونربط الطلب بالمعتمدين. خذ لحظة — لا
+                  تُغلق الصفحة.
+                </p>
+              </div>
+            )}
+
+            {submissionStage === "saved" && savedRequest && (
+              <div>
+                <div className="bg-thmanyah-black text-white rounded-t-3xl p-6 md:p-8">
+                  <div className="flex items-center gap-3 mb-1">
+                    <div className="w-11 h-11 bg-thmanyah-green/20 rounded-xl flex items-center justify-center">
+                      <CheckCircle2 className="w-6 h-6 text-thmanyah-green" />
+                    </div>
+                    <div>
+                      <h2 className="font-display font-black text-[20px] md:text-[22px]">
+                        تم استلام طلبك
+                      </h2>
+                      <p className="font-ui font-bold text-[12px] text-white/60 mt-0.5">
+                        رقم الطلب: {savedRequest.id.slice(0, 8).toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 md:p-8 space-y-5">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <ShieldCheck className="w-4 h-4 text-thmanyah-charcoal" />
+                      <p className="font-ui font-black text-[13px] text-thmanyah-black">
+                        مسار الاعتماد
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      {savedRequest.approvalChain.map((step) => (
+                        <div
+                          key={step.id}
+                          className="flex items-center gap-3 p-3 rounded-xl bg-thmanyah-cream/50 border border-thmanyah-warm-border"
+                        >
+                          <div className="w-7 h-7 rounded-full bg-white border border-thmanyah-warm-border flex items-center justify-center font-ui font-black text-[11px] text-thmanyah-charcoal shrink-0">
+                            {step.order}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-ui font-black text-[13px] text-thmanyah-black truncate">
+                              {step.role}
+                            </p>
+                            {step.approverName && (
+                              <p className="font-ui font-bold text-[11px] text-thmanyah-charcoal/70 truncate">
+                                {step.approverName}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 text-thmanyah-charcoal/60 shrink-0">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span className="font-ui font-bold text-[11px]">
+                              {step.slaHours >= 24
+                                ? `${Math.round(step.slaHours / 24)} ي`
+                                : `${step.slaHours} س`}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2 p-3 rounded-xl bg-thmanyah-pale-yellow/30 border border-thmanyah-pale-yellow">
+                    <Clock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                    <p className="font-ui font-bold text-[12px] text-thmanyah-charcoal leading-relaxed">
+                      {(() => {
+                        const totalH = savedRequest.approvalChain.reduce(
+                          (sum, step) => sum + step.slaHours,
+                          0
+                        );
+                        const days = Math.round(totalH / 24);
+                        return `مدة التقييم الكاملة متوقعة ${days} يوم عمل تقريبًا، ستصلك تنبيهات عند كل خطوة.`;
+                      })()}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 pt-1">
+                    <button
+                      onClick={() => router.push(`/track/${savedRequest.id}`)}
+                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 bg-thmanyah-black hover:bg-thmanyah-charcoal text-white rounded-full font-ui font-black text-[13px] transition-all cursor-pointer hover:scale-[1.01]"
+                    >
+                      <Target className="w-4 h-4" />
+                      تتبع هذا الطلب
+                    </button>
+                    <button
+                      onClick={() => router.push("/dashboard")}
+                      className="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 bg-thmanyah-cream hover:bg-thmanyah-warm-gray text-thmanyah-charcoal rounded-full font-ui font-black text-[13px] transition-all cursor-pointer"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      الذهاب إلى لوحة التحكم
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
