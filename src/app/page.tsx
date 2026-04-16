@@ -29,7 +29,8 @@ import { getAllRequests } from "@/lib/store";
 import { seedDemoData, hasDemoData, clearAllData } from "@/lib/seedData";
 
 function HomeContent() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
+  const isAdmin = user?.role === "culture_admin";
   const [hasRequests, setHasRequests] = useState(false);
   const [, setSeeded] = useState(false);
   const [seedCount, setSeedCount] = useState(0);
@@ -39,6 +40,16 @@ function HomeContent() {
     let cancelled = false;
     (async () => {
       try {
+        // Only admins need the org-wide count (for the seed panel) or the
+        // "has any data" signal. Requesters see a simpler hero without it.
+        if (!isAdmin) {
+          if (!cancelled) {
+            setHasRequests(false);
+            setSeedCount(0);
+            setSeeded(false);
+          }
+          return;
+        }
         const [all, seededFlag] = await Promise.all([getAllRequests(), hasDemoData()]);
         if (cancelled) return;
         setHasRequests(all.length > 0);
@@ -49,7 +60,7 @@ function HomeContent() {
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [isAdmin]);
 
   const handleSeed = async () => {
     if (busy) return;
@@ -94,7 +105,7 @@ function HomeContent() {
           </Link>
           <nav className="flex items-center gap-1 md:gap-2">
             <Link href="/dashboard" className="px-3 md:px-4 py-2 text-[12px] md:text-[13px] font-ui font-bold text-white/85 hover:text-white rounded-full transition-all">
-              لوحة المتابعة
+              {isAdmin ? "لوحة المتابعة" : "طلباتي"}
             </Link>
             <Link href="/submit">
               <Button variant="accent" size="sm" icon={<Send className="w-3.5 h-3.5" />}>
@@ -176,53 +187,55 @@ function HomeContent() {
                 تقديم طلب فتح شاغر
               </Button>
             </Link>
-            {hasRequests && (
+            {(isAdmin ? hasRequests : true) && (
               <Link href="/dashboard">
                 <Button variant="secondary" size="lg" icon={<BarChart3 className="w-4 h-4" />} className="!bg-white/10 !text-white !border-white/20 hover:!bg-white/20 text-[14px] md:text-[15px] w-full sm:w-auto font-black">
-                  لوحة المتابعة
+                  {isAdmin ? "لوحة المتابعة" : "طلباتي"}
                 </Button>
               </Link>
             )}
           </div>
 
-          {/* Demo Data Panel */}
-          <div className="mt-10 md:mt-14 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
-            <div className="inline-block bg-white/[0.08] border border-white/25 rounded-2xl p-5 md:p-6 backdrop-blur-sm max-w-md mx-auto">
-              <div className="flex items-center gap-2 mb-3">
-                <FlaskConical className="w-4 h-4 text-thmanyah-amber" />
-                <span className="font-ui font-black text-[13px] text-white">بيانات تجريبية</span>
-              </div>
-              <p className="font-ui text-[12px] text-white/70 mb-4 leading-relaxed">
-                أنشئ طلبات تجريبية بمراحل مختلفة (معتمدة، مرفوضة، قيد المعالجة) لاستعراض جميع واجهات المنصة.
-              </p>
-              {seedCount > 0 && (
-                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-thmanyah-green/20 border border-thmanyah-green/50 rounded-xl">
-                  <Database className="w-3.5 h-3.5 text-thmanyah-green" />
-                  <span className="font-ui font-bold text-[12px] text-thmanyah-green">{seedCount} طلب في النظام</span>
+          {/* Demo Data Panel — admin-only */}
+          {isAdmin && (
+            <div className="mt-10 md:mt-14 animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
+              <div className="inline-block bg-white/[0.08] border border-white/25 rounded-2xl p-5 md:p-6 backdrop-blur-sm max-w-md mx-auto">
+                <div className="flex items-center gap-2 mb-3">
+                  <FlaskConical className="w-4 h-4 text-thmanyah-amber" />
+                  <span className="font-ui font-black text-[13px] text-white">بيانات تجريبية</span>
                 </div>
-              )}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => { void handleSeed(); }}
-                  disabled={busy}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
-                >
-                  <FlaskConical className="w-3.5 h-3.5" />
-                  {busy ? "جاري..." : seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
-                </button>
+                <p className="font-ui text-[12px] text-white/70 mb-4 leading-relaxed">
+                  أنشئ طلبات تجريبية بمراحل مختلفة (معتمدة، مرفوضة، قيد المعالجة) لاستعراض جميع واجهات المنصة.
+                </p>
                 {seedCount > 0 && (
-                  <button
-                    onClick={() => { void handleClear(); }}
-                    disabled={busy}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/15 hover:bg-thmanyah-red/30 disabled:opacity-50 disabled:cursor-not-allowed text-white/90 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    مسح
-                  </button>
+                  <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-thmanyah-green/20 border border-thmanyah-green/50 rounded-xl">
+                    <Database className="w-3.5 h-3.5 text-thmanyah-green" />
+                    <span className="font-ui font-bold text-[12px] text-thmanyah-green">{seedCount} طلب في النظام</span>
+                  </div>
                 )}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { void handleSeed(); }}
+                    disabled={busy}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-thmanyah-amber hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-thmanyah-black rounded-full font-ui font-black text-[12px] transition-all cursor-pointer hover:scale-[1.02]"
+                  >
+                    <FlaskConical className="w-3.5 h-3.5" />
+                    {busy ? "جاري..." : seedCount > 0 ? "إعادة التعبئة" : "تعبئة البيانات"}
+                  </button>
+                  {seedCount > 0 && (
+                    <button
+                      onClick={() => { void handleClear(); }}
+                      disabled={busy}
+                      className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/15 hover:bg-thmanyah-red/30 disabled:opacity-50 disabled:cursor-not-allowed text-white/90 hover:text-thmanyah-red rounded-full font-ui font-bold text-[12px] transition-all cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      مسح
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-6 md:mt-8 animate-bounce">
             <ChevronDown className="w-5 h-5 text-white/50 mx-auto" />

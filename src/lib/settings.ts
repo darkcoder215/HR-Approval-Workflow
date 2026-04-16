@@ -20,10 +20,34 @@ import { supabase } from "./supabase";
 export interface ApprovalStepConfig {
   order: number;
   role: string;
+  /**
+   * Which profile role is authorised to approve this step.
+   * - "requester_manager" → the person whose email was entered as budget-owner
+   *   / direct manager on the request itself (resolved per-request).
+   * - "department_head" | "approver" | "culture_admin" → any logged-in user
+   *   with that `hr_profiles.role`.
+   * - "specific" → only the `approverEmail` pinned on this step can approve.
+   */
+  approverRole: ApproverRole;
   approverName: string;
   approverEmail: string;
   slaHours: number;
 }
+
+export type ApproverRole =
+  | "requester_manager"
+  | "department_head"
+  | "approver"
+  | "culture_admin"
+  | "specific";
+
+export const APPROVER_ROLE_LABELS: Record<ApproverRole, string> = {
+  requester_manager: "المدير المباشر لمقدم الطلب",
+  department_head: "رئيس إدارة (department_head)",
+  approver: "معتمد (approver)",
+  culture_admin: "إدارة الثقافة (culture_admin)",
+  specific: "شخص محدد بالبريد فقط",
+};
 
 export interface AppSettings {
   departments: string[];
@@ -38,6 +62,12 @@ export interface AppSettings {
   slaTotal: string;
 }
 
+function defaultApproverRoleFor(role: string): ApproverRole {
+  if (role.includes("المدير المباشر")) return "requester_manager";
+  if (role.includes("الرئيس التنفيذي للإدارة")) return "department_head";
+  return "specific";
+}
+
 export function getDefaultSettings(): AppSettings {
   return {
     departments: [...DEPARTMENTS],
@@ -47,6 +77,7 @@ export function getDefaultSettings(): AppSettings {
     approvalChain: APPROVAL_CHAIN_TEMPLATE.map((s) => ({
       order: s.order,
       role: s.role,
+      approverRole: defaultApproverRoleFor(s.role),
       approverName: s.approverName,
       approverEmail: s.approverEmail,
       slaHours: s.slaHours,
@@ -70,7 +101,14 @@ export async function getSettings(): Promise<AppSettings> {
     if (error) return defaults;
     if (!data) return defaults;
     const saved = (data.data ?? {}) as Partial<AppSettings>;
-    return { ...defaults, ...saved };
+    const merged: AppSettings = { ...defaults, ...saved };
+    // Back-fill approverRole on any legacy chain rows so the editor + runtime
+    // gating always have a value to read.
+    merged.approvalChain = merged.approvalChain.map((s) => ({
+      ...s,
+      approverRole: s.approverRole ?? defaultApproverRoleFor(s.role),
+    }));
+    return merged;
   } catch {
     return defaults;
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -27,7 +27,6 @@ import LoginScreen from "@/components/ui/LoginScreen";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { getRequestById } from "@/lib/store";
 import { VacancyRequest } from "@/lib/types";
-import { STATUS_LABELS } from "@/lib/constants";
 
 export default function TrackPage() {
   return <AuthProvider><TrackContent /></AuthProvider>;
@@ -41,7 +40,7 @@ function TrackContent() {
 
 function TrackView() {
   const params = useParams();
-  const router = useRouter();
+  const { user } = useAuth();
   const [request, setRequest] = useState<VacancyRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -99,6 +98,39 @@ function TrackView() {
           <Link href="/submit">
             <Button variant="primary">تقديم طلب جديد</Button>
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Ownership / role gate: requesters may only see their own requests. Anyone
+  // in an approval role (approver, department_head, culture_admin) can view
+  // any request for tracking purposes.
+  const isOwner =
+    !!user &&
+    (user.email.toLowerCase() === request.requesterEmail.toLowerCase() ||
+      (!!request.budgetOwner &&
+        user.email.toLowerCase() === request.budgetOwner.toLowerCase()));
+  const isStaff =
+    user?.role === "culture_admin" ||
+    user?.role === "approver" ||
+    user?.role === "department_head";
+
+  if (!isOwner && !isStaff) {
+    return (
+      <div className="min-h-screen bg-thmanyah-off-white">
+        <Header />
+        <div className="max-w-lg mx-auto px-4 md:px-6 py-24 text-center">
+          <div className="w-16 h-16 rounded-full bg-red-50 mx-auto flex items-center justify-center mb-4">
+            <XCircle className="w-8 h-8 text-thmanyah-red" />
+          </div>
+          <h2 className="font-display font-bold text-[22px] mb-2">
+            لا تملك صلاحية عرض هذا الطلب
+          </h2>
+          <p className="font-ui text-[13px] text-thmanyah-muted mb-6">
+            يمكنك عرض طلباتك الشخصية فقط من خلال «طلباتي».
+          </p>
+          <Link href="/dashboard"><Button variant="primary">طلباتي</Button></Link>
         </div>
       </div>
     );

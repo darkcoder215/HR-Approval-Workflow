@@ -34,6 +34,8 @@ import {
   getDefaultSettings,
   hasCustomSettings,
   ApprovalStepConfig,
+  ApproverRole,
+  APPROVER_ROLE_LABELS,
 } from "@/lib/settings";
 
 function SettingsContent() {
@@ -379,6 +381,7 @@ function ApprovalChainEditor({
       {
         order: chain.length + 1,
         role: "",
+        approverRole: "specific",
         approverName: "",
         approverEmail: "",
         slaHours: 24,
@@ -391,7 +394,11 @@ function ApprovalChainEditor({
     onChange(updated);
   };
 
-  const updateStep = (index: number, field: keyof ApprovalStepConfig, value: string | number) => {
+  const updateStep = <K extends keyof ApprovalStepConfig>(
+    index: number,
+    field: K,
+    value: ApprovalStepConfig[K]
+  ) => {
     const updated = [...chain];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -453,6 +460,25 @@ function ApprovalChainEditor({
                 placeholder="مثال: المدير المباشر"
                 className="w-full px-3 py-2 bg-white border border-thmanyah-warm-border rounded-lg font-ui font-bold text-[13px] focus:outline-none focus:ring-2 focus:ring-thmanyah-green/40 focus:border-thmanyah-green transition-all"
               />
+            </div>
+            <div>
+              <label className="block font-ui font-bold text-[11px] text-thmanyah-muted mb-1">
+                <span className="flex items-center gap-1">
+                  <Shield className="w-3 h-3" />
+                  من يملك صلاحية الاعتماد
+                </span>
+              </label>
+              <select
+                value={step.approverRole}
+                onChange={(e) => updateStep(i, "approverRole", e.target.value as ApproverRole)}
+                className="w-full px-3 py-2 bg-white border border-thmanyah-warm-border rounded-lg font-ui font-bold text-[13px] focus:outline-none focus:ring-2 focus:ring-thmanyah-green/40 focus:border-thmanyah-green transition-all cursor-pointer"
+              >
+                {(Object.entries(APPROVER_ROLE_LABELS) as [ApproverRole, string][]).map(
+                  ([value, label]) => (
+                    <option key={value} value={value}>{label}</option>
+                  )
+                )}
+              </select>
             </div>
             <div>
               <label className="block font-ui font-bold text-[11px] text-thmanyah-muted mb-1">اسم المعتمد</label>

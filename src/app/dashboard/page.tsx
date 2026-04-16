@@ -11,13 +11,12 @@ import {
   TrendingUp,
   Filter,
   Search,
-  ChevronDown,
   Eye,
   ShieldCheck,
   Users,
   Briefcase,
   BarChart3,
-  ArrowLeft,
+  Send,
 } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Card from "@/components/ui/Card";
@@ -25,14 +24,15 @@ import StatCard from "@/components/ui/StatCard";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import LoginScreen from "@/components/ui/LoginScreen";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { AuthProvider, useAuth, AuthUser } from "@/lib/auth";
 import {
   getAllRequests,
+  getRequestsByEmail,
   getDashboardStats,
   getTopRequestingManagers,
 } from "@/lib/store";
 import { VacancyRequest } from "@/lib/types";
-import { DEPARTMENTS, STATUS_LABELS } from "@/lib/constants";
+import { DEPARTMENTS } from "@/lib/constants";
 
 type FilterStatus = "all" | "received" | "pending_approval" | "approved" | "rejected";
 
@@ -41,14 +41,18 @@ export default function DashboardPage() {
 }
 
 function DashboardContent() {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) return <LoginScreen />;
-  return <DashboardView />;
+  const { isAuthenticated, user } = useAuth();
+  if (!isAuthenticated || !user) return <LoginScreen />;
+  return <DashboardView user={user} />;
 }
 
-function DashboardView() {
+function DashboardView({ user }: { user: AuthUser }) {
+  const isAdmin = user.role === "culture_admin";
+  const isApprover = user.role === "approver" || user.role === "department_head";
+  const canSeeAll = isAdmin || isApprover;
+
   const [requests, setRequests] = useState<VacancyRequest[]>([]);
-  const [stats, setStats] = useState({
+  const [orgStats, setOrgStats] = useState({
     totalRequests: 0,
     pendingRequests: 0,
     approvedRequests: 0,
@@ -65,15 +69,22 @@ function DashboardView() {
     let cancelled = false;
     (async () => {
       try {
-        const [reqs, s, top] = await Promise.all([
-          getAllRequests(),
-          getDashboardStats(),
-          getTopRequestingManagers(),
-        ]);
-        if (cancelled) return;
-        setRequests(reqs);
-        setStats(s);
-        setTopManagers(top);
+        if (canSeeAll) {
+          const [reqs, s, top] = await Promise.all([
+            getAllRequests(),
+            getDashboardStats(),
+            getTopRequestingManagers(),
+          ]);
+          if (cancelled) return;
+          setRequests(reqs);
+          setOrgStats(s);
+          setTopManagers(top);
+        } else {
+          // Requester: only own rows, no org-wide analytics
+          const reqs = await getRequestsByEmail(user.email);
+          if (cancelled) return;
+          setRequests(reqs);
+        }
       } catch (err) {
         console.error("Failed to load dashboard data", err);
       } finally {
@@ -81,7 +92,26 @@ function DashboardView() {
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [canSeeAll, user.email]);
+
+  const mineStats = useMemo(() => {
+    const approved = requests.filter(
+      (r) => r.status === "approved" || r.status === "hiring_started"
+    ).length;
+    const rejected = requests.filter((r) => r.status === "rejected").length;
+    const pending = requests.filter(
+      (r) =>
+        r.status === "received" ||
+        r.status === "under_review" ||
+        r.status === "pending_approval"
+    ).length;
+    return {
+      total: requests.length,
+      pending,
+      approved,
+      rejected,
+    };
+  }, [requests]);
 
   const filtered = useMemo(() => {
     return requests.filter((r) => {
@@ -136,55 +166,88 @@ function DashboardView() {
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
           <div className="flex items-center gap-3 mb-1">
             <LayoutDashboard className="w-5 h-5 text-thmanyah-green" />
-            <span className="font-ui text-[13px] text-thmanyah-green font-medium">لوحة المتابعة</span>
+            <span className="font-ui text-[13px] text-thmanyah-green font-medium">
+              {canSeeAll ? "لوحة المتابعة" : "طلباتي"}
+            </span>
           </div>
           <h1 className="font-display font-black text-[28px] md:text-[36px]">
-            إدارة طلبات التوظيف
+            {canSeeAll ? "إدارة طلبات التوظيف" : `أهلًا ${user.username}`}
           </h1>
           <p className="font-ui text-[14px] text-white/50 mt-1">
-            مراجعة واعتماد طلبات فتح الشواغر الوظيفية
+            {canSeeAll
+              ? "مراجعة واعتماد طلبات فتح الشواغر الوظيفية"
+              : "تابع طلباتك المقدّمة ومكانها في مسار الاعتماد"}
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-6">
         {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-          <StatCard
-            label="إجمالي الطلبات"
-            value={stats.totalRequests}
-            icon={<FileText className="w-5 h-5" />}
-            color="black"
-          />
-          <StatCard
-            label="قيد المعالجة"
-            value={stats.pendingRequests}
-            icon={<Clock className="w-5 h-5" />}
-            color="amber"
-          />
-          <StatCard
-            label="معتمدة"
-            value={stats.approvedRequests}
-            icon={<CheckCircle2 className="w-5 h-5" />}
-            color="green"
-          />
-          <StatCard
-            label="مرفوضة"
-            value={stats.rejectedRequests}
-            icon={<XCircle className="w-5 h-5" />}
-            color="red"
-          />
-          <StatCard
-            label="متوسط أيام المعالجة"
-            value={stats.avgApprovalDays || "—"}
-            icon={<TrendingUp className="w-5 h-5" />}
-            color="blue"
-          />
-        </div>
+        {canSeeAll ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            <StatCard
+              label="إجمالي الطلبات"
+              value={orgStats.totalRequests}
+              icon={<FileText className="w-5 h-5" />}
+              color="black"
+            />
+            <StatCard
+              label="قيد المعالجة"
+              value={orgStats.pendingRequests}
+              icon={<Clock className="w-5 h-5" />}
+              color="amber"
+            />
+            <StatCard
+              label="معتمدة"
+              value={orgStats.approvedRequests}
+              icon={<CheckCircle2 className="w-5 h-5" />}
+              color="green"
+            />
+            <StatCard
+              label="مرفوضة"
+              value={orgStats.rejectedRequests}
+              icon={<XCircle className="w-5 h-5" />}
+              color="red"
+            />
+            <StatCard
+              label="متوسط أيام المعالجة"
+              value={orgStats.avgApprovalDays || "—"}
+              icon={<TrendingUp className="w-5 h-5" />}
+              color="blue"
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <StatCard
+              label="طلباتي"
+              value={mineStats.total}
+              icon={<FileText className="w-5 h-5" />}
+              color="black"
+            />
+            <StatCard
+              label="قيد المعالجة"
+              value={mineStats.pending}
+              icon={<Clock className="w-5 h-5" />}
+              color="amber"
+            />
+            <StatCard
+              label="معتمدة"
+              value={mineStats.approved}
+              icon={<CheckCircle2 className="w-5 h-5" />}
+              color="green"
+            />
+            <StatCard
+              label="مرفوضة"
+              value={mineStats.rejected}
+              icon={<XCircle className="w-5 h-5" />}
+              color="red"
+            />
+          </div>
+        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className={`grid grid-cols-1 gap-6 ${canSeeAll ? "lg:grid-cols-4" : ""}`}>
           {/* Main area */}
-          <div className="lg:col-span-3 space-y-4">
+          <div className={canSeeAll ? "lg:col-span-3 space-y-4" : "space-y-4"}>
             {/* Filters */}
             <Card padding="sm">
               <div className="flex flex-wrap items-center gap-3">
@@ -192,7 +255,11 @@ function DashboardView() {
                   <Search className="w-4 h-4 text-thmanyah-muted" />
                   <input
                     type="text"
-                    placeholder="بحث بالاسم، المسمى، أو رقم الطلب..."
+                    placeholder={
+                      canSeeAll
+                        ? "بحث بالاسم، المسمى، أو رقم الطلب..."
+                        : "بحث بالمسمى أو رقم الطلب..."
+                    }
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-transparent font-ui text-[13px] placeholder:text-thmanyah-muted/50 focus:outline-none"
@@ -224,16 +291,18 @@ function DashboardView() {
                       </button>
                     )
                   )}
-                  <select
-                    value={filterDept}
-                    onChange={(e) => setFilterDept(e.target.value)}
-                    className="px-3 py-1.5 rounded-full font-ui text-[12px] bg-thmanyah-cream text-thmanyah-muted border-0 cursor-pointer focus:outline-none"
-                  >
-                    <option value="">كل الإدارات</option>
-                    {DEPARTMENTS.map((d) => (
-                      <option key={d} value={d}>{d}</option>
-                    ))}
-                  </select>
+                  {canSeeAll && (
+                    <select
+                      value={filterDept}
+                      onChange={(e) => setFilterDept(e.target.value)}
+                      className="px-3 py-1.5 rounded-full font-ui text-[12px] bg-thmanyah-cream text-thmanyah-muted border-0 cursor-pointer focus:outline-none"
+                    >
+                      <option value="">كل الإدارات</option>
+                      {DEPARTMENTS.map((d) => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               </div>
             </Card>
@@ -247,12 +316,21 @@ function DashboardView() {
                   </div>
                   <p className="font-ui text-[14px] text-thmanyah-muted">
                     {requests.length === 0
-                      ? "لا توجد طلبات بعد"
+                      ? canSeeAll
+                        ? "لا توجد طلبات بعد"
+                        : "ما قدّمت أي طلب بعد"
                       : "لا توجد نتائج مطابقة للفلتر"}
                   </p>
+                  {requests.length === 0 && !canSeeAll && (
+                    <p className="font-ui text-[12px] text-thmanyah-muted/80 mt-1 mb-4">
+                      ابدأ بتقديم أول طلب لفتح شاغر في فريقك
+                    </p>
+                  )}
                   {requests.length === 0 && (
                     <Link href="/submit" className="mt-4 inline-block">
-                      <Button variant="accent" size="sm">تقديم أول طلب</Button>
+                      <Button variant="accent" size="sm" icon={<Send className="w-4 h-4" />}>
+                        {canSeeAll ? "تقديم أول طلب" : "تقديم طلب جديد"}
+                      </Button>
                     </Link>
                   )}
                 </div>
@@ -260,98 +338,100 @@ function DashboardView() {
             ) : (
               <div className="space-y-3">
                 {filtered.map((r) => (
-                  <RequestCard key={r.id} request={r} />
+                  <RequestCard key={r.id} request={r} canApprove={canSeeAll} />
                 ))}
               </div>
             )}
           </div>
 
-          {/* Sidebar analytics */}
-          <div className="space-y-4">
-            {/* Dept breakdown */}
-            <Card>
-              <h3 className="font-ui font-bold text-[14px] mb-4 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-thmanyah-green" />
-                الطلبات حسب الإدارة
-              </h3>
-              {deptStats.length === 0 ? (
-                <p className="font-ui text-[13px] text-thmanyah-muted">لا توجد بيانات</p>
-              ) : (
-                <div className="space-y-3">
-                  {deptStats.map((d) => (
-                    <div key={d.dept}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-ui text-[12px] text-thmanyah-charcoal">
-                          {d.dept}
+          {/* Sidebar analytics — admins/approvers only */}
+          {canSeeAll && (
+            <div className="space-y-4">
+              {/* Dept breakdown */}
+              <Card>
+                <h3 className="font-ui font-bold text-[14px] mb-4 flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-thmanyah-green" />
+                  الطلبات حسب الإدارة
+                </h3>
+                {deptStats.length === 0 ? (
+                  <p className="font-ui text-[13px] text-thmanyah-muted">لا توجد بيانات</p>
+                ) : (
+                  <div className="space-y-3">
+                    {deptStats.map((d) => (
+                      <div key={d.dept}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-ui text-[12px] text-thmanyah-charcoal">
+                            {d.dept}
+                          </span>
+                          <span className="font-ui font-bold text-[12px]">
+                            {d.total}
+                          </span>
+                        </div>
+                        <div className="h-2 bg-thmanyah-cream rounded-full overflow-hidden flex">
+                          {d.approved > 0 && (
+                            <div
+                              className="h-full bg-thmanyah-green rounded-full"
+                              style={{ width: `${(d.approved / d.total) * 100}%` }}
+                            />
+                          )}
+                          {d.rejected > 0 && (
+                            <div
+                              className="h-full bg-thmanyah-red rounded-full"
+                              style={{ width: `${(d.rejected / d.total) * 100}%` }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card>
+
+              {/* Top managers */}
+              <Card>
+                <h3 className="font-ui font-bold text-[14px] mb-4 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-thmanyah-green" />
+                  الأكثر طلبًا للتوظيف
+                </h3>
+                {topManagers.length === 0 ? (
+                  <p className="font-ui text-[13px] text-thmanyah-muted">لا توجد بيانات</p>
+                ) : (
+                  <div className="space-y-2.5">
+                    {topManagers.map((m, i) => (
+                      <div key={m.name} className="flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-thmanyah-cream flex items-center justify-center font-ui font-bold text-[11px] text-thmanyah-muted shrink-0">
+                          {i + 1}
                         </span>
-                        <span className="font-ui font-bold text-[12px]">
-                          {d.total}
+                        <span className="font-ui text-[13px] flex-1">{m.name}</span>
+                        <span className="font-ui font-bold text-[13px] text-thmanyah-green">
+                          {m.count}
                         </span>
                       </div>
-                      <div className="h-2 bg-thmanyah-cream rounded-full overflow-hidden flex">
-                        {d.approved > 0 && (
-                          <div
-                            className="h-full bg-thmanyah-green rounded-full"
-                            style={{ width: `${(d.approved / d.total) * 100}%` }}
-                          />
-                        )}
-                        {d.rejected > 0 && (
-                          <div
-                            className="h-full bg-thmanyah-red rounded-full"
-                            style={{ width: `${(d.rejected / d.total) * 100}%` }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Card>
+                    ))}
+                  </div>
+                )}
+              </Card>
 
-            {/* Top managers */}
-            <Card>
-              <h3 className="font-ui font-bold text-[14px] mb-4 flex items-center gap-2">
-                <Users className="w-4 h-4 text-thmanyah-green" />
-                الأكثر طلبًا للتوظيف
-              </h3>
-              {topManagers.length === 0 ? (
-                <p className="font-ui text-[13px] text-thmanyah-muted">لا توجد بيانات</p>
-              ) : (
-                <div className="space-y-2.5">
-                  {topManagers.map((m, i) => (
-                    <div key={m.name} className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full bg-thmanyah-cream flex items-center justify-center font-ui font-bold text-[11px] text-thmanyah-muted shrink-0">
-                        {i + 1}
-                      </span>
-                      <span className="font-ui text-[13px] flex-1">{m.name}</span>
-                      <span className="font-ui font-bold text-[13px] text-thmanyah-green">
-                        {m.count}
-                      </span>
-                    </div>
-                  ))}
+              {/* Quick actions */}
+              <Card className="bg-thmanyah-black text-white">
+                <h3 className="font-ui font-bold text-[14px] mb-3">إجراءات سريعة</h3>
+                <div className="space-y-2">
+                  <Link href="/submit" className="block">
+                    <Button variant="accent" size="sm" className="w-full" icon={<Briefcase className="w-4 h-4" />}>
+                      تقديم طلب جديد
+                    </Button>
+                  </Link>
                 </div>
-              )}
-            </Card>
-
-            {/* Quick actions */}
-            <Card className="bg-thmanyah-black text-white">
-              <h3 className="font-ui font-bold text-[14px] mb-3">إجراءات سريعة</h3>
-              <div className="space-y-2">
-                <Link href="/submit" className="block">
-                  <Button variant="accent" size="sm" className="w-full" icon={<Briefcase className="w-4 h-4" />}>
-                    تقديم طلب جديد
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          </div>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function RequestCard({ request }: { request: VacancyRequest }) {
+function RequestCard({ request, canApprove }: { request: VacancyRequest; canApprove: boolean }) {
   const currentApprover =
     request.approvalChain[request.currentApprovalStep];
 
@@ -421,7 +501,7 @@ function RequestCard({ request }: { request: VacancyRequest }) {
               عرض
             </Button>
           </Link>
-          {request.status !== "approved" && request.status !== "rejected" && (
+          {canApprove && request.status !== "approved" && request.status !== "rejected" && (
             <Link href={`/approve/${request.id}?step=${request.currentApprovalStep}`}>
               <Button variant="secondary" size="sm" icon={<ShieldCheck className="w-4 h-4" />}>
                 اعتماد
