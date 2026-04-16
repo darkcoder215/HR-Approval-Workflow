@@ -273,18 +273,21 @@ function HomeContent() {
             <div className="relative grid grid-cols-3 gap-8">
               <PipelineStage
                 index={0}
+                tone="amber"
                 icon={<FileText className="w-7 h-7" />}
                 title="رفع طلب شاغر"
                 description="دورك كقائد، ترفع احتياج القوى العاملة في فريقك، وسيُقيم الطلب مبدئيًا بواسطة الذكاء الاصطناعي."
               />
               <PipelineStage
                 index={1}
+                tone="sky"
                 icon={<Search className="w-7 h-7" />}
                 title="تحليل الدور"
                 description="بعد التحليل المبدئي، يراجع فريق المواهب طلبك ويرد عليك وفق الخط الزمني المُتفق عليه بالأداة."
               />
               <PipelineStage
                 index={2}
+                tone="green"
                 icon={<CheckCircle2 className="w-7 h-7" />}
                 title="اتّخاذ القرار"
                 description="عند قبول طلبك، يُعين مسؤول الاستقطاب للعمل معك، وفي حال الرفض، نشاركك تقرير واضح."
@@ -294,30 +297,36 @@ function HomeContent() {
 
           {/* Mobile timeline — vertical */}
           <div className="md:hidden relative space-y-8">
-            <div className="absolute top-8 bottom-8 right-7 w-px bg-gradient-to-b from-thmanyah-amber/40 via-thmanyah-amber/20 to-thmanyah-amber/5" />
+            <div className="absolute top-8 bottom-8 right-7 w-px bg-gradient-to-b from-white/30 via-white/15 to-white/5" />
             {[
               {
                 icon: <FileText className="w-5 h-5" />,
                 title: "رفع طلب شاغر",
                 description: "دورك كقائد، ترفع احتياج القوى العاملة في فريقك، وسيُقيم الطلب مبدئيًا بواسطة الذكاء الاصطناعي.",
+                node: "bg-thmanyah-amber text-thmanyah-black",
+                title_text: "text-thmanyah-amber",
               },
               {
                 icon: <Search className="w-5 h-5" />,
                 title: "تحليل الدور",
                 description: "بعد التحليل المبدئي، يراجع فريق المواهب طلبك ويرد عليك وفق الخط الزمني المُتفق عليه بالأداة.",
+                node: "bg-thmanyah-sky text-thmanyah-dark-slate",
+                title_text: "text-thmanyah-sky",
               },
               {
                 icon: <CheckCircle2 className="w-5 h-5" />,
                 title: "اتّخاذ القرار",
                 description: "عند قبول طلبك، يُعين مسؤول الاستقطاب للعمل معك، وفي حال الرفض، نشاركك تقرير واضح.",
+                node: "bg-thmanyah-green text-white",
+                title_text: "text-thmanyah-green",
               },
             ].map((s, i) => (
               <div key={i} className="relative flex items-start gap-4 pipeline-node-enter" style={{ animationDelay: `${i * 0.12}s` }}>
-                <div className="relative z-10 w-14 h-14 rounded-full bg-thmanyah-amber flex items-center justify-center text-thmanyah-black shrink-0 shadow-[0_0_0_4px_rgba(250,204,21,0.12)]">
+                <div className={`relative z-10 w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-[0_0_0_4px_rgba(255,255,255,0.06)] ${s.node}`}>
                   {s.icon}
                 </div>
                 <div className="flex-1 pt-1.5">
-                  <h3 className="font-display font-black text-[17px] text-thmanyah-amber mb-1.5">{s.title}</h3>
+                  <h3 className={`font-display font-black text-[17px] mb-1.5 ${s.title_text}`}>{s.title}</h3>
                   <p className="font-ui text-[12px] text-white/85 leading-relaxed">{s.description}</p>
                 </div>
               </div>
@@ -356,23 +365,73 @@ function HomeContent() {
           </div>
 
           <div className="space-y-3 max-w-2xl mx-auto stagger-children">
-            {APPROVAL_CHAIN_TEMPLATE.map((step, i) => (
-              <div key={i} className="flex items-center gap-3 md:gap-4 bg-white rounded-2xl p-4 md:p-5 border border-thmanyah-warm-border shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover-lift">
-                <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-thmanyah-black text-thmanyah-amber flex items-center justify-center font-display font-black text-[14px] md:text-[16px] shrink-0">
-                  {i + 1}
+            {APPROVAL_CHAIN_TEMPLATE.map((step, i) => {
+              // Rotate accent hues so each step's index badge & SLA chip feel
+              // distinct — per DESIGN_GUIDE_New's "more variation in color"
+              // direction. Colors stay within the Thmanyah extended palette.
+              const palettes = [
+                {
+                  badgeBg: "bg-thmanyah-green",
+                  badgeText: "text-white",
+                  slaBg: "bg-thmanyah-green-light/70",
+                  slaText: "text-emerald-800",
+                  accent: "text-thmanyah-green",
+                },
+                {
+                  badgeBg: "bg-thmanyah-blue",
+                  badgeText: "text-white",
+                  slaBg: "bg-thmanyah-sky-light/80",
+                  slaText: "text-thmanyah-blue",
+                  accent: "text-thmanyah-blue",
+                },
+                {
+                  badgeBg: "bg-thmanyah-amber",
+                  badgeText: "text-thmanyah-black",
+                  slaBg: "bg-thmanyah-pale-yellow/80",
+                  slaText: "text-amber-800",
+                  accent: "text-amber-700",
+                },
+                {
+                  badgeBg: "bg-thmanyah-hot-pink",
+                  badgeText: "text-white",
+                  slaBg: "bg-thmanyah-rose/80",
+                  slaText: "text-thmanyah-burgundy",
+                  accent: "text-thmanyah-burgundy",
+                },
+                {
+                  badgeBg: "bg-thmanyah-peach",
+                  badgeText: "text-white",
+                  slaBg: "bg-thmanyah-salmon/60",
+                  slaText: "text-thmanyah-red",
+                  accent: "text-thmanyah-red",
+                },
+                {
+                  badgeBg: "bg-thmanyah-charcoal",
+                  badgeText: "text-thmanyah-amber",
+                  slaBg: "bg-thmanyah-lavender/60",
+                  slaText: "text-thmanyah-charcoal",
+                  accent: "text-thmanyah-charcoal",
+                },
+              ];
+              const c = palettes[i % palettes.length];
+              return (
+                <div key={i} className="flex items-center gap-3 md:gap-4 bg-white rounded-2xl p-4 md:p-5 border border-thmanyah-warm-border shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover-lift">
+                  <div className={`w-9 h-9 md:w-10 md:h-10 rounded-full ${c.badgeBg} ${c.badgeText} flex items-center justify-center font-display font-black text-[14px] md:text-[16px] shrink-0`}>
+                    {i + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-ui font-black text-[14px] md:text-[15px] text-thmanyah-black">{step.role}</p>
+                    {step.approverName && step.role !== "الرئيس التنفيذي" && (
+                      <p className={`font-ui font-bold text-[12px] md:text-[13px] mt-0.5 truncate ${c.accent}`}>{step.approverName}</p>
+                    )}
+                  </div>
+                  <div className={`flex items-center gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 rounded-full shrink-0 ${c.slaBg}`}>
+                    <Clock className={`w-3 md:w-3.5 h-3 md:h-3.5 ${c.slaText}`} />
+                    <span className={`font-ui font-black text-[12px] md:text-[13px] ${c.slaText}`}>{step.slaHours}h</span>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-ui font-black text-[14px] md:text-[15px] text-thmanyah-black">{step.role}</p>
-                  {step.approverName && step.role !== "الرئيس التنفيذي" && (
-                    <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-charcoal mt-0.5 truncate">{step.approverName}</p>
-                  )}
-                </div>
-                <div className="flex items-center gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 bg-thmanyah-black rounded-full shrink-0">
-                  <Clock className="w-3 md:w-3.5 h-3 md:h-3.5 text-thmanyah-amber" />
-                  <span className="font-ui font-black text-[12px] md:text-[13px] text-thmanyah-amber">{step.slaHours}h</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -388,9 +447,9 @@ function HomeContent() {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 stagger-children">
-            <FeatureCard icon={<Target className="w-5 h-5" />} title="أسئلة متكيّفة" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
-            <FeatureCard icon={<Eye className="w-5 h-5" />} title="تتبع لحظي" description="اعرف وين وصل طلبك بالضبط مع شريط تقدم بصري واضح" />
-            <FeatureCard icon={<BarChart3 className="w-5 h-5" />} title="لوحة تحليلية" description="إحصائيات شاملة حسب الإدارة مع نسب القبول والرفض" />
+            <FeatureCard accent="green" icon={<Target className="w-5 h-5" />} title="أسئلة متكيّفة" description="النموذج يتكيّف مع إجاباتك ويعرض أسئلة مختلفة حسب نوع الشاغر" />
+            <FeatureCard accent="pink" icon={<Eye className="w-5 h-5" />} title="تتبع لحظي" description="اعرف وين وصل طلبك بالضبط مع شريط تقدم بصري واضح" />
+            <FeatureCard accent="blue" icon={<BarChart3 className="w-5 h-5" />} title="لوحة تحليلية" description="إحصائيات شاملة حسب الإدارة مع نسب القبول والرفض" />
           </div>
         </div>
       </section>
@@ -417,10 +476,39 @@ export default function HomePage() {
   );
 }
 
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
+function FeatureCard({
+  icon,
+  title,
+  description,
+  accent = "green",
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  accent?: "green" | "pink" | "blue" | "amber";
+}) {
+  const accents: Record<string, { tile: string; shadow: string }> = {
+    green: {
+      tile: "bg-thmanyah-green text-white",
+      shadow: "shadow-[0_4px_12px_rgba(0,193,122,0.25)]",
+    },
+    pink: {
+      tile: "bg-thmanyah-hot-pink text-white",
+      shadow: "shadow-[0_4px_12px_rgba(255,0,183,0.22)]",
+    },
+    blue: {
+      tile: "bg-thmanyah-blue text-white",
+      shadow: "shadow-[0_4px_12px_rgba(0,114,249,0.25)]",
+    },
+    amber: {
+      tile: "bg-thmanyah-amber text-thmanyah-black",
+      shadow: "shadow-[0_4px_12px_rgba(255,188,10,0.30)]",
+    },
+  };
+  const c = accents[accent];
   return (
     <div className="bg-thmanyah-off-white border border-thmanyah-warm-border rounded-2xl p-5 md:p-6 hover-lift">
-      <div className="w-11 h-11 rounded-xl bg-thmanyah-green flex items-center justify-center mb-4 text-white shadow-[0_4px_12px_rgba(0,193,122,0.25)]">{icon}</div>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${c.tile} ${c.shadow}`}>{icon}</div>
       <h3 className="font-ui font-black text-[14px] md:text-[15px] mb-2 text-thmanyah-black">{title}</h3>
       <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-charcoal leading-relaxed">{description}</p>
     </div>
@@ -432,12 +520,55 @@ function PipelineStage({
   icon,
   title,
   description,
+  tone = "amber",
 }: {
   index: number;
   icon: React.ReactNode;
   title: string;
   description: string;
+  tone?: "amber" | "sky" | "green" | "pink" | "lavender";
 }) {
+  // Varied tone per stage so the 3-step pipeline reads like a journey instead
+  // of three identical amber nodes. Each tone uses a distinct brand hue for
+  // the node surface, badge accent, and headline.
+  const tones: Record<string, { node: string; text: string; badgeBorder: string; badgeText: string; titleText: string }> = {
+    amber: {
+      node: "bg-thmanyah-amber",
+      text: "text-thmanyah-black",
+      badgeBorder: "border-thmanyah-amber",
+      badgeText: "text-thmanyah-amber",
+      titleText: "text-thmanyah-amber",
+    },
+    sky: {
+      node: "bg-thmanyah-sky",
+      text: "text-thmanyah-dark-slate",
+      badgeBorder: "border-thmanyah-sky",
+      badgeText: "text-thmanyah-sky",
+      titleText: "text-thmanyah-sky",
+    },
+    green: {
+      node: "bg-thmanyah-green",
+      text: "text-white",
+      badgeBorder: "border-thmanyah-green",
+      badgeText: "text-thmanyah-green",
+      titleText: "text-thmanyah-green",
+    },
+    pink: {
+      node: "bg-thmanyah-hot-pink",
+      text: "text-white",
+      badgeBorder: "border-thmanyah-hot-pink",
+      badgeText: "text-thmanyah-pink-light",
+      titleText: "text-thmanyah-pink-light",
+    },
+    lavender: {
+      node: "bg-thmanyah-lavender",
+      text: "text-thmanyah-charcoal",
+      badgeBorder: "border-thmanyah-lavender",
+      badgeText: "text-thmanyah-lavender",
+      titleText: "text-thmanyah-lavender",
+    },
+  };
+  const c = tones[tone];
   return (
     <div
       className="relative group pipeline-node-enter text-center"
@@ -446,18 +577,18 @@ function PipelineStage({
       {/* Node circle */}
       <div className="flex justify-center mb-6">
         <div className="relative">
-          <div className="pipeline-node w-[104px] h-[104px] rounded-full bg-thmanyah-amber flex items-center justify-center text-thmanyah-black shadow-[0_0_0_6px_rgba(250,204,21,0.08)] transition-transform duration-500 group-hover:scale-[1.04]">
+          <div className={`pipeline-node w-[104px] h-[104px] rounded-full flex items-center justify-center shadow-[0_0_0_6px_rgba(255,255,255,0.05)] transition-transform duration-500 group-hover:scale-[1.04] ${c.node} ${c.text}`}>
             {icon}
           </div>
           {/* Stage number badge */}
-          <span className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-thmanyah-black border-2 border-thmanyah-amber text-thmanyah-amber font-display font-black text-[12px] flex items-center justify-center">
+          <span className={`absolute -top-1 -right-1 w-7 h-7 rounded-full bg-thmanyah-black border-2 font-display font-black text-[12px] flex items-center justify-center ${c.badgeBorder} ${c.badgeText}`}>
             {index + 1}
           </span>
         </div>
       </div>
 
       {/* Title */}
-      <h3 className="font-display font-black text-[19px] md:text-[21px] text-thmanyah-amber mb-3 leading-tight">
+      <h3 className={`font-display font-black text-[19px] md:text-[21px] mb-3 leading-tight ${c.titleText}`}>
         {title}
       </h3>
 

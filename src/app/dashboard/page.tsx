@@ -189,7 +189,7 @@ function DashboardView({ user }: { user: AuthUser }) {
               label="إجمالي الطلبات"
               value={orgStats.totalRequests}
               icon={<FileText className="w-5 h-5" />}
-              color="black"
+              color="lavender"
             />
             <StatCard
               label="قيد المعالجة"
@@ -201,19 +201,19 @@ function DashboardView({ user }: { user: AuthUser }) {
               label="معتمدة"
               value={orgStats.approvedRequests}
               icon={<CheckCircle2 className="w-5 h-5" />}
-              color="green"
+              color="mint"
             />
             <StatCard
               label="مرفوضة"
               value={orgStats.rejectedRequests}
               icon={<XCircle className="w-5 h-5" />}
-              color="red"
+              color="peach"
             />
             <StatCard
               label="متوسط أيام المعالجة"
               value={orgStats.avgApprovalDays || "—"}
               icon={<TrendingUp className="w-5 h-5" />}
-              color="blue"
+              color="sky"
             />
           </div>
         ) : (
@@ -222,7 +222,7 @@ function DashboardView({ user }: { user: AuthUser }) {
               label="طلباتي"
               value={mineStats.total}
               icon={<FileText className="w-5 h-5" />}
-              color="black"
+              color="lavender"
             />
             <StatCard
               label="قيد المعالجة"
@@ -234,13 +234,13 @@ function DashboardView({ user }: { user: AuthUser }) {
               label="معتمدة"
               value={mineStats.approved}
               icon={<CheckCircle2 className="w-5 h-5" />}
-              color="green"
+              color="mint"
             />
             <StatCard
               label="مرفوضة"
               value={mineStats.rejected}
               icon={<XCircle className="w-5 h-5" />}
-              color="red"
+              color="peach"
             />
           </div>
         )}
@@ -350,7 +350,7 @@ function DashboardView({ user }: { user: AuthUser }) {
               {/* Dept breakdown */}
               <Card>
                 <h3 className="font-ui font-bold text-[14px] mb-4 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-thmanyah-green" />
+                  <BarChart3 className="w-4 h-4 text-thmanyah-blue" />
                   الطلبات حسب الإدارة
                 </h3>
                 {deptStats.length === 0 ? (
@@ -376,7 +376,7 @@ function DashboardView({ user }: { user: AuthUser }) {
                           )}
                           {d.rejected > 0 && (
                             <div
-                              className="h-full bg-thmanyah-red rounded-full"
+                              className="h-full bg-thmanyah-peach rounded-full"
                               style={{ width: `${(d.rejected / d.total) * 100}%` }}
                             />
                           )}
@@ -390,24 +390,39 @@ function DashboardView({ user }: { user: AuthUser }) {
               {/* Top managers */}
               <Card>
                 <h3 className="font-ui font-bold text-[14px] mb-4 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-thmanyah-green" />
+                  <Users className="w-4 h-4 text-thmanyah-hot-pink" />
                   الأكثر طلبًا للتوظيف
                 </h3>
                 {topManagers.length === 0 ? (
                   <p className="font-ui text-[13px] text-thmanyah-muted">لا توجد بيانات</p>
                 ) : (
                   <div className="space-y-2.5">
-                    {topManagers.map((m, i) => (
-                      <div key={m.name} className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-thmanyah-cream flex items-center justify-center font-ui font-bold text-[11px] text-thmanyah-muted shrink-0">
-                          {i + 1}
-                        </span>
-                        <span className="font-ui text-[13px] flex-1">{m.name}</span>
-                        <span className="font-ui font-bold text-[13px] text-thmanyah-green">
-                          {m.count}
-                        </span>
-                      </div>
-                    ))}
+                    {topManagers.map((m, i) => {
+                      // Rotate ranking badge hues so the list reads like a
+                      // small spectrum instead of a single neutral chip.
+                      const rankStyles = [
+                        "bg-thmanyah-amber/25 text-amber-800",
+                        "bg-thmanyah-lavender/50 text-thmanyah-charcoal",
+                        "bg-thmanyah-mint/50 text-emerald-700",
+                        "bg-thmanyah-rose/60 text-thmanyah-burgundy",
+                        "bg-thmanyah-sky-light/70 text-thmanyah-blue",
+                      ];
+                      return (
+                        <div key={m.name} className="flex items-center gap-3">
+                          <span
+                            className={`w-6 h-6 rounded-full flex items-center justify-center font-ui font-bold text-[11px] shrink-0 ${
+                              rankStyles[i % rankStyles.length]
+                            }`}
+                          >
+                            {i + 1}
+                          </span>
+                          <span className="font-ui text-[13px] flex-1">{m.name}</span>
+                          <span className="font-ui font-bold text-[13px] text-thmanyah-green">
+                            {m.count}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </Card>

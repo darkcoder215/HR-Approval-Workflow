@@ -518,29 +518,44 @@ function SubmitForm() {
                 </p>
               </div>
               <div className="space-y-3">
-                {approvalChain.map((step, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-thmanyah-cream/60"
-                  >
-                    <span className="w-7 h-7 rounded-full bg-thmanyah-black text-white flex items-center justify-center font-ui font-bold text-[12px] shrink-0">
-                      {i + 1}
-                    </span>
-                    <div className="flex-1">
-                      <p className="font-ui font-medium text-[13px]">
-                        {step.role}
-                      </p>
-                      {step.approverName && step.role !== "الرئيس التنفيذي" && (
-                        <p className="font-ui text-[12px] text-thmanyah-muted">
-                          {step.approverName}
+                {approvalChain.map((step, i) => {
+                  // Rotate through the Thmanyah extended palette so each step
+                  // carries its own hue instead of stacking black circles.
+                  const stepPalettes = [
+                    { badge: "bg-thmanyah-green text-white", row: "bg-thmanyah-green-light/25" },
+                    { badge: "bg-thmanyah-blue text-white", row: "bg-thmanyah-aqua-pale/60" },
+                    { badge: "bg-thmanyah-amber text-thmanyah-black", row: "bg-thmanyah-pale-yellow/40" },
+                    { badge: "bg-thmanyah-hot-pink text-white", row: "bg-thmanyah-rose/40" },
+                    { badge: "bg-thmanyah-peach text-white", row: "bg-thmanyah-blush/50" },
+                    { badge: "bg-thmanyah-charcoal text-thmanyah-amber", row: "bg-thmanyah-lavender/35" },
+                  ];
+                  const p = stepPalettes[i % stepPalettes.length];
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl ${p.row}`}
+                    >
+                      <span
+                        className={`w-7 h-7 rounded-full flex items-center justify-center font-ui font-bold text-[12px] shrink-0 ${p.badge}`}
+                      >
+                        {i + 1}
+                      </span>
+                      <div className="flex-1">
+                        <p className="font-ui font-medium text-[13px]">
+                          {step.role}
                         </p>
-                      )}
+                        {step.approverName && step.role !== "الرئيس التنفيذي" && (
+                          <p className="font-ui text-[12px] text-thmanyah-muted">
+                            {step.approverName}
+                          </p>
+                        )}
+                      </div>
+                      <span className="font-ui text-[12px] text-thmanyah-muted bg-white px-2.5 py-1 rounded-full">
+                        {step.slaHours} ساعة
+                      </span>
                     </div>
-                    <span className="font-ui text-[12px] text-thmanyah-muted bg-white px-2.5 py-1 rounded-full">
-                      {step.slaHours} ساعة
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -556,6 +571,7 @@ function SubmitForm() {
         <FormSection
           title="بيانات مقدم الطلب"
           icon={<User className="w-5 h-5" />}
+          tone="blue"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
@@ -627,6 +643,7 @@ function SubmitForm() {
         <FormSection
           title="تقييم طلب التوظيف"
           icon={<FileText className="w-5 h-5" />}
+          tone="amber"
         >
           <RadioGroup
             label="هل جربت حلول أخرى غير التوظيف؟"
@@ -684,6 +701,7 @@ function SubmitForm() {
         <FormSection
           title="تفاصيل الشاغر"
           icon={<Building2 className="w-5 h-5" />}
+          tone="pink"
         >
           <RadioGroup
             label="نوع الشاغر"
@@ -801,6 +819,7 @@ function SubmitForm() {
         <FormSection
           title="تفاصيل الدور الوظيفي"
           icon={<Briefcase className="w-5 h-5" />}
+          tone="sky"
         >
           <Input
             label="المسمى الوظيفي"
@@ -913,6 +932,7 @@ function SubmitForm() {
           subtitle="ثمانية شركة تقنية، وتفعيل أدوات الذكاء الاصطناعي بعملنا ضمن مشروع التحول الرقمي والتقني يُعد إلزامي وليس خيار."
           icon={<Brain className="w-5 h-5" />}
           highlight
+          tone="lavender"
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
@@ -950,6 +970,7 @@ function SubmitForm() {
           title="رفع معيار اختيار المواهب"
           icon={<Target className="w-5 h-5" />}
           highlight
+          tone="peach"
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
@@ -971,6 +992,7 @@ function SubmitForm() {
           title="تعريف النجاح"
           icon={<CheckCircle2 className="w-5 h-5" />}
           highlight
+          tone="mint"
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
@@ -1008,6 +1030,7 @@ function SubmitForm() {
           title="تأكيد مدير الشاغر"
           icon={<ShieldCheck className="w-5 h-5" />}
           highlight
+          tone="amber"
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
@@ -1032,6 +1055,7 @@ function SubmitForm() {
           title="بيانات المعتمدين"
           icon={<ShieldCheck className="w-5 h-5" />}
           highlight
+          tone="blue"
         >
           <div className="bg-thmanyah-black rounded-xl p-5 text-white">
             <p className="font-body text-[15px] leading-relaxed text-white/80">
