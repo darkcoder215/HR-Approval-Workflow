@@ -1,11 +1,14 @@
 "use client";
 
 import React from "react";
+import { INPUT_TONES, InputTone } from "./inputTones";
+import { useFormSectionTone } from "@/components/form/FormSection";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   hint?: string;
   error?: string;
+  tone?: InputTone;
 }
 
 export default function Input({
@@ -15,9 +18,12 @@ export default function Input({
   id,
   className = "",
   required,
+  tone,
   ...props
 }: InputProps) {
+  const sectionTone = useFormSectionTone();
   const inputId = id || label.replace(/\s+/g, "-");
+  const t = INPUT_TONES[tone ?? sectionTone];
   return (
     <div className="flex flex-col gap-1.5">
       <label
@@ -42,7 +48,7 @@ export default function Input({
           placeholder:text-thmanyah-muted/50
           transition-all duration-200
           hover:border-thmanyah-muted/40
-          focus:border-thmanyah-green focus:ring-2 focus:ring-thmanyah-green/20
+          ${t.focus}
           focus:outline-none
           ${error ? "border-thmanyah-red ring-2 ring-thmanyah-red/20" : ""}
           ${className}

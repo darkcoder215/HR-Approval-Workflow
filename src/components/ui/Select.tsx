@@ -2,6 +2,8 @@
 
 import React from "react";
 import { ChevronDown } from "lucide-react";
+import { INPUT_TONES, InputTone } from "./inputTones";
+import { useFormSectionTone } from "@/components/form/FormSection";
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
@@ -9,6 +11,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: string;
   options: { value: string; label: string }[];
   placeholder?: string;
+  tone?: InputTone;
 }
 
 export default function Select({
@@ -20,9 +23,12 @@ export default function Select({
   id,
   required,
   className = "",
+  tone,
   ...props
 }: SelectProps) {
+  const sectionTone = useFormSectionTone();
   const selectId = id || label.replace(/\s+/g, "-");
+  const t = INPUT_TONES[tone ?? sectionTone];
   return (
     <div className="flex flex-col gap-1.5">
       <label
@@ -47,7 +53,7 @@ export default function Select({
             font-ui text-[14px] text-thmanyah-black
             transition-all duration-200
             hover:border-thmanyah-muted/40
-            focus:border-thmanyah-green focus:ring-2 focus:ring-thmanyah-green/20
+            ${t.focus}
             focus:outline-none cursor-pointer
             ${error ? "border-thmanyah-red ring-2 ring-thmanyah-red/20" : ""}
             ${className}

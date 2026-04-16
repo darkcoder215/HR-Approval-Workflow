@@ -2,7 +2,21 @@
 
 import React from "react";
 
-type Variant = "primary" | "secondary" | "accent" | "danger" | "ghost";
+// Extended variant list: accent-colored buttons draw from the full Thmanyah
+// palette so different actions across the app can carry distinct identities
+// (e.g. "new request" in blue, "export" in amber, etc.) rather than every
+// accent button being the same green.
+type Variant =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "danger"
+  | "ghost"
+  | "blue"
+  | "pink"
+  | "amber"
+  | "burgundy"
+  | "charcoal";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
@@ -22,6 +36,16 @@ const variants: Record<Variant, string> = {
     "bg-thmanyah-red text-white hover:bg-red-600 active:bg-red-700",
   ghost:
     "bg-transparent text-thmanyah-black hover:bg-thmanyah-cream active:bg-thmanyah-warm-border",
+  blue:
+    "bg-thmanyah-blue text-white hover:bg-blue-600 active:bg-blue-700",
+  pink:
+    "bg-thmanyah-hot-pink text-white hover:bg-pink-600 active:bg-pink-700",
+  amber:
+    "bg-thmanyah-amber text-thmanyah-black hover:bg-yellow-500 active:bg-yellow-600",
+  burgundy:
+    "bg-thmanyah-burgundy text-white hover:bg-rose-900 active:bg-rose-950",
+  charcoal:
+    "bg-thmanyah-charcoal text-thmanyah-amber hover:bg-thmanyah-dark-slate active:bg-thmanyah-black",
 };
 
 const sizes: Record<string, string> = {

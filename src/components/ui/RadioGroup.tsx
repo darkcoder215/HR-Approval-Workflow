@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { INPUT_TONES, InputTone } from "./inputTones";
+import { useFormSectionTone } from "@/components/form/FormSection";
 
 interface RadioGroupProps {
   label: string;
@@ -11,6 +13,7 @@ interface RadioGroupProps {
   onChange: (value: string) => void;
   required?: boolean;
   error?: string;
+  tone?: InputTone;
 }
 
 export default function RadioGroup({
@@ -22,7 +25,10 @@ export default function RadioGroup({
   onChange,
   required,
   error,
+  tone,
 }: RadioGroupProps) {
+  const sectionTone = useFormSectionTone();
+  const t = INPUT_TONES[tone ?? sectionTone];
   return (
     <div className="flex flex-col gap-2">
       <p className="font-ui font-medium text-[14px] text-thmanyah-black">
@@ -43,7 +49,7 @@ export default function RadioGroup({
               border transition-all duration-200 select-none
               ${
                 value === opt.value
-                  ? "border-thmanyah-green bg-thmanyah-green-light/20 ring-2 ring-thmanyah-green/20"
+                  ? `${t.selectedBorder} ${t.selectedBg} ${t.selectedRing}`
                   : "border-thmanyah-warm-border bg-white hover:border-thmanyah-muted/40"
               }
             `}
@@ -61,13 +67,13 @@ export default function RadioGroup({
                 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
                 ${
                   value === opt.value
-                    ? "border-thmanyah-green"
+                    ? t.radioBorder
                     : "border-thmanyah-warm-border"
                 }
               `}
             >
               {value === opt.value && (
-                <span className="w-2.5 h-2.5 rounded-full bg-thmanyah-green" />
+                <span className={`w-2.5 h-2.5 rounded-full ${t.radioDot}`} />
               )}
             </span>
             <div>
