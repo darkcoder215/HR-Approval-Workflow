@@ -23,7 +23,7 @@ import Card from "@/components/ui/Card";
 import StatCard from "@/components/ui/StatCard";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
-import LoginScreen from "@/components/ui/LoginScreen";
+import AuthGate from "@/components/ui/AuthGate";
 import { useAuth, AuthUser } from "@/lib/auth";
 import {
   getAllRequests,
@@ -37,8 +37,17 @@ import { DEPARTMENTS } from "@/lib/constants";
 type FilterStatus = "all" | "received" | "pending_approval" | "approved" | "rejected";
 
 export default function DashboardPage() {
-  const { isAuthenticated, user } = useAuth();
-  if (!isAuthenticated || !user) return <LoginScreen />;
+  return (
+    <AuthGate>
+      <DashboardGuard />
+    </AuthGate>
+  );
+}
+
+function DashboardGuard() {
+  const { user } = useAuth();
+  // AuthGate already guards against null user, but TS needs the narrowing.
+  if (!user) return null;
   return <DashboardView user={user} />;
 }
 

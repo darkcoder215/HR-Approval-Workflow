@@ -22,7 +22,7 @@ import {
   Search,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
-import LoginScreen from "@/components/ui/LoginScreen";
+import AuthGate from "@/components/ui/AuthGate";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/lib/auth";
 import { APPROVAL_CHAIN_TEMPLATE, SLA_TOTAL } from "@/lib/constants";
@@ -30,7 +30,7 @@ import { getAllRequests } from "@/lib/store";
 import { seedDemoData, hasDemoData, clearAllData } from "@/lib/seedData";
 
 function HomeContent() {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { logout, user } = useAuth();
   const isAdmin = user?.role === "culture_admin";
   const [hasRequests, setHasRequests] = useState(false);
   const [, setSeeded] = useState(false);
@@ -92,8 +92,6 @@ function HomeContent() {
       setBusy(false);
     }
   };
-
-  if (!isAuthenticated) return <LoginScreen />;
 
   return (
     <div className="min-h-screen page-bg-home">
@@ -471,7 +469,11 @@ function HomeContent() {
 }
 
 export default function HomePage() {
-  return <HomeContent />;
+  return (
+    <AuthGate>
+      <HomeContent />
+    </AuthGate>
+  );
 }
 
 function FeatureCard({

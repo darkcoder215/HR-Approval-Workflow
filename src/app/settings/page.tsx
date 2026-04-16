@@ -25,7 +25,7 @@ import {
 import Header from "@/components/ui/Header";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/lib/auth";
-import LoginScreen from "@/components/ui/LoginScreen";
+import AuthGate from "@/components/ui/AuthGate";
 import {
   AppSettings,
   getSettings,
@@ -39,7 +39,7 @@ import {
 } from "@/lib/settings";
 
 function SettingsContent() {
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [hasCustom, setHasCustom] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -95,8 +95,6 @@ function SettingsContent() {
   const toggleSection = (key: string) => {
     setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-
-  if (!isAuthenticated) return <LoginScreen />;
 
   if (user?.role !== "culture_admin") {
     return (
@@ -322,7 +320,11 @@ function SettingsContent() {
 }
 
 export default function SettingsPage() {
-  return <SettingsContent />;
+  return (
+    <AuthGate>
+      <SettingsContent />
+    </AuthGate>
+  );
 }
 
 /* ── Section wrapper ── */

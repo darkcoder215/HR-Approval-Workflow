@@ -70,9 +70,8 @@ export const STATUS_COLORS: Record<string, { bg: string; text: string; dot: stri
 };
 
 export const DEPARTMENTS = [
-  "الإنتاج",
+  "الإنتاج والمحتوى",
   "البث",
-  "المحتوى",
   "الأعمال",
   "التسويق",
   "المالية",
