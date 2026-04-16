@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -25,6 +25,7 @@ import ApprovalStepper from "@/components/ui/ApprovalStepper";
 import LoginScreen from "@/components/ui/LoginScreen";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { getRequestById, approveStep, rejectStep } from "@/lib/store";
+import { getSettings, ApproverRole } from "@/lib/settings";
 import { VacancyRequest } from "@/lib/types";
 
 export default function ApprovePage() {
@@ -40,8 +41,9 @@ function ApproveContent() {
 function ApproveView() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const { user } = useAuth();
   const [request, setRequest] = useState<VacancyRequest | null>(null);
+  const [stepApproverRole, setStepApproverRole] = useState<ApproverRole | null>(null);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState("");
   const [internalComment, setInternalComment] = useState("");
@@ -57,9 +59,22 @@ function ApproveView() {
     let cancelled = false;
     (async () => {
       try {
-        const r = await getRequestById(params.id as string);
+        const [r, settings] = await Promise.all([
+          getRequestById(params.id as string),
+          getSettings(),
+        ]);
         if (cancelled) return;
         setRequest(r || null);
+        if (r && stepIndex >= 0) {
+          const step = r.approvalChain[stepIndex];
+          // Resolve who can approve this step by matching the saved step's
+          // `order` against the current settings chain. This keeps authority
+          // assignments editable from /settings without a DB migration.
+          const cfg = settings.approvalChain.find(
+            (s) => s.order === step?.order
+          );
+          setStepApproverRole(cfg?.approverRole ?? "specific");
+        }
       } catch (err) {
         console.error("Failed to load request", err);
       } finally {
@@ -67,7 +82,7 @@ function ApproveView() {
       }
     })();
     return () => { cancelled = true; };
-  }, [params.id]);
+  }, [params.id, stepIndex]);
 
   const handleApprove = async () => {
     if (!request) return;
@@ -125,7 +140,73 @@ function ApproveView() {
   }
 
   const step = request.approvalChain[stepIndex];
-  const canAct = step && step.status === "pending" && request.currentApprovalStep === stepIndex;
+
+  // Authority gate: does the signed-in user have permission to approve THIS
+  // step? The rule set mirrors the five `approverRole` options exposed in
+  // /settings. culture_admin is always an allowed override (it also satisfies
+  // a "culture_admin" approverRole trivially).
+  const hasAuthority = (() => {
+    if (!user || !step) return false;
+    const role = user.role;
+    if (role === "culture_admin") return true;
+    // Email pinned on the step always counts (e.g. a specific CEO mailbox).
+    if (step.approverEmail && user.email.toLowerCase() === step.approverEmail.toLowerCase()) {
+      return true;
+    }
+    switch (stepApproverRole) {
+      case "specific":
+        // Only the exact email pinned on the step (already handled above).
+        return false;
+      case "requester_manager":
+        // The "direct manager" is the budget-owner email entered on the request.
+        return (
+          !!request.budgetOwner &&
+          user.email.toLowerCase() === request.budgetOwner.toLowerCase()
+        );
+      case "department_head":
+        return role === "department_head";
+      case "approver":
+        return role === "approver";
+      case "culture_admin":
+        // Handled by the early return above; non-admins never pass here.
+        return false;
+      default:
+        return false;
+    }
+  })();
+
+  // Requesters never reach the approval UI. Culture-admin is the only role
+  // that can *view* an approval page for a step they don't own, and even then
+  // their action buttons are gated on step timing below.
+  const canView =
+    user?.role === "culture_admin" ||
+    user?.role === "approver" ||
+    user?.role === "department_head" ||
+    hasAuthority;
+
+  if (!canView) {
+    return (
+      <div className="min-h-screen bg-thmanyah-off-white">
+        <Header />
+        <div className="max-w-lg mx-auto px-4 md:px-6 py-24 text-center">
+          <div className="w-20 h-20 rounded-full bg-red-50 mx-auto flex items-center justify-center mb-6">
+            <ShieldCheck className="w-10 h-10 text-thmanyah-red" />
+          </div>
+          <h2 className="font-display font-black text-[24px] mb-2">لا تملك صلاحية الاعتماد</h2>
+          <p className="font-ui text-[13px] text-thmanyah-muted mb-6">
+            هذه الصفحة مخصصة للمعتمدين فقط. يمكنك متابعة طلباتك من لوحة «طلباتي».
+          </p>
+          <Link href="/dashboard"><Button>العودة لطلباتي</Button></Link>
+        </div>
+      </div>
+    );
+  }
+
+  const canAct =
+    step &&
+    step.status === "pending" &&
+    request.currentApprovalStep === stepIndex &&
+    hasAuthority;
 
   if (actionDone) {
     return (
