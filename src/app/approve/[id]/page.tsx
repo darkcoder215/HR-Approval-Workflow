@@ -22,16 +22,18 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Textarea from "@/components/ui/Textarea";
 import ApprovalStepper from "@/components/ui/ApprovalStepper";
-import LoginScreen from "@/components/ui/LoginScreen";
+import AuthGate from "@/components/ui/AuthGate";
 import { useAuth } from "@/lib/auth";
 import { getRequestById, approveStep, rejectStep } from "@/lib/store";
 import { getSettings, ApproverRole } from "@/lib/settings";
 import { VacancyRequest } from "@/lib/types";
 
 export default function ApprovePage() {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) return <LoginScreen />;
-  return <ApproveView />;
+  return (
+    <AuthGate>
+      <ApproveView />
+    </AuthGate>
+  );
 }
 
 function ApproveView() {

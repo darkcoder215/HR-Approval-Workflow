@@ -31,7 +31,7 @@ import Textarea from "@/components/ui/Textarea";
 import RadioGroup from "@/components/ui/RadioGroup";
 import Button from "@/components/ui/Button";
 import FormSection from "@/components/form/FormSection";
-import LoginScreen from "@/components/ui/LoginScreen";
+import AuthGate from "@/components/ui/AuthGate";
 import { useAuth } from "@/lib/auth";
 import { createRequest } from "@/lib/store";
 import { DUMMY_PROFILES, DummyProfile } from "@/lib/dummyProfiles";
@@ -143,14 +143,12 @@ const initial: FormData = {
   deptCeoEmail: "",
 };
 
-function SubmitContent() {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) return <LoginScreen />;
-  return <SubmitForm />;
-}
-
 export default function SubmitPage() {
-  return <SubmitContent />;
+  return (
+    <AuthGate>
+      <SubmitForm />
+    </AuthGate>
+  );
 }
 
 interface AnalysisDimension {
@@ -182,9 +180,18 @@ const ANALYSIS_STEPS = [
   "بناء التقرير النهائي...",
 ];
 
+// Draft auto-save: one slot per user. Keyed by user id so if two people
+// share a browser (login → logout → login as other), they don't see each
+// other's in-progress form.
+const DRAFT_KEY_PREFIX = "thmanyah_hr_vacancy_draft:";
+
 function SubmitForm() {
   const router = useRouter();
+  const { user } = useAuth();
+  const draftKey = user ? `${DRAFT_KEY_PREFIX}${user.id}` : null;
   const [form, setForm] = useState<FormData>(initial);
+  const [draftLoaded, setDraftLoaded] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(false);
   const [submissionStage, setSubmissionStage] = useState<
     "idle" | "saving" | "saved"
   >("idle");
@@ -199,6 +206,71 @@ function SubmitForm() {
   const [showPrefill, setShowPrefill] = useState(false);
   const [prefillFlash, setPrefillFlash] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+
+  // Restore draft on mount (and whenever user changes — e.g. after login).
+  useEffect(() => {
+    if (!draftKey) return;
+    try {
+      const saved = localStorage.getItem(draftKey);
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<FormData>;
+        // Only merge keys that exist on FormData; everything stays a string.
+        setForm((prev) => {
+          const merged = { ...prev };
+          for (const k of Object.keys(prev) as (keyof FormData)[]) {
+            if (typeof parsed[k] === "string") {
+              merged[k] = parsed[k] as string;
+            }
+          }
+          // Flag "restored" only if the draft had any user content.
+          const hasContent = Object.entries(merged).some(
+            ([key, val]) => val && val !== initial[key as keyof FormData],
+          );
+          if (hasContent) setDraftRestored(true);
+          return merged;
+        });
+      }
+    } catch {
+      // Corrupt draft? Ignore and continue with empty form.
+    }
+    setDraftLoaded(true);
+  }, [draftKey]);
+
+  // Persist draft on every form change, but only after the initial load so we
+  // don't overwrite a stored draft with the empty `initial` state.
+  useEffect(() => {
+    if (!draftKey || !draftLoaded) return;
+    try {
+      // Skip persistence when the form is still at its pristine default.
+      const hasContent = Object.entries(form).some(
+        ([key, val]) => val && val !== initial[key as keyof FormData],
+      );
+      if (hasContent) {
+        localStorage.setItem(draftKey, JSON.stringify(form));
+      } else {
+        localStorage.removeItem(draftKey);
+      }
+    } catch {
+      // localStorage can be full / disabled — failing silently is fine here.
+    }
+  }, [form, draftKey, draftLoaded]);
+
+  const clearDraft = () => {
+    if (!draftKey) return;
+    try {
+      localStorage.removeItem(draftKey);
+    } catch {
+      // ignore
+    }
+    setDraftRestored(false);
+  };
+
+  const discardDraft = () => {
+    clearDraft();
+    setForm(initial);
+    setErrors({});
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Load admin-customizable settings (falls back to constants.ts defaults).
   // Settings live in Supabase (hr_settings singleton), so the fetch is async.
@@ -405,6 +477,9 @@ function SubmitForm() {
 
       setSavedRequest(request);
       setSubmissionStage("saved");
+      // Request successfully submitted — drop the draft so the form starts
+      // fresh next time the user opens /submit.
+      clearDraft();
     } catch (err) {
       console.error("Failed to create request", err);
       setSubmissionStage("idle");
@@ -579,6 +654,24 @@ function SubmitForm() {
         onSubmit={handleSubmit}
         className="max-w-3xl mx-auto px-4 md:px-6 pb-24 space-y-6"
       >
+        {draftRestored && (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-thmanyah-green-light/20 border border-thmanyah-green/30 rounded-2xl px-4 py-3 animate-fade-in">
+            <div className="flex items-center gap-2 flex-1">
+              <CheckCircle2 className="w-4 h-4 text-thmanyah-green shrink-0" />
+              <p className="font-ui font-bold text-[13px] text-emerald-800 leading-relaxed">
+                استعدنا مسودتك المحفوظة. تقدر تكمل من حيث وقفت.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={discardDraft}
+              className="self-start sm:self-auto px-3 py-1.5 bg-white hover:bg-thmanyah-cream text-thmanyah-muted hover:text-thmanyah-charcoal rounded-full font-ui font-black text-[12px] border border-thmanyah-warm-border cursor-pointer transition-colors"
+            >
+              مسح المسودة والبدء من جديد
+            </button>
+          </div>
+        )}
+
         {/* Section 1: Requester Info */}
         <FormSection
           title="بيانات مقدم الطلب"
