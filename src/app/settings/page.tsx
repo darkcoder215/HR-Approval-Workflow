@@ -197,6 +197,7 @@ function SettingsContent() {
             title="مسار الاعتماد"
             subtitle="تحكم في مراحل الاعتماد والمعتمدين والمهلة الزمنية"
             icon={<Shield className="w-5 h-5" />}
+            tone="green"
             expanded={expandedSections.approvalChain}
             onToggle={() => toggleSection("approvalChain")}
           >
@@ -211,6 +212,7 @@ function SettingsContent() {
             title="الإدارات"
             subtitle={`${settings.departments.length} إدارة`}
             icon={<Building2 className="w-5 h-5" />}
+            tone="blue"
             expanded={expandedSections.departments}
             onToggle={() => toggleSection("departments")}
           >
@@ -226,6 +228,7 @@ function SettingsContent() {
             title="المستويات الوظيفية"
             subtitle={`${settings.jobLevels.length} مستوى`}
             icon={<Briefcase className="w-5 h-5" />}
+            tone="amber"
             expanded={expandedSections.jobLevels}
             onToggle={() => toggleSection("jobLevels")}
           >
@@ -241,6 +244,7 @@ function SettingsContent() {
             title="طبيعة الدور"
             subtitle={`${settings.roleNatures.length} نوع`}
             icon={<Users className="w-5 h-5" />}
+            tone="pink"
             expanded={expandedSections.roleNatures}
             onToggle={() => toggleSection("roleNatures")}
           >
@@ -257,6 +261,7 @@ function SettingsContent() {
             title="الدول"
             subtitle={`${settings.countries.length} دولة`}
             icon={<Globe className="w-5 h-5" />}
+            tone="sky"
             expanded={expandedSections.countries}
             onToggle={() => toggleSection("countries")}
           >
@@ -272,6 +277,7 @@ function SettingsContent() {
             title="نصوص النموذج"
             subtitle="تحرير المقدمة والرسائل التوجيهية"
             icon={<FileText className="w-5 h-5" />}
+            tone="lavender"
             expanded={expandedSections.messages}
             onToggle={() => toggleSection("messages")}
           >
@@ -324,10 +330,22 @@ export default function SettingsPage() {
 }
 
 /* ── Section wrapper ── */
+type SectionTone = "green" | "blue" | "amber" | "pink" | "sky" | "lavender";
+
+const SECTION_TONES: Record<SectionTone, string> = {
+  green: "bg-thmanyah-green-light/40 text-thmanyah-green",
+  blue: "bg-thmanyah-aqua-pale/80 text-thmanyah-blue",
+  amber: "bg-thmanyah-pale-yellow/60 text-amber-700",
+  pink: "bg-thmanyah-rose/60 text-thmanyah-burgundy",
+  sky: "bg-thmanyah-sky-light/70 text-thmanyah-blue",
+  lavender: "bg-thmanyah-lavender/50 text-thmanyah-charcoal",
+};
+
 function SettingsSection({
   title,
   subtitle,
   icon,
+  tone = "green",
   expanded,
   onToggle,
   children,
@@ -335,6 +353,7 @@ function SettingsSection({
   title: string;
   subtitle: string;
   icon: React.ReactNode;
+  tone?: SectionTone;
   expanded: boolean;
   onToggle: () => void;
   children: React.ReactNode;
@@ -345,7 +364,7 @@ function SettingsSection({
         onClick={onToggle}
         className="w-full flex items-center gap-3 px-5 md:px-6 py-4 md:py-5 cursor-pointer hover:bg-thmanyah-off-white/50 transition-colors"
       >
-        <div className="w-9 h-9 bg-thmanyah-off-white rounded-xl flex items-center justify-center text-thmanyah-charcoal shrink-0">
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${SECTION_TONES[tone]}`}>
           {icon}
         </div>
         <div className="flex-1 text-right min-w-0">
@@ -413,6 +432,16 @@ function ApprovalChainEditor({
     onChange(updated.map((s, i) => ({ ...s, order: i + 1 })));
   };
 
+  // Rotate accent hues for step number badges so each row reads distinctly.
+  const stepPalettes = [
+    "bg-thmanyah-green text-white",
+    "bg-thmanyah-blue text-white",
+    "bg-thmanyah-amber text-thmanyah-black",
+    "bg-thmanyah-hot-pink text-white",
+    "bg-thmanyah-peach text-white",
+    "bg-thmanyah-charcoal text-thmanyah-amber",
+  ];
+
   return (
     <div className="space-y-3">
       {chain.map((step, i) => (
@@ -421,7 +450,7 @@ function ApprovalChainEditor({
           className="bg-thmanyah-off-white rounded-xl p-4 border border-thmanyah-warm-border"
         >
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 rounded-full bg-thmanyah-black text-white flex items-center justify-center font-display font-black text-[13px] shrink-0">
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center font-display font-black text-[13px] shrink-0 ${stepPalettes[i % stepPalettes.length]}`}>
               {i + 1}
             </div>
             <span className="font-ui font-black text-[13px] flex-1">المرحلة {i + 1}</span>

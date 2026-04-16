@@ -111,31 +111,61 @@
   font-display: swap;
 }
 
-/* ── Theme ── */
+/* ── Theme ──
+   Palette derived from DESIGN_GUIDE_New (Thmanyah Brand v2.0). All the
+   extended-palette hues are registered so we can vary accent colors across
+   the tool without reaching for arbitrary Tailwind values. */
 @theme {
   --font-display: 'Thmanyah Serif Display', 'Georgia', serif;
   --font-body: 'Thmanyah Serif Text', 'Georgia', serif;
   --font-ui: 'Thmanyah Sans', 'Segoe UI', 'Helvetica Neue', sans-serif;
 
+  /* Primary brand */
   --color-thmanyah-black: #000000;
+  --color-thmanyah-white: #FFFFFF;
   --color-thmanyah-green: #00C17A;
   --color-thmanyah-green-light: #B5E8BE;
+
+  /* Brand accents */
   --color-thmanyah-blue: #0072F9;
   --color-thmanyah-red: #F24935;
+
+  /* Extended palette — warm */
+  --color-thmanyah-burgundy: #82003A;
+  --color-thmanyah-hot-pink: #FF00B7;
   --color-thmanyah-amber: #FFBC0A;
-  --color-thmanyah-off-white: #F7F4EE;
-  --color-thmanyah-warm-gray: #F2EDEA;
-  --color-thmanyah-cream: #F4F2ED;
-  --color-thmanyah-charcoal: #2B2D3F;
-  --color-thmanyah-dark-slate: #111421;
-  --color-thmanyah-muted: #494C6B;
-  --color-thmanyah-warm-border: #EFEDE2;
-  --color-thmanyah-mint: #B2E2BA;
-  --color-thmanyah-peach: #FF9172;
-  --color-thmanyah-sky: #84DBE5;
+  --color-thmanyah-yellow-bright: #FFDD56;
   --color-thmanyah-pale-yellow: #F9E59E;
+  --color-thmanyah-peach: #FF9172;
+  --color-thmanyah-salmon: #FFBAA3;
   --color-thmanyah-blush: #FFD1C4;
   --color-thmanyah-pink-light: #FFA5C6;
+  --color-thmanyah-rose: #FFC9D8;
+
+  /* Extended palette — cool */
+  --color-thmanyah-lavender: #D1C4E2;
+  --color-thmanyah-mint: #B2E2BA;
+  --color-thmanyah-sky: #84DBE5;
+  --color-thmanyah-sky-light: #AFE2EA;
+  --color-thmanyah-aqua-pale: #D1EDEF;
+
+  /* Neutrals */
+  --color-thmanyah-dark-slate: #111421;
+  --color-thmanyah-charcoal: #2B2D3F;
+  --color-thmanyah-muted: #494C6B;
+  --color-thmanyah-warm-border: #EFEDE2;
+  --color-thmanyah-cream: #F4F2ED;
+  --color-thmanyah-off-white: #F7F4EE;
+  --color-thmanyah-warm-gray: #F2EDEA;
+  --color-thmanyah-warm-white: #F2EDEA;
+  --color-thmanyah-showcase: #1A1A1D;
+
+  /* Score gradation (semantic) */
+  --color-score-excellent: #00C17A;
+  --color-score-good: #B2E2BA;
+  --color-score-average: #FFBC0A;
+  --color-score-below: #FF9172;
+  --color-score-poor: #F24935;
 }
 
 /* ── Base ── */
