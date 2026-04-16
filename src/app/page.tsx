@@ -505,7 +505,7 @@ function FeatureCard({
   };
   const c = accents[accent];
   return (
-    <div className="bg-thmanyah-off-white border border-thmanyah-warm-border rounded-2xl p-5 md:p-6 hover-lift">
+    <div className="bg-thmanyah-off-white border border-thmanyah-warm-border rounded-2xl p-5 md:p-6 hover-lift flex flex-col items-center text-center">
       <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${c.tile} ${c.shadow}`}>{icon}</div>
       <h3 className="font-ui font-black text-[14px] md:text-[15px] mb-2 text-thmanyah-black">{title}</h3>
       <p className="font-ui font-bold text-[12px] md:text-[13px] text-thmanyah-charcoal leading-relaxed">{description}</p>
