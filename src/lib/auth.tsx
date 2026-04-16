@@ -114,14 +114,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // IMPORTANT: Do not await supabase calls inside onAuthStateChange.
+    // The auth client holds a navigator lock while this callback runs, and
+    // a nested query that itself needs the lock will deadlock the entire
+    // client — which is exactly what made logins hang forever. Kick the
+    // profile fetch to a microtask so the lock releases first.
+    // See supabase/auth-js#762.
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        try {
-          const profile = await loadProfile(session.user.id, session.user.email ?? "");
-          if (mounted) setUser(profile);
-        } catch (err) {
-          console.error("Profile load failed:", err);
-        }
+        const uid = session.user.id;
+        const uemail = session.user.email ?? "";
+        setTimeout(async () => {
+          if (!mounted) return;
+          try {
+            const profile = await loadProfile(uid, uemail);
+            if (mounted) setUser(profile);
+          } catch (err) {
+            console.error("Profile load failed:", err);
+          }
+        }, 0);
       } else if (event === "SIGNED_OUT") {
         // Only clear state on an explicit sign-out. A transient token-refresh
         // failure or other event without a session shouldn't boot the user
