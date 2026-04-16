@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -15,6 +15,7 @@ import {
   Clock,
   AlertTriangle,
   Building2,
+  ArrowLeft,
 } from "lucide-react";
 import Header from "@/components/ui/Header";
 import Card from "@/components/ui/Card";
@@ -38,6 +39,7 @@ export default function ApprovePage() {
 
 function ApproveView() {
   const params = useParams();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
   const [request, setRequest] = useState<VacancyRequest | null>(null);
@@ -90,6 +92,9 @@ function ApproveView() {
       if (updated) {
         setRequest(updated);
         setActionDone("approved");
+        // Invalidate the router cache so /dashboard refetches when the user
+        // navigates back instead of showing the pre-approval snapshot.
+        router.refresh();
       }
     } catch (err) {
       console.error("Failed to approve step", err);
@@ -106,6 +111,7 @@ function ApproveView() {
       if (updated) {
         setRequest(updated);
         setActionDone("rejected");
+        router.refresh();
       }
     } catch (err) {
       console.error("Failed to reject step", err);
@@ -207,38 +213,97 @@ function ApproveView() {
     hasAuthority;
 
   if (actionDone) {
+    // The chain in `request` is already the post-decision snapshot that came
+    // back from approveStep/rejectStep, so all the counters below reflect the
+    // state AFTER this approver's action.
+    const totalSteps = request.approvalChain.length;
+    const approvedCount = request.approvalChain.filter((s) => s.status === "approved").length;
+    const isFinal = approvedCount === totalSteps && actionDone === "approved";
+    const nextStep =
+      actionDone === "approved" && !isFinal
+        ? request.approvalChain[request.currentApprovalStep]
+        : null;
+    const stepLabel = step?.role ?? `المرحلة ${stepIndex + 1}`;
+
     return (
       <div className="min-h-screen page-bg-approve">
         <Header />
-        <div className="max-w-lg mx-auto px-4 md:px-6 py-24 text-center animate-fade-in-up">
-          <div
-            className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-6 ${
-              actionDone === "approved" ? "bg-thmanyah-green-light/30" : "bg-red-50"
-            }`}
-          >
-            {actionDone === "approved" ? (
-              <CheckCircle2 className="w-10 h-10 text-thmanyah-green" />
-            ) : (
-              <XCircle className="w-10 h-10 text-thmanyah-red" />
-            )}
+        <div className="max-w-xl mx-auto px-4 md:px-6 py-16 animate-fade-in-up">
+          <div className="text-center">
+            <div
+              className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-6 ${
+                actionDone === "approved" ? "bg-thmanyah-green-light/30" : "bg-red-50"
+              }`}
+            >
+              {actionDone === "approved" ? (
+                <CheckCircle2 className="w-10 h-10 text-thmanyah-green" />
+              ) : (
+                <XCircle className="w-10 h-10 text-thmanyah-red" />
+              )}
+            </div>
+            <h2 className="font-display font-black text-[28px] mb-2">
+              {actionDone === "rejected"
+                ? "رفضت الطلب"
+                : isFinal
+                ? "اكتمل اعتماد الطلب"
+                : `وافقت على مرحلة «${stepLabel}»`}
+            </h2>
+            <p className="font-ui text-[14px] text-thmanyah-muted mb-6">
+              {request.jobTitle} — {request.requesterName}
+            </p>
           </div>
-          <h2 className="font-display font-black text-[28px] mb-2">
-            {actionDone === "approved" ? "وافقت على الطلب" : "رفضت الطلب"}
-          </h2>
-          <p className="font-ui text-[14px] text-thmanyah-muted mb-2">
-            طلب: {request.jobTitle} — {request.requesterName}
-          </p>
-          <p className="font-ui text-[13px] text-thmanyah-muted mb-8">
-            {actionDone === "approved"
-              ? "مرّرنا الطلب للمعتمد التالي في المسار."
-              : "أوقفنا المسار وأشعرنا مقدم الطلب بالرفض."}
-          </p>
-          <div className="flex gap-3 justify-center">
+
+          {/* Progress summary card */}
+          <Card tone={actionDone === "rejected" ? "peach" : isFinal ? "green" : "mint"} className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="font-ui font-bold text-[13px] text-thmanyah-charcoal">
+                تقدم الاعتماد
+              </span>
+              <span className="font-ui font-bold text-[13px] text-thmanyah-green">
+                {approvedCount} من {totalSteps} مراحل
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              {request.approvalChain.map((s, i) => (
+                <div key={s.id} className="flex items-center gap-1 flex-1">
+                  <div
+                    className={`h-2 flex-1 rounded-full ${
+                      s.status === "approved"
+                        ? "bg-thmanyah-green"
+                        : s.status === "rejected"
+                        ? "bg-thmanyah-red"
+                        : i === request.currentApprovalStep && request.status !== "rejected"
+                        ? "bg-thmanyah-amber animate-pulse-soft"
+                        : "bg-thmanyah-warm-border"
+                    }`}
+                    title={s.role}
+                  />
+                </div>
+              ))}
+            </div>
+            <p className="font-ui text-[12px] text-thmanyah-muted mt-4 leading-relaxed">
+              {actionDone === "rejected"
+                ? "أوقفنا المسار وأشعرنا مقدم الطلب بالرفض. لن تتم أي اعتمادات لاحقة."
+                : isFinal
+                ? "هذه كانت المرحلة الأخيرة. انتقل الطلب لمرحلة بدء التوظيف."
+                : nextStep
+                ? `مرّرنا الطلب إلى «${nextStep.role}»${
+                    nextStep.approverName ? ` — ${nextStep.approverName}` : ""
+                  }.`
+                : "تم حفظ قرارك."}
+            </p>
+          </Card>
+
+          <div className="flex gap-3 justify-center flex-wrap">
             <Link href={`/track/${request.id}`}>
-              <Button variant="secondary">عرض الطلب</Button>
+              <Button variant="secondary" icon={<FileText className="w-4 h-4" />}>
+                عرض تفاصيل الطلب
+              </Button>
             </Link>
             <Link href="/dashboard">
-              <Button variant="primary">لوحة المتابعة</Button>
+              <Button variant="primary" icon={<ArrowLeft className="w-4 h-4" />}>
+                العودة للوحة المتابعة
+              </Button>
             </Link>
           </div>
         </div>

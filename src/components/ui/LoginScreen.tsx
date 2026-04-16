@@ -2,18 +2,14 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Lock, Mail, Eye, EyeOff, ArrowLeft, AlertCircle, User } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, AlertCircle } from "lucide-react";
 import Button from "./Button";
 import { useAuth } from "@/lib/auth";
 
-type Mode = "login" | "signup";
-
 export default function LoginScreen() {
-  const { login, signup } = useAuth();
-  const [mode, setMode] = useState<Mode>("login");
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,33 +20,14 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
 
-    if (mode === "login") {
-      const res = await login(email, password);
-      if (!res.ok) {
-        setError(res.error || "تعذر تسجيل الدخول");
-        setShake(true);
-        setTimeout(() => setShake(false), 600);
-      }
-    } else {
-      if (!displayName.trim()) {
-        setError("الرجاء إدخال الاسم الكامل");
-        setLoading(false);
-        return;
-      }
-      const res = await signup(email, password, displayName);
-      if (!res.ok) {
-        setError(res.error || "تعذر إنشاء الحساب");
-        setShake(true);
-        setTimeout(() => setShake(false), 600);
-      }
+    const res = await login(email, password);
+    if (!res.ok) {
+      setError(res.error || "تعذر تسجيل الدخول");
+      setShake(true);
+      setTimeout(() => setShake(false), 600);
     }
 
     setLoading(false);
-  };
-
-  const switchMode = (next: Mode) => {
-    setMode(next);
-    setError(null);
   };
 
   return (
@@ -77,50 +54,10 @@ export default function LoginScreen() {
           </p>
         </div>
 
-        {/* Mode tabs — each tab takes on its own palette role so the user sees
-            a clear identity shift between "returning" and "new" journeys. */}
-        <div className="flex bg-white/[0.04] border border-white/10 rounded-full p-1 mb-5 max-w-xs mx-auto">
-          <button
-            type="button"
-            onClick={() => switchMode("login")}
-            className={`flex-1 py-2 rounded-full font-ui font-black text-[12px] transition-all cursor-pointer ${
-              mode === "login" ? "bg-thmanyah-green text-white" : "text-white/50 hover:text-white/80"
-            }`}
-          >
-            تسجيل الدخول
-          </button>
-          <button
-            type="button"
-            onClick={() => switchMode("signup")}
-            className={`flex-1 py-2 rounded-full font-ui font-black text-[12px] transition-all cursor-pointer ${
-              mode === "signup" ? "bg-thmanyah-blue text-white" : "text-white/50 hover:text-white/80"
-            }`}
-          >
-            حساب جديد
-          </button>
-        </div>
-
-        {/* Auth card */}
+        {/* Auth card — login only. Account provisioning is handled by the
+            culture-admin team, not by self-service sign-up. */}
         <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-8 animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
           <form onSubmit={handleSubmit} className="space-y-5">
-            {mode === "signup" && (
-              <div>
-                <label className="block font-ui font-bold text-[13px] text-white/60 mb-2">
-                  الاسم الكامل
-                </label>
-                <div className="relative">
-                  <User className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                  <input
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => { setDisplayName(e.target.value); setError(null); }}
-                    placeholder="مثال: زكية حكمي"
-                    className="w-full bg-white/[0.06] border border-white/10 rounded-xl pr-11 pl-4 py-3.5 font-ui font-bold text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-thmanyah-green/50 focus:ring-2 focus:ring-thmanyah-green/20 transition-all"
-                  />
-                </div>
-              </div>
-            )}
-
             <div>
               <label className="block font-ui font-bold text-[13px] text-white/60 mb-2">
                 البريد الإلكتروني
@@ -133,7 +70,7 @@ export default function LoginScreen() {
                   onChange={(e) => { setEmail(e.target.value); setError(null); }}
                   placeholder="email@thmanyah.com"
                   className="w-full bg-white/[0.06] border border-white/10 rounded-xl pr-11 pl-4 py-3.5 font-ui font-bold text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-thmanyah-green/50 focus:ring-2 focus:ring-thmanyah-green/20 transition-all"
-                  autoComplete={mode === "signup" ? "email" : "username"}
+                  autoComplete="username"
                   dir="ltr"
                 />
               </div>
@@ -149,9 +86,9 @@ export default function LoginScreen() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setError(null); }}
-                  placeholder={mode === "signup" ? "8 أحرف على الأقل" : "أدخل كلمة المرور"}
+                  placeholder="أدخل كلمة المرور"
                   className="w-full bg-white/[0.06] border border-white/10 rounded-xl pr-11 pl-11 py-3.5 font-ui font-bold text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-thmanyah-green/50 focus:ring-2 focus:ring-thmanyah-green/20 transition-all"
-                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                  autoComplete="current-password"
                   dir="ltr"
                 />
                 <button
@@ -179,26 +116,14 @@ export default function LoginScreen() {
               className="w-full text-[15px] font-black"
               icon={<ArrowLeft className="w-4 h-4" />}
             >
-              {mode === "login" ? "تسجيل الدخول" : "إنشاء الحساب"}
+              تسجيل الدخول
             </Button>
           </form>
         </div>
 
         {/* Helper text */}
         <p className="mt-6 text-center font-ui font-bold text-[12px] text-white/40">
-          {mode === "login" ? (
-            <>ليس لديك حساب؟{" "}
-              <button onClick={() => switchMode("signup")} className="text-thmanyah-green hover:underline cursor-pointer">
-                أنشئ حسابًا
-              </button>
-            </>
-          ) : (
-            <>لديك حساب؟{" "}
-              <button onClick={() => switchMode("login")} className="text-thmanyah-green hover:underline cursor-pointer">
-                سجّل دخولك
-              </button>
-            </>
-          )}
+          للحصول على حساب، تواصل مع فريق إدارة الثقافة
         </p>
       </div>
     </div>
