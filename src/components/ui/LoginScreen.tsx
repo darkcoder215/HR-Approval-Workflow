@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Lock, Mail, Eye, EyeOff, ArrowLeft, AlertCircle, User, CheckCircle2 } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, AlertCircle, User } from "lucide-react";
 import Button from "./Button";
 import { useAuth } from "@/lib/auth";
 
@@ -16,7 +16,6 @@ export default function LoginScreen() {
   const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
 
@@ -24,7 +23,6 @@ export default function LoginScreen() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setInfo(null);
 
     if (mode === "login") {
       const res = await login(email, password);
@@ -44,8 +42,6 @@ export default function LoginScreen() {
         setError(res.error || "تعذر إنشاء الحساب");
         setShake(true);
         setTimeout(() => setShake(false), 600);
-      } else if (res.needsConfirmation) {
-        setInfo("أرسلنا رابط التفعيل إلى بريدك الإلكتروني، فعّل الحساب ثم سجّل دخولك.");
       }
     }
 
@@ -55,7 +51,6 @@ export default function LoginScreen() {
   const switchMode = (next: Mode) => {
     setMode(next);
     setError(null);
-    setInfo(null);
   };
 
   return (
@@ -170,13 +165,6 @@ export default function LoginScreen() {
               <div className="flex items-center gap-2 px-4 py-3 bg-thmanyah-red/10 border border-thmanyah-red/20 rounded-xl animate-fade-in-up">
                 <AlertCircle className="w-4 h-4 text-thmanyah-red shrink-0" />
                 <p className="font-ui font-bold text-[13px] text-thmanyah-red">{error}</p>
-              </div>
-            )}
-
-            {info && (
-              <div className="flex items-center gap-2 px-4 py-3 bg-thmanyah-green/10 border border-thmanyah-green/20 rounded-xl animate-fade-in-up">
-                <CheckCircle2 className="w-4 h-4 text-thmanyah-green shrink-0" />
-                <p className="font-ui font-bold text-[13px] text-thmanyah-green">{info}</p>
               </div>
             )}
 
