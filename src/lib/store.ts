@@ -44,6 +44,7 @@ interface VacancyRequestRow {
   preferred_country: string | null;
   work_location: string | null;
   nationality: VacancyRequest["nationality"];
+  non_arab_justification: string | null;
   tried_alternatives: boolean;
   alternatives_description: string | null;
   risks_if_not_hired: string;
@@ -119,6 +120,7 @@ function rowToRequest(
     preferredCountry: row.preferred_country ?? undefined,
     workLocation: row.work_location ?? undefined,
     nationality: row.nationality,
+    nonArabJustification: row.non_arab_justification ?? undefined,
     triedAlternatives: row.tried_alternatives,
     alternativesDescription: row.alternatives_description ?? undefined,
     risksIfNotHired: row.risks_if_not_hired,
@@ -251,6 +253,7 @@ export async function createRequest(
     preferred_country: data.preferredCountry ?? null,
     work_location: data.workLocation ?? null,
     nationality: data.nationality,
+    non_arab_justification: data.nonArabJustification ?? null,
     tried_alternatives: data.triedAlternatives,
     alternatives_description: data.alternativesDescription ?? null,
     risks_if_not_hired: data.risksIfNotHired,

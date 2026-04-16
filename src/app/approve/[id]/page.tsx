@@ -299,7 +299,7 @@ function ApproveView() {
                   { full_time: "دوام كامل", part_time: "دوام جزئي", contract: "عقد محدد", freelance: "مستقل", intern: "متدرب" }[request.roleNature] || ""
                 } />
                 <MiniInfo label="الدولة" value={request.country} />
-                <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي" : request.nationality === "arab" ? "عربي" : "غير عربي"} />
+                <MiniInfo label="الجنسية" value={request.nationality === "saudi" ? "سعودي فقط" : request.nationality === "arab" ? "مرن عربيًا" : "غير عربي"} />
                 {request.preferredCountry && (
                   <MiniInfo label="دولة" value={request.preferredCountry} />
                 )}
@@ -358,6 +358,19 @@ function ApproveView() {
                     </p>
                   </div>
                 )}
+              </Card>
+            )}
+
+            {/* Non-Arab talent justification */}
+            {request.nationality === "non_arab" && request.nonArabJustification && (
+              <Card tone="burgundy">
+                <h3 className="font-display font-bold text-[16px] mb-3 flex items-center gap-2">
+                  <Target className="w-4 h-4 text-thmanyah-burgundy" />
+                  تبرير الحاجة لمواهب غير عربية
+                </h3>
+                <p className="font-body text-[14px] text-thmanyah-charcoal leading-relaxed whitespace-pre-wrap">
+                  {request.nonArabJustification}
+                </p>
               </Card>
             )}
 
