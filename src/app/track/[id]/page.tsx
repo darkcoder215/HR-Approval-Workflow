@@ -255,9 +255,9 @@ function TrackView() {
                   label="الجنسية"
                   value={
                     request.nationality === "saudi"
-                      ? "سعودي"
+                      ? "سعودي فقط"
                       : request.nationality === "arab"
-                      ? "عربي"
+                      ? "مرن عربيًا"
                       : "غير عربي"
                   }
                 />
@@ -274,6 +274,19 @@ function TrackView() {
                 {request.jobDescription}
               </p>
             </Card>
+
+            {/* Non-Arab talent justification */}
+            {request.nationality === "non_arab" && request.nonArabJustification && (
+              <Card tone="burgundy">
+                <h3 className="font-display font-bold text-[18px] mb-3 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-thmanyah-burgundy" />
+                  تبرير الحاجة لمواهب غير عربية
+                </h3>
+                <p className="font-body text-[15px] text-thmanyah-charcoal leading-relaxed whitespace-pre-wrap">
+                  {request.nonArabJustification}
+                </p>
+              </Card>
+            )}
 
             {/* Replacement/New details */}
             {request.vacancyType === "replacement" && request.previousEmployeeName && (

@@ -390,6 +390,7 @@ export async function seedDemoData(): Promise<VacancyRequest[]> {
     preferred_country: r.preferredCountry ?? null,
     work_location: r.workLocation ?? null,
     nationality: r.nationality,
+    non_arab_justification: r.nonArabJustification ?? null,
     tried_alternatives: r.triedAlternatives,
     alternatives_description: r.alternativesDescription ?? null,
     risks_if_not_hired: r.risksIfNotHired,

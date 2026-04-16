@@ -71,6 +71,7 @@ type FormData = {
   preferredCountry: string;
   workLocation: string;
   nationality: string;
+  nonArabJustification: string;
   triedAlternatives: string;
   alternativesDescription: string;
   whyNoAlternatives: string;
@@ -117,6 +118,7 @@ const initial: FormData = {
   preferredCountry: "",
   workLocation: "",
   nationality: "",
+  nonArabJustification: "",
   triedAlternatives: "",
   alternativesDescription: "",
   whyNoAlternatives: "",
@@ -274,6 +276,9 @@ function SubmitForm() {
     if (!form.country) newErrors.country = "مطلوب";
     if (!form.workLocation) newErrors.workLocation = "مطلوب";
     if (!form.nationality) newErrors.nationality = "مطلوب";
+    if (form.nationality === "non_arab" && !form.nonArabJustification.trim()) {
+      newErrors.nonArabJustification = "مطلوب";
+    }
 
     if (!form.triedAlternatives) newErrors.triedAlternatives = "مطلوب";
     if (form.triedAlternatives === "yes" && !form.alternativesDescription.trim()) {
@@ -383,6 +388,8 @@ function SubmitForm() {
         preferredCountry: form.preferredCountry || undefined,
         workLocation: form.workLocation || undefined,
         nationality: form.nationality as "saudi" | "arab" | "non_arab",
+        nonArabJustification:
+          form.nationality === "non_arab" ? form.nonArabJustification.trim() : undefined,
         triedAlternatives: form.triedAlternatives === "yes",
         alternativesDescription: form.alternativesDescription || undefined,
         risksIfNotHired: form.risksIfNotHired,
@@ -883,8 +890,8 @@ function SubmitForm() {
               label="الجنسية"
               name="nationality"
               options={[
-                { value: "saudi", label: "سعودي" },
-                { value: "arab", label: "عربي" },
+                { value: "saudi", label: "سعودي فقط" },
+                { value: "arab", label: "مرن عربيًا" },
                 { value: "non_arab", label: "غير عربي" },
               ]}
               value={form.nationality}
@@ -905,6 +912,17 @@ function SubmitForm() {
               error={errors.workLocation}
             />
           </div>
+          {form.nationality === "non_arab" && (
+            <Textarea
+              label="برر الحاجة لتوظيف مواهب غير عربية"
+              hint="اشرح لماذا لا يمكن شغل هذا الدور بمواهب سعودية أو عربية — الكفاءات المتخصصة المطلوبة، ندرتها محليًا، وما تمت تجربته للاستقطاب قبل التوسع."
+              placeholder="مثال: الدور يتطلب خبرة متخصصة في... غير متوفرة محليًا رغم البحث عبر..."
+              value={form.nonArabJustification}
+              onChange={set("nonArabJustification")}
+              error={errors.nonArabJustification}
+              required
+            />
+          )}
           <RadioGroup
             label="الدولة"
             name="country"

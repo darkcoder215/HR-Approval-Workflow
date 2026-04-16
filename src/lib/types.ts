@@ -67,6 +67,9 @@ export interface VacancyRequest {
   preferredCountry?: string;
   workLocation?: string;
   nationality: Nationality;
+  // When nationality is "non_arab" the requester must justify the need for
+  // non-Arab talent so reviewers can evaluate the case.
+  nonArabJustification?: string;
 
   // Assessment
   triedAlternatives: boolean;
