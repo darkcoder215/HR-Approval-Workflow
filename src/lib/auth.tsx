@@ -29,7 +29,7 @@ interface AuthContextType {
     email: string,
     password: string,
     displayName: string
-  ) => Promise<{ ok: boolean; error?: string; needsConfirmation?: boolean }>;
+  ) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -114,20 +114,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = useCallback(
     async (email: string, password: string, displayName: string) => {
+      const trimmedEmail = email.trim();
       const { data, error } = await supabase.auth.signUp({
-        email: email.trim(),
+        email: trimmedEmail,
         password,
         options: {
           data: { display_name: displayName.trim() },
-          emailRedirectTo:
-            typeof window !== "undefined" ? window.location.origin : undefined,
         },
       });
       if (error) return { ok: false, error: error.message };
-      // If email confirmation is enabled, session will be null until confirmed
-      if (!data.session) return { ok: true, needsConfirmation: true };
-      if (data.user) {
-        const profile = await loadProfile(data.user.id, data.user.email ?? "");
+
+      // A DB trigger auto-confirms new users, so signUp usually returns a session
+      // directly. If it doesn't (e.g. the dashboard setting still blocks the
+      // initial response), log in with the just-created credentials.
+      if (data.session?.user) {
+        const profile = await loadProfile(data.session.user.id, data.session.user.email ?? "");
+        setUser(profile);
+        return { ok: true };
+      }
+
+      const loginRes = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
+        password,
+      });
+      if (loginRes.error) return { ok: false, error: loginRes.error.message };
+      if (loginRes.data.user) {
+        const profile = await loadProfile(
+          loginRes.data.user.id,
+          loginRes.data.user.email ?? ""
+        );
         setUser(profile);
       }
       return { ok: true };
