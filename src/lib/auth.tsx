@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import Image from "next/image";
 import { supabase } from "./supabase";
 
 export interface AuthUser {
@@ -74,20 +73,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      const session = data.session;
-      if (session?.user && mounted) {
-        const profile = await loadProfile(session.user.id, session.user.email ?? "");
-        if (mounted) setUser(profile);
-      }
+    // Failsafe: never leave the app waiting on auth for more than 3s. If the
+    // network hangs, we flip to "no session" so the login screen can render.
+    const failsafe = setTimeout(() => {
       if (mounted) setLoading(false);
+    }, 3000);
+
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const session = data.session;
+        if (session?.user && mounted) {
+          const profile = await loadProfile(session.user.id, session.user.email ?? "");
+          if (mounted) setUser(profile);
+        }
+      } catch (err) {
+        console.error("Auth session check failed:", err);
+      } finally {
+        if (mounted) setLoading(false);
+        clearTimeout(failsafe);
+      }
     })();
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        const profile = await loadProfile(session.user.id, session.user.email ?? "");
-        if (mounted) setUser(profile);
+        try {
+          const profile = await loadProfile(session.user.id, session.user.email ?? "");
+          if (mounted) setUser(profile);
+        } catch (err) {
+          console.error("Profile load failed:", err);
+        }
       } else {
         if (mounted) setUser(null);
       }
@@ -95,6 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false;
+      clearTimeout(failsafe);
       sub.subscription.unsubscribe();
     };
   }, []);
@@ -155,22 +171,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-thmanyah-black flex items-center justify-center">
-        <div className="animate-pulse-soft">
-          <Image
-            src="/thamanyah.png"
-            alt="ثمانية"
-            width={48}
-            height={48}
-            className="rounded-xl mx-auto"
-          />
-        </div>
-      </div>
-    );
-  }
-
+  // Always render children. The initial session check is short-lived and
+  // consumers that need to wait can read `loading` from context — but we never
+  // gate rendering on it so the login screen (for unauthenticated users)
+  // appears immediately on app open.
   return (
     <AuthContext.Provider
       value={{ isAuthenticated: !!user, user, loading, login, signup, logout }}

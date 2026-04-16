@@ -29,8 +29,7 @@ import { getRequestById } from "@/lib/store";
 import { VacancyRequest } from "@/lib/types";
 
 export default function TrackPage() {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return null;
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) return <LoginScreen />;
   return <TrackView />;
 }
