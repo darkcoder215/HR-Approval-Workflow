@@ -11,7 +11,7 @@ import {
   RequestStatus,
   VacancyRequest,
 } from "./types";
-import { getSettings } from "./settings";
+import { AppSettings, getSettings } from "./settings";
 
 interface VacancyRequestRow {
   id: string;
@@ -214,13 +214,22 @@ export async function createRequest(
   data: Omit<
     VacancyRequest,
     "id" | "createdAt" | "updatedAt" | "status" | "currentApprovalStep" | "approvalChain"
-  >
+  >,
+  options?: { settings?: AppSettings; userId?: string | null }
 ): Promise<VacancyRequest> {
-  const settings = await getSettings();
-  const chainTemplate = settings.approvalChain;
+  // The submit page already has both settings and the logged-in user cached.
+  // Skip re-fetching them to cut two serial round-trips off the save path.
+  const chainTemplate =
+    options?.settings?.approvalChain ?? (await getSettings()).approvalChain;
 
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData?.user?.id ?? null;
+  let userId = options?.userId ?? null;
+  if (options?.userId === undefined) {
+    // Fallback for non-authenticated callers: getSession() reads from local
+    // storage (fast), unlike getUser() which always revalidates with the
+    // server.
+    const { data: sessionData } = await supabase.auth.getSession();
+    userId = sessionData.session?.user?.id ?? null;
+  }
 
   const insertPayload = {
     created_by: userId,
