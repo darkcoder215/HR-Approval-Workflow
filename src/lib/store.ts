@@ -339,34 +339,19 @@ export async function approveStep(
   comment?: string,
   internalComment?: string
 ): Promise<VacancyRequest | null> {
-  const current = await getRequestById(requestId);
-  if (!current) return null;
-  const step = current.approvalChain[stepIndex];
-  if (!step) return null;
+  const { data, error } = await supabase.rpc("hr_approve_step", {
+    p_request_id: requestId,
+    p_step_index: stepIndex,
+    p_comment: comment ?? null,
+    p_internal_comment: internalComment ?? null,
+  });
+  if (error) throw error;
 
-  const nowIso = new Date().toISOString();
-  const { error: stepErr } = await supabase
-    .from("hr_approval_steps")
-    .update({
-      status: "approved",
-      comment: comment ?? null,
-      internal_comment: internalComment ?? null,
-      decided_at: nowIso,
-    })
-    .eq("id", step.id);
-  if (stepErr) throw stepErr;
-
-  const isLast = stepIndex === current.approvalChain.length - 1;
-  const nextStatus: RequestStatus = isLast ? "approved" : "pending_approval";
-  const nextStep = isLast ? stepIndex : stepIndex + 1;
-
-  const { error: reqErr } = await supabase
-    .from("hr_vacancy_requests")
-    .update({ status: nextStatus, current_approval_step: nextStep })
-    .eq("id", requestId);
-  if (reqErr) throw reqErr;
-
-  return getRequestById(requestId);
+  const payload = data as
+    | { request: VacancyRequestRow; steps: ApprovalStepRow[] }
+    | null;
+  if (!payload?.request) return null;
+  return rowToRequest(payload.request, payload.steps ?? []);
 }
 
 export async function rejectStep(
@@ -375,52 +360,21 @@ export async function rejectStep(
   reason: string,
   internalComment?: string
 ): Promise<VacancyRequest | null> {
-  const current = await getRequestById(requestId);
-  if (!current) return null;
-  const step = current.approvalChain[stepIndex];
-  if (!step) return null;
-
-  const nowIso = new Date().toISOString();
-  const { error: stepErr } = await supabase
-    .from("hr_approval_steps")
-    .update({
-      status: "rejected",
-      comment: reason,
-      internal_comment: internalComment ?? null,
-      decided_at: nowIso,
-    })
-    .eq("id", step.id);
-  if (stepErr) throw stepErr;
-
-  const { error: reqErr } = await supabase
-    .from("hr_vacancy_requests")
-    .update({ status: "rejected", rejection_reason: reason })
-    .eq("id", requestId);
-  if (reqErr) throw reqErr;
-
-  return getRequestById(requestId);
-}
-
-export async function updateRequestStatus(
-  requestId: string,
-  status: RequestStatus
-): Promise<VacancyRequest | null> {
-  const { error } = await supabase
-    .from("hr_vacancy_requests")
-    .update({ status })
-    .eq("id", requestId);
+  const { data, error } = await supabase.rpc("hr_reject_step", {
+    p_request_id: requestId,
+    p_step_index: stepIndex,
+    p_reason: reason,
+    p_internal_comment: internalComment ?? null,
+  });
   if (error) throw error;
-  return getRequestById(requestId);
+
+  const payload = data as
+    | { request: VacancyRequestRow; steps: ApprovalStepRow[] }
+    | null;
+  if (!payload?.request) return null;
+  return rowToRequest(payload.request, payload.steps ?? []);
 }
 
-export async function deleteRequest(requestId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from("hr_vacancy_requests")
-    .delete()
-    .eq("id", requestId);
-  if (error) throw error;
-  return true;
-}
 
 export interface DashboardStats {
   totalRequests: number;
