@@ -82,6 +82,21 @@ export const DEPARTMENTS = [
   "العمليات",
 ];
 
+// C-level budget owners. Each entry is surfaced as an option in the
+// "صاحب الميزانية" dropdown on the submit form.
+export const BUDGET_OWNERS: { name: string; title: string }[] = [
+  { name: "عبدالرحمن أبومالح", title: "الرئيس التنفيذي" },
+  { name: "أسيل باعبدالله", title: "الرئيسة التنفيذية للإنتاج" },
+  { name: "إبراهيم القرعاوي", title: "الرئيس التنفيذي للتسويق" },
+  { name: "معاذ الحربي", title: "الرئيس التنفيذي للتصميم" },
+  { name: "علي بوصالح", title: "الرئيس التنفيذي للتقنية" },
+  { name: "فيصل الغامدي", title: "الرئيس التنفيذي للعمليات" },
+  { name: "ياسر الأحمد", title: "الرئيس التنفيذي للمالية" },
+  { name: "أحمد الحقيل", title: "الرئيس التنفيذي للمحتوى" },
+  { name: "معاذ خليفاوي", title: "الرئيس التنفيذي للأعمال" },
+  { name: "البراء العوهلي", title: "الرئيس التنفيذي لثقافة المنظومة" },
+];
+
 export const JOB_LEVELS = [
   "مبتدئ (Junior)",
   "متوسط (Mid-level)",

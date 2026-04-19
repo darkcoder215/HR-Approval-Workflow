@@ -45,6 +45,7 @@ import {
   HIRING_BAR_MESSAGE,
   APPROVAL_FLOW_NOTE,
   APPROVAL_CHAIN_TEMPLATE,
+  BUDGET_OWNERS,
 } from "@/lib/constants";
 import { getSettings, AppSettings } from "@/lib/settings";
 import { VacancyRequest } from "@/lib/types";
@@ -732,10 +733,14 @@ function SubmitForm() {
               onChange={set("project")}
             />
           </div>
-          <Input
+          <Select
             label="صاحب الميزانية"
             hint="الرئيس التنفيذي لكل إدارة هو صاحب الميزانية"
-            placeholder="مثال: خالد العتيبي — الرئيس التنفيذي للتقنية"
+            placeholder="اختر صاحب الميزانية..."
+            options={BUDGET_OWNERS.map((o) => ({
+              value: `${o.name} — ${o.title}`,
+              label: `${o.name} — ${o.title}`,
+            }))}
             value={form.budgetOwner}
             onChange={set("budgetOwner")}
             error={errors.budgetOwner}
