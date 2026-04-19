@@ -94,7 +94,7 @@ export const BUDGET_OWNERS: { name: string; title: string }[] = [
   { name: "ياسر الأحمد", title: "الرئيس التنفيذي للمالية" },
   { name: "أحمد الحقيل", title: "الرئيس التنفيذي للمحتوى" },
   { name: "معاذ خليفاوي", title: "الرئيس التنفيذي للأعمال" },
-  { name: "البراء العوهلي", title: "الرئيس التنفيذي لثقافة المنظومة" },
+  { name: "البراء العوهلي", title: "الرئيس التنفيذي للثقافة" },
 ];
 
 export const JOB_LEVELS = [
