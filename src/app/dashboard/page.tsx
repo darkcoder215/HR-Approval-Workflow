@@ -518,7 +518,7 @@ function RequestCard({ request, canApprove }: { request: VacancyRequest; canAppr
             </span>
             <span className="font-ui text-[12px] text-thmanyah-muted flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              {new Date(request.createdAt).toLocaleDateString("ar-SA", {
+              {new Date(request.createdAt).toLocaleDateString("ar-SA-u-nu-latn", {
                 month: "short",
                 day: "numeric",
               })}

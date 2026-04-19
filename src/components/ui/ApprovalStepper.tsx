@@ -114,7 +114,7 @@ export default function ApprovalStepper({
               </p>
               {step.decidedAt && (
                 <p className="text-[12px] text-thmanyah-muted/70 font-ui mt-1">
-                  {new Date(step.decidedAt).toLocaleDateString("ar-SA", {
+                  {new Date(step.decidedAt).toLocaleDateString("ar-SA-u-nu-latn", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
