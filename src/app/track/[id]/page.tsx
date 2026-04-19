@@ -176,7 +176,7 @@ function TrackView() {
               </p>
               <p className="font-ui text-[13px] text-white/50 mt-1">
                 <Clock className="w-3.5 h-3.5 inline ml-1" />
-                {new Date(request.createdAt).toLocaleDateString("ar-SA", {
+                {new Date(request.createdAt).toLocaleDateString("ar-SA-u-nu-latn", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -300,7 +300,7 @@ function TrackView() {
                   <InfoRow label="الاسم" value={request.previousEmployeeName} />
                   <InfoRow
                     label="تاريخ المغادرة"
-                    value={request.departureDate ? new Date(request.departureDate).toLocaleDateString("ar-SA") : "—"}
+                    value={request.departureDate ? new Date(request.departureDate).toLocaleDateString("ar-SA-u-nu-latn") : "—"}
                   />
                   <InfoRow
                     label="نوع المغادرة"

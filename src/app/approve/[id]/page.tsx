@@ -338,7 +338,7 @@ function ApproveView() {
             />
             <span className="font-ui text-[12px] text-white/40">
               <Clock className="w-3 h-3 inline ml-1" />
-              {new Date(request.createdAt).toLocaleDateString("ar-SA")}
+              {new Date(request.createdAt).toLocaleDateString("ar-SA-u-nu-latn")}
             </span>
           </div>
         </div>
@@ -554,7 +554,7 @@ function ApproveView() {
                       {step.status === "pending" && request.currentApprovalStep !== stepIndex
                         ? "الطلب لم يصل لمرحلتك بعد"
                         : step.decidedAt
-                        ? `القرار بتاريخ ${new Date(step.decidedAt).toLocaleDateString("ar-SA")}`
+                        ? `القرار بتاريخ ${new Date(step.decidedAt).toLocaleDateString("ar-SA-u-nu-latn")}`
                         : ""}
                     </p>
                   </div>
