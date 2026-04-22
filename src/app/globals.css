@@ -112,60 +112,85 @@
 }
 
 /* ── Theme ──
-   Palette derived from DESIGN_GUIDE_New (Thmanyah Brand v2.0). All the
-   extended-palette hues are registered so we can vary accent colors across
-   the tool without reaching for arbitrary Tailwind values. */
+   Values rewired to the Thmanyah Latest Design System (TDS). Neutrals are now
+   warm cream + warm off-black (no pure #000 / #FFF for large surfaces), and
+   the signature accent is the TDS brand green (#5B7A1E light / #A1B650 dark).
+   The extended palette names are retained so the existing Tailwind class API
+   keeps working, but each hex is shifted toward the warmer, more editorial
+   TDS language (ember red, gold, muted sky, etc.). */
 @theme {
-  --font-display: 'Thmanyah Serif Display', 'Georgia', serif;
-  --font-body: 'Thmanyah Serif Text', 'Georgia', serif;
-  --font-ui: 'Thmanyah Sans', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-display: 'Thmanyah Serif Display', 'Amiri', 'Georgia', serif;
+  --font-body: 'Thmanyah Serif Text', 'Thmanyah Serif Display', 'Amiri', serif;
+  --font-ui: 'Thmanyah Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
 
-  /* Primary brand */
-  --color-thmanyah-black: #000000;
+  /* Primary brand — warm ink + cream, no pure black/white on surfaces */
+  --color-thmanyah-black: #1C1B1A;
   --color-thmanyah-white: #FFFFFF;
-  --color-thmanyah-green: #00C17A;
-  --color-thmanyah-green-light: #B5E8BE;
 
-  /* Brand accents */
-  --color-thmanyah-blue: #0072F9;
-  --color-thmanyah-red: #F24935;
+  /* Signature accent — TDS brand green 500 (light mode) */
+  --color-thmanyah-green: #5B7A1E;
+  --color-thmanyah-green-light: #C7D38A;
 
-  /* Extended palette — warm */
-  --color-thmanyah-burgundy: #82003A;
-  --color-thmanyah-hot-pink: #FF00B7;
-  --color-thmanyah-amber: #FFBC0A;
-  --color-thmanyah-yellow-bright: #FFDD56;
-  --color-thmanyah-pale-yellow: #F9E59E;
-  --color-thmanyah-peach: #FF9172;
-  --color-thmanyah-salmon: #FFBAA3;
-  --color-thmanyah-blush: #FFD1C4;
-  --color-thmanyah-pink-light: #FFA5C6;
-  --color-thmanyah-rose: #FFC9D8;
+  /* Supporting accents — TDS semantic scales */
+  --color-thmanyah-blue: #2F9DB5;
+  --color-thmanyah-red: #BF2E1E;
 
-  /* Extended palette — cool */
-  --color-thmanyah-lavender: #D1C4E2;
-  --color-thmanyah-mint: #B2E2BA;
-  --color-thmanyah-sky: #84DBE5;
-  --color-thmanyah-sky-light: #AFE2EA;
-  --color-thmanyah-aqua-pale: #D1EDEF;
+  /* Extended palette — warm (kept as names, tuned toward TDS warmth) */
+  --color-thmanyah-burgundy: #7A1C12;
+  --color-thmanyah-hot-pink: #BF2E1E;
+  --color-thmanyah-amber: #C89A24;
+  --color-thmanyah-yellow-bright: #E8C36B;
+  --color-thmanyah-pale-yellow: #F7E5B8;
+  --color-thmanyah-peach: #E8C36B;
+  --color-thmanyah-salmon: #F7E5B8;
+  --color-thmanyah-blush: #F1EBDC;
+  --color-thmanyah-pink-light: #F28874;
+  --color-thmanyah-rose: #FBDDD5;
 
-  /* Neutrals */
-  --color-thmanyah-dark-slate: #111421;
-  --color-thmanyah-charcoal: #2B2D3F;
-  --color-thmanyah-muted: #494C6B;
-  --color-thmanyah-warm-border: #EFEDE2;
-  --color-thmanyah-cream: #F4F2ED;
-  --color-thmanyah-off-white: #F7F4EE;
-  --color-thmanyah-warm-gray: #F2EDEA;
-  --color-thmanyah-warm-white: #F2EDEA;
-  --color-thmanyah-showcase: #1A1A1D;
+  /* Extended palette — cool (muted toward TDS sky/mint) */
+  --color-thmanyah-lavender: #C3B594;
+  --color-thmanyah-mint: #C7D38A;
+  --color-thmanyah-sky: #7BCBDC;
+  --color-thmanyah-sky-light: #CDEEF5;
+  --color-thmanyah-aqua-pale: #CDEEF5;
 
-  /* Score gradation (semantic) */
-  --color-score-excellent: #00C17A;
-  --color-score-good: #B2E2BA;
-  --color-score-average: #FFBC0A;
-  --color-score-below: #FF9172;
-  --color-score-poor: #F24935;
+  /* Neutrals — warm cream → warm ink ramp */
+  --color-thmanyah-dark-slate: #0E0D0C;
+  --color-thmanyah-charcoal: #242322;
+  --color-thmanyah-muted: #5D5C58;
+  --color-thmanyah-warm-border: #E7DFCB;
+  --color-thmanyah-cream: #F1EBDC;
+  --color-thmanyah-off-white: #F8F3EA;
+  --color-thmanyah-warm-gray: #FCFAF5;
+  --color-thmanyah-warm-white: #FCFAF5;
+  --color-thmanyah-showcase: #1C1B1A;
+
+  /* Score gradation (semantic) — tuned to TDS green/gold/red */
+  --color-score-excellent: #5B7A1E;
+  --color-score-good: #A1B650;
+  --color-score-average: #C89A24;
+  --color-score-below: #F28874;
+  --color-score-poor: #BF2E1E;
+}
+
+/* ── TDS raw semantic tokens ──
+   Exposed as CSS custom properties for any component that needs to reach for a
+   true-to-TDS surface/fg/accent without going through the Tailwind scale. They
+   also drive the scrollbar, selection, and focus ring below. */
+:root {
+  --tds-bg: #F8F3EA;
+  --tds-surface: #FCFAF5;
+  --tds-surface-elev: #FFFFFF;
+  --tds-surface-sunk: #E7DFCB;
+  --tds-border: rgba(10,9,8,0.10);
+  --tds-border-strong: rgba(10,9,8,0.20);
+  --tds-fg: #1C1B1A;
+  --tds-fg-muted: rgba(10,9,8,0.60);
+  --tds-fg-subtle: rgba(10,9,8,0.40);
+  --tds-accent: #5B7A1E;
+  --tds-accent-hover: #4A6418;
+  --tds-accent-deep: #384C12;
+  --tds-accent-fg: #FCFAF5;
 }
 
 /* ── Base ── */
@@ -178,25 +203,32 @@ body {
   font-weight: 500;
   background-color: var(--color-thmanyah-off-white);
   color: var(--color-thmanyah-black);
+  /* Force Latin lining figures inside Arabic running text, per TDS. Arabic
+     body copy stays Arabic; numerals render as lining Latin digits. */
+  font-variant-numeric: lining-nums proportional-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-thmanyah-cream);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c4c0b8;
+  background: rgba(10, 9, 8, 0.14);
   border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 9, 8, 0.28);
 }
 
 /* ── Selection ── */
 ::selection {
-  background-color: var(--color-thmanyah-green-light);
+  background-color: color-mix(in oklab, var(--color-thmanyah-green) 30%, transparent);
   color: var(--color-thmanyah-black);
 }
 
@@ -205,6 +237,28 @@ body {
   outline: 2px solid var(--color-thmanyah-green);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* ── Accent-on-dark scoped variants ──
+   TDS pairs two accent shades: deep on cream (brand-500 #5B7A1E) and bright
+   on warm ink (brand-300 #A1B650). Landing hero, header, and footer sit on
+   warm ink regardless of theme — so any descendant of a dark container
+   re-points the token variable itself. This propagates through both solid
+   utilities (`text-thmanyah-green`, `border-thmanyah-green`) and Tailwind's
+   alpha variants (`bg-thmanyah-green/20`, `border-thmanyah-green/60`)
+   without per-component edits. */
+.bg-thmanyah-black,
+.bg-thmanyah-dark-slate,
+.bg-thmanyah-charcoal,
+.bg-thmanyah-showcase {
+  --color-thmanyah-green: #A1B650;
+  --color-thmanyah-green-light: #C7D38A;
+  --color-thmanyah-amber: #E8C36B;
+  --color-thmanyah-red: #F28874;
+  --color-thmanyah-hot-pink: #F28874;
+  --color-thmanyah-burgundy: #F28874;
+  --color-thmanyah-sky: #7BCBDC;
+  --color-thmanyah-sky-light: #CDEEF5;
 }
 
 /* ── Animations ── */
@@ -445,50 +499,50 @@ body {
 }
 
 /* ── Per-page brand backdrops ──
-   Each top-level tool page carries a distinct warm/cool tint so the product
-   reads as a suite rather than a single off-white canvas. The tint is a large
-   soft gradient layered on top of the warm body so cards still float cleanly.
-   Keep saturation low — the accent is the flavor, not the dish. */
+   Each top-level tool page keeps a distinct identity, but the palette is
+   compressed toward TDS: warm cream canvas with a single accent glow. The
+   glows are lower-saturation (brand green, ember red, gold, muted sky) so
+   the cream canvas still reads as the dish. */
 .page-bg-dashboard {
   background-color: var(--color-thmanyah-off-white);
   background-image:
-    radial-gradient(1200px 600px at 90% -10%, rgba(209, 196, 226, 0.55), transparent 60%),
-    radial-gradient(900px 500px at 10% 110%, rgba(209, 237, 239, 0.55), transparent 60%);
+    radial-gradient(1200px 600px at 90% -10%, rgba(91, 122, 30, 0.16), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(200, 154, 36, 0.12), transparent 60%);
   background-attachment: fixed;
 }
 .page-bg-submit {
   background-color: var(--color-thmanyah-off-white);
   background-image:
-    radial-gradient(1200px 600px at 10% -10%, rgba(255, 209, 196, 0.45), transparent 60%),
-    radial-gradient(900px 500px at 90% 110%, rgba(249, 229, 158, 0.40), transparent 60%);
+    radial-gradient(1200px 600px at 10% -10%, rgba(239, 70, 50, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, rgba(200, 154, 36, 0.14), transparent 60%);
   background-attachment: fixed;
 }
 .page-bg-settings {
   background-color: var(--color-thmanyah-warm-gray);
   background-image:
-    radial-gradient(1100px 600px at 100% 0%, rgba(175, 226, 234, 0.50), transparent 60%),
-    radial-gradient(900px 500px at 0% 100%, rgba(255, 201, 216, 0.40), transparent 60%);
+    radial-gradient(1100px 600px at 100% 0%, rgba(47, 157, 181, 0.14), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, rgba(91, 122, 30, 0.12), transparent 60%);
   background-attachment: fixed;
 }
 .page-bg-home {
   background-color: var(--color-thmanyah-off-white);
   background-image:
-    radial-gradient(1400px 700px at 50% -10%, rgba(178, 226, 186, 0.40), transparent 55%),
-    radial-gradient(1000px 500px at 0% 100%, rgba(255, 165, 198, 0.28), transparent 60%);
+    radial-gradient(1400px 700px at 50% -10%, rgba(91, 122, 30, 0.16), transparent 55%),
+    radial-gradient(1000px 500px at 0% 100%, rgba(200, 154, 36, 0.12), transparent 60%);
   background-attachment: fixed;
 }
 .page-bg-approve {
   background-color: var(--color-thmanyah-off-white);
   background-image:
-    radial-gradient(1200px 600px at 80% 0%, rgba(132, 219, 229, 0.45), transparent 60%),
-    radial-gradient(900px 500px at 20% 100%, rgba(178, 226, 186, 0.35), transparent 60%);
+    radial-gradient(1200px 600px at 80% 0%, rgba(47, 157, 181, 0.14), transparent 60%),
+    radial-gradient(900px 500px at 20% 100%, rgba(91, 122, 30, 0.14), transparent 60%);
   background-attachment: fixed;
 }
 .page-bg-track {
   background-color: var(--color-thmanyah-off-white);
   background-image:
-    radial-gradient(1200px 600px at 10% 10%, rgba(255, 188, 10, 0.20), transparent 60%),
-    radial-gradient(900px 500px at 90% 90%, rgba(209, 196, 226, 0.50), transparent 60%);
+    radial-gradient(1200px 600px at 10% 10%, rgba(200, 154, 36, 0.14), transparent 60%),
+    radial-gradient(900px 500px at 90% 90%, rgba(91, 122, 30, 0.12), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -500,20 +554,24 @@ body {
    ═══════════════════════════════════════════════════════════════════════ */
 
 html[data-theme="bold"] body {
-  background-color: #05060a;
-  color: rgba(255, 255, 255, 0.92);
+  /* TDS dark mode uses warm off-black (#1C1B1A) — pure black is forbidden. */
+  background-color: #1C1B1A;
+  color: #F8F3EA;
 }
 
 html[data-theme="bold"] ::-webkit-scrollbar-track {
-  background: #0a0b10;
+  background: transparent;
 }
 html[data-theme="bold"] ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(248, 243, 234, 0.14);
+}
+html[data-theme="bold"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(248, 243, 234, 0.28);
 }
 
 html[data-theme="bold"] ::selection {
-  background-color: rgba(0, 193, 122, 0.45);
-  color: #ffffff;
+  background-color: rgba(161, 182, 80, 0.35);
+  color: #F8F3EA;
 }
 
 /* ── Bold page backdrops ──
@@ -521,101 +579,116 @@ html[data-theme="bold"] ::selection {
    layered with three vivid colored glows so every page feels like its own
    ambient stage. */
 html[data-theme="bold"] .page-bg-home {
-  background-color: #05060a !important;
+  background-color: #1C1B1A !important;
   background-image:
-    radial-gradient(1200px 700px at 10% -10%, rgba(0, 193, 122, 0.28), transparent 60%),
-    radial-gradient(900px 600px at 100% 50%, rgba(255, 0, 183, 0.18), transparent 60%),
-    radial-gradient(1000px 600px at 50% 110%, rgba(0, 114, 249, 0.14), transparent 55%) !important;
+    radial-gradient(1200px 700px at 10% -10%, rgba(161, 182, 80, 0.22), transparent 60%),
+    radial-gradient(900px 600px at 100% 50%, rgba(232, 195, 107, 0.14), transparent 60%),
+    radial-gradient(1000px 600px at 50% 110%, rgba(47, 157, 181, 0.12), transparent 55%) !important;
   background-attachment: fixed !important;
 }
 
 html[data-theme="bold"] .page-bg-dashboard {
-  background-color: #05060a !important;
+  background-color: #1C1B1A !important;
   background-image:
-    radial-gradient(1200px 700px at 90% -10%, rgba(132, 219, 229, 0.22), transparent 60%),
-    radial-gradient(900px 600px at 10% 100%, rgba(209, 196, 226, 0.20), transparent 60%),
-    radial-gradient(700px 500px at 50% 50%, rgba(255, 188, 10, 0.08), transparent 60%) !important;
+    radial-gradient(1200px 700px at 90% -10%, rgba(123, 203, 220, 0.16), transparent 60%),
+    radial-gradient(900px 600px at 10% 100%, rgba(161, 182, 80, 0.16), transparent 60%),
+    radial-gradient(700px 500px at 50% 50%, rgba(232, 195, 107, 0.08), transparent 60%) !important;
   background-attachment: fixed !important;
 }
 
 html[data-theme="bold"] .page-bg-submit {
-  background-color: #07060a !important;
+  background-color: #1C1B1A !important;
   background-image:
-    radial-gradient(1200px 700px at 10% -10%, rgba(255, 145, 114, 0.22), transparent 60%),
-    radial-gradient(900px 600px at 100% 100%, rgba(255, 188, 10, 0.18), transparent 60%),
-    radial-gradient(800px 500px at 50% 40%, rgba(255, 0, 183, 0.08), transparent 60%) !important;
+    radial-gradient(1200px 700px at 10% -10%, rgba(239, 70, 50, 0.16), transparent 60%),
+    radial-gradient(900px 600px at 100% 100%, rgba(232, 195, 107, 0.16), transparent 60%),
+    radial-gradient(800px 500px at 50% 40%, rgba(161, 182, 80, 0.08), transparent 60%) !important;
   background-attachment: fixed !important;
 }
 
 html[data-theme="bold"] .page-bg-approve {
-  background-color: #05060a !important;
+  background-color: #1C1B1A !important;
   background-image:
-    radial-gradient(1200px 700px at 80% -10%, rgba(132, 219, 229, 0.24), transparent 60%),
-    radial-gradient(900px 600px at 20% 100%, rgba(0, 193, 122, 0.20), transparent 60%),
-    radial-gradient(800px 500px at 50% 50%, rgba(0, 114, 249, 0.10), transparent 60%) !important;
+    radial-gradient(1200px 700px at 80% -10%, rgba(123, 203, 220, 0.18), transparent 60%),
+    radial-gradient(900px 600px at 20% 100%, rgba(161, 182, 80, 0.20), transparent 60%),
+    radial-gradient(800px 500px at 50% 50%, rgba(47, 157, 181, 0.10), transparent 60%) !important;
   background-attachment: fixed !important;
 }
 
 html[data-theme="bold"] .page-bg-track {
-  background-color: #05060a !important;
+  background-color: #1C1B1A !important;
   background-image:
-    radial-gradient(1200px 700px at 10% 10%, rgba(255, 188, 10, 0.20), transparent 60%),
-    radial-gradient(900px 600px at 90% 90%, rgba(209, 196, 226, 0.24), transparent 60%),
-    radial-gradient(700px 500px at 50% 50%, rgba(130, 0, 58, 0.10), transparent 60%) !important;
+    radial-gradient(1200px 700px at 10% 10%, rgba(232, 195, 107, 0.18), transparent 60%),
+    radial-gradient(900px 600px at 90% 90%, rgba(161, 182, 80, 0.18), transparent 60%),
+    radial-gradient(700px 500px at 50% 50%, rgba(239, 70, 50, 0.10), transparent 60%) !important;
   background-attachment: fixed !important;
 }
 
 html[data-theme="bold"] .page-bg-settings {
-  background-color: #06060a !important;
+  background-color: #1C1B1A !important;
   background-image:
-    radial-gradient(1100px 600px at 100% 0%, rgba(132, 219, 229, 0.22), transparent 60%),
-    radial-gradient(900px 500px at 0% 100%, rgba(255, 165, 198, 0.20), transparent 60%),
-    radial-gradient(700px 500px at 50% 50%, rgba(0, 193, 122, 0.06), transparent 60%) !important;
+    radial-gradient(1100px 600px at 100% 0%, rgba(123, 203, 220, 0.16), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, rgba(161, 182, 80, 0.16), transparent 60%),
+    radial-gradient(700px 500px at 50% 50%, rgba(232, 195, 107, 0.08), transparent 60%) !important;
   background-attachment: fixed !important;
 }
 
 /* ── Bold surface swaps ──
-   Any warm off-white or cream surface becomes a translucent glass plate. The
-   backdrop-blur + faint white alpha lets the colored glows behind bleed up
-   through the tile, which is a hallmark of the bold aesthetic. */
+   Any warm off-white or cream surface becomes a translucent glass plate on
+   the warm-ink canvas. The cream-alpha tint lets the colored glows behind
+   bleed through while staying warm instead of sliding cold. */
 html[data-theme="bold"] .bg-thmanyah-off-white,
 html[data-theme="bold"] .bg-thmanyah-cream,
 html[data-theme="bold"] .bg-thmanyah-warm-white,
 html[data-theme="bold"] .bg-thmanyah-warm-gray {
-  background-color: rgba(255, 255, 255, 0.035) !important;
+  background-color: rgba(248, 243, 234, 0.04) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(248, 243, 234, 0.10);
 }
 
-/* Plain white surfaces (inputs, small tiles, inline cards) flip to glass too.
-   Buttons keep their accent fills because those use color-named utilities
-   (bg-thmanyah-green, bg-thmanyah-amber) rather than bg-white. */
+/* Plain white surfaces flip to a very faint cream-glass tile so the warm
+   canvas never reads as cool/glacial. Accent-named utilities keep their
+   fills because they target color-named utilities. */
 html[data-theme="bold"] .bg-white {
-  background-color: rgba(255, 255, 255, 0.045) !important;
+  background-color: rgba(248, 243, 234, 0.05) !important;
 }
 
 /* ── Text flips ──
-   Primary ink inverts to white. Secondary tiers drop to alpha-white so
-   hierarchy survives on the dark canvas. */
+   Primary ink inverts to warm cream, never pure white. Muted tiers drop
+   to cream-alpha so hierarchy survives on the warm-ink canvas. */
 html[data-theme="bold"] .text-thmanyah-black {
-  color: #ffffff !important;
+  color: #F8F3EA !important;
 }
 html[data-theme="bold"] .text-thmanyah-charcoal {
-  color: rgba(255, 255, 255, 0.88) !important;
+  color: rgba(248, 243, 234, 0.88) !important;
 }
 html[data-theme="bold"] .text-thmanyah-muted {
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: rgba(248, 243, 234, 0.55) !important;
 }
 
 /* ── Borders ──
-   Warm cream borders become white-alpha hairlines. */
+   Warm cream borders become cream-alpha hairlines. */
 html[data-theme="bold"] .border-thmanyah-warm-border {
-  border-color: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(248, 243, 234, 0.10) !important;
 }
 
-/* ── Focus ring stays brand green but picks up a glow on dark ── */
+/* ── Bold mode accent lift ──
+   On dark canvas, the TDS guide says the accent shifts to the lighter end
+   of the ramp (#A1B650 brand-300) so it stays readable against warm ink.
+   We re-point the Tailwind token here so bg-thmanyah-green, text-thmanyah-green,
+   etc. automatically pick up the dark-mode shade. */
+html[data-theme="bold"] {
+  --color-thmanyah-green: #A1B650;
+  --color-thmanyah-green-light: #C7D38A;
+  --color-thmanyah-red: #EF4632;
+  --color-thmanyah-hot-pink: #EF4632;
+  --color-thmanyah-amber: #E8C36B;
+  --color-thmanyah-burgundy: #BF2E1E;
+  --color-thmanyah-warm-border: rgba(248, 243, 234, 0.10);
+}
+
+/* ── Focus ring stays brand green but picks up a cream-alpha glow on dark ── */
 html[data-theme="bold"] *:focus-visible {
   outline-color: var(--color-thmanyah-green);
-  box-shadow: 0 0 0 3px rgba(0, 193, 122, 0.25);
+  box-shadow: 0 0 0 3px rgba(161, 182, 80, 0.28);
 }

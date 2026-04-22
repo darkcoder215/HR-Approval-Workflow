@@ -12,7 +12,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-thmanyah-black">
+    <header className="sticky top-0 z-40 bg-thmanyah-black border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0">
           <Image
