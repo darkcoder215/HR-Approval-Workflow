@@ -25,27 +25,30 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
 }
 
+// Hover/active states use token-relative brightness/darkness instead of
+// generic Tailwind shades, so every variant tracks the TDS palette even as
+// the underlying hex values evolve.
 const variants: Record<Variant, string> = {
   primary:
-    "bg-thmanyah-black text-white hover:bg-thmanyah-charcoal active:bg-thmanyah-dark-slate",
+    "bg-thmanyah-black text-thmanyah-off-white hover:bg-thmanyah-charcoal active:bg-thmanyah-dark-slate",
   secondary:
-    "bg-white text-thmanyah-black border border-thmanyah-warm-border hover:bg-thmanyah-cream active:bg-thmanyah-warm-gray",
+    "bg-white text-thmanyah-black border border-thmanyah-warm-border hover:bg-thmanyah-cream active:bg-thmanyah-warm-border",
   accent:
-    "bg-thmanyah-green text-white hover:bg-emerald-600 active:bg-emerald-700",
+    "bg-thmanyah-green text-thmanyah-off-white hover:brightness-110 active:brightness-95",
   danger:
-    "bg-thmanyah-red text-white hover:bg-red-600 active:bg-red-700",
+    "bg-thmanyah-red text-white hover:brightness-110 active:brightness-95",
   ghost:
     "bg-transparent text-thmanyah-black hover:bg-thmanyah-cream active:bg-thmanyah-warm-border",
   blue:
-    "bg-thmanyah-blue text-white hover:bg-blue-600 active:bg-blue-700",
+    "bg-thmanyah-blue text-white hover:brightness-110 active:brightness-95",
   pink:
-    "bg-thmanyah-hot-pink text-white hover:bg-pink-600 active:bg-pink-700",
+    "bg-thmanyah-hot-pink text-white hover:brightness-110 active:brightness-95",
   amber:
-    "bg-thmanyah-amber text-thmanyah-black hover:bg-yellow-500 active:bg-yellow-600",
+    "bg-thmanyah-amber text-white hover:brightness-110 active:brightness-95",
   burgundy:
-    "bg-thmanyah-burgundy text-white hover:bg-rose-900 active:bg-rose-950",
+    "bg-thmanyah-burgundy text-white hover:brightness-110 active:brightness-95",
   charcoal:
-    "bg-thmanyah-charcoal text-thmanyah-amber hover:bg-thmanyah-dark-slate active:bg-thmanyah-black",
+    "bg-thmanyah-charcoal text-thmanyah-off-white hover:bg-thmanyah-dark-slate active:bg-thmanyah-black",
 };
 
 const sizes: Record<string, string> = {
