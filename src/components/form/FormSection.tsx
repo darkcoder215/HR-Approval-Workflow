@@ -3,9 +3,9 @@
 import React, { createContext, useContext } from "react";
 import type { InputTone } from "@/components/ui/inputTones";
 
-// Tone palette mirrors DESIGN_GUIDE_New §3 and the SECTION_TONES map in
-// settings/page.tsx. Picking a varied hue per section keeps a long form
-// readable instead of leaning on a single green accent.
+// Tone palette mirrors the SECTION_TONES map in settings/page.tsx. Picking a
+// varied hue per section keeps a long form readable instead of leaning on a
+// single green accent.
 export type FormSectionTone =
   | "green"
   | "blue"

@@ -367,8 +367,7 @@ function HomeContent() {
           <div className="space-y-3 max-w-2xl mx-auto stagger-children">
             {APPROVAL_CHAIN_TEMPLATE.map((step, i) => {
               // Rotate accent hues so each step's index badge & SLA chip feel
-              // distinct — per DESIGN_GUIDE_New's "more variation in color"
-              // direction. Colors stay within the Thmanyah extended palette.
+              // distinct. Colors stay within the Thmanyah extended palette.
               const palettes = [
                 {
                   badgeBg: "bg-thmanyah-green",

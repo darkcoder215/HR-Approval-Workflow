@@ -2,8 +2,8 @@
 
 import React from "react";
 
-// Expanded palette per DESIGN_GUIDE_New so we can tint each stat differently
-// instead of leaning on a single green accent.
+// Expanded palette so we can tint each stat differently instead of leaning
+// on a single green accent.
 type StatColor =
   | "green"
   | "amber"
