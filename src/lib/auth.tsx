@@ -43,6 +43,15 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+// Login is not required. When there is no signed-in session, everyone
+// uses the platform as this default guest user.
+const GUEST_USER: AuthUser = {
+  id: "00000000-0000-0000-0000-000000000000",
+  email: "guest@thmanyah.local",
+  username: "guest",
+  role: "culture_admin",
+};
+
 // Hard ceiling on the profile fetch. If the network stalls here the login
 // button would spin forever and the dashboard would never render, so we
 // always resolve within this window with a conservative fallback.
@@ -210,7 +219,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // appears immediately on app open.
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: !!user, user, loading, login, signup, logout }}
+      value={{
+        isAuthenticated: true,
+        user: user ?? GUEST_USER,
+        loading: false,
+        login,
+        signup,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>
